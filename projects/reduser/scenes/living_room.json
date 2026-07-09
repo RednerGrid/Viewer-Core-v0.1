@@ -1,0 +1,15 @@
+{
+  "id": "living_room",
+  "title": "Гостиная",
+  "type": "panorama",
+  "assets": {
+    "image": "assets/panoramas/living_room.jpg"
+  },
+  "actions": [
+    {
+      "id": "backHall",
+      "title": "В прихожую",
+      "target": "hall"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "yard_pano_01",
+  "title": "Панорама двора",
+  "type": "panorama",
+  "assets": {
+    "image": "assets/panoramas/yard_pano_01.jpg"
+  },
+  "actions": [
+    {
+      "id": "backOverview",
+      "title": "К общему виду",
+      "target": "overview"
+    },
+    {
+      "id": "enterHouse",
+      "title": "Войти в дом",
+      "target": "hall"
+    }
+  ]
+}

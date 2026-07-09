@@ -1,0 +1,20 @@
+{
+  "id": "hall",
+  "title": "Прихожая",
+  "type": "panorama",
+  "assets": {
+    "image": "assets/panoramas/hall.jpg"
+  },
+  "actions": [
+    {
+      "id": "toLivingRoom",
+      "title": "В гостиную",
+      "target": "living_room"
+    },
+    {
+      "id": "backYard",
+      "title": "Во двор",
+      "target": "yard_pano_01"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "overview",
+  "title": "Общий вид участка",
+  "type": "overview",
+  "assets": {
+    "image": "assets/overview/day.jpg",
+    "idmap": "assets/overview/idmap.png"
+  },
+  "actions": [
+    {
+      "id": "openHouse360",
+      "title": "Облет дома",
+      "target": "house360"
+    },
+    {
+      "id": "openYard",
+      "title": "Панорама двора",
+      "target": "yard_pano_01"
+    },
+    {
+      "id": "openHall",
+      "title": "Войти в дом",
+      "target": "hall"
+    }
+  ]
+}

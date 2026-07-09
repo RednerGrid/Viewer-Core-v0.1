@@ -1,0 +1,24 @@
+{
+  "id": "house360",
+  "title": "Облет дома",
+  "type": "object360",
+  "assets": {
+    "framesPath": "assets/object360/house/frames/",
+    "frameCount": 89,
+    "filePrefix": "frame_",
+    "fileExtension": "jpg",
+    "padding": 4
+  },
+  "actions": [
+    {
+      "id": "backOverview",
+      "title": "К общему виду",
+      "target": "overview"
+    },
+    {
+      "id": "enterHouse",
+      "title": "Войти в дом",
+      "target": "hall"
+    }
+  ]
+}
