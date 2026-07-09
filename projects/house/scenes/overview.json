@@ -6,6 +6,22 @@
     "image": "assets/overview/day.jpg",
     "idmap": "assets/overview/idmap.png"
   },
+  "layers": [
+    {
+      "id": "house_hover",
+      "type": "hover",
+      "image": "assets/overview/house_hover.png",
+      "objectId": "house"
+    }
+  ],
+  "idObjects": [
+    {
+      "id": "house",
+      "title": "Дом",
+      "color": [255, 255, 255],
+      "target": "house360"
+    }
+  ],
   "actions": [
     {
       "id": "openHouse360",
