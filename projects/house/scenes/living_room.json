@@ -5,6 +5,15 @@
   "assets": {
     "image": "assets/panoramas/living_room.jpg"
   },
+  "hotspots": [
+  {
+    "id": "hall",
+    "title": "В прихожую",
+    "yaw": -354.2,
+    "pitch": 1.6,
+    "target": "hall"
+  }
+],
   "actions": [
     {
       "id": "backHall",

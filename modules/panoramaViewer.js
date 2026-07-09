@@ -1,4 +1,5 @@
 import { renderToolbar } from "../ui/toolbar.js";
+import { renderHotspots, updatePanoramaHotspots, clearHotspots } from "../ui/hotspots.js";
 
 let viewerRef = null;
 let renderer = null;
@@ -22,6 +23,7 @@ export async function init({ project, scene, viewer, openScene }) {
   viewerRef = viewer;
 
   renderToolbar(scene.actions, openScene);
+  renderHotspots(scene.hotspots, openScene);
 
   scene3d = new THREE.Scene();
 
@@ -179,7 +181,13 @@ function animate() {
   camera.fov += (targetFov - camera.fov) * 0.12;
   camera.updateProjectionMatrix();
 
+  window.currentView = {
+  yaw: Number(lon.toFixed(1)),
+  pitch: Number(lat.toFixed(1))
+}; // временная для координат
+  
   renderer.render(scene3d, camera);
+  updatePanoramaHotspots(camera, renderer);
 }
 
 export function resize() {
@@ -194,6 +202,7 @@ export function resize() {
 export function update() {}
 
 export function destroy() {
+  clearHotspots();
   removeControls();
 
   if (animationId) {

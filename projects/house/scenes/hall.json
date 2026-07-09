@@ -5,6 +5,15 @@
   "assets": {
     "image": "assets/panoramas/hall.jpg"
   },
+ "hotspots": [
+  {
+    "id": "to_living_room",
+    "title": "В гостиную",
+    "yaw": -182.1,
+    "pitch": -1.3,
+    "target": "living_room"
+  }
+],
   "actions": [
     {
       "id": "toLivingRoom",
