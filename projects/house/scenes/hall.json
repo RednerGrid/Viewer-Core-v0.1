@@ -2,6 +2,13 @@
   "id": "hall",
   "title": "Прихожая",
   "type": "panorama",
+  
+   "view": {
+    "yaw": -179.6,
+    "pitch": 2.2,
+    "fov": 60
+  },
+
   "assets": {
     "image": "assets/panoramas/hall.jpg"
   },
@@ -12,7 +19,14 @@
     "yaw": -182.1,
     "pitch": -1.3,
     "target": "living_room"
-  }
+  },
+  {
+  "id": "new_hotspot",
+  "title": "Во двор",
+  "yaw": -300.2,
+  "pitch": -0.7,
+  "target": "yard_pano_01"
+}
 ],
   "actions": [
     {

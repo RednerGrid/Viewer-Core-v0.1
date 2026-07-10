@@ -1,5 +1,10 @@
 import { renderToolbar } from "../ui/toolbar.js";
 import { renderHotspots, updatePanoramaHotspots, clearHotspots } from "../ui/hotspots.js";
+import {
+  initDeveloperTools,
+  updateDeveloperView,
+  destroyDeveloperTools
+} from "../ui/developerTools.js";
 
 let viewerRef = null;
 let renderer = null;
@@ -23,18 +28,30 @@ export async function init({ project, scene, viewer, openScene }) {
   viewerRef = viewer;
 
   renderToolbar(scene.actions, openScene);
-  renderHotspots(scene.hotspots, openScene);
+  initDeveloperTools();
+
+  // Каждый раз сбрасываем состояние управления
+  isDown = false;
+  startX = 0;
+  startY = 0;
+  activePointers.clear();
+
+  // Загружаем стартовый ракурс текущей сцены
+  lon = Number(scene.view?.yaw ?? 0);
+  lat = Number(scene.view?.pitch ?? 0);
+  targetFov = Number(scene.view?.fov ?? 50);
 
   scene3d = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(
-    50,
+    targetFov,
     window.innerWidth / window.innerHeight,
     1,
     2000
   );
 
-  targetFov = 50;
+  camera.fov = targetFov;
+  camera.updateProjectionMatrix();
 
   renderer = new THREE.WebGLRenderer({
     antialias: true
@@ -49,7 +66,6 @@ export async function init({ project, scene, viewer, openScene }) {
   geometry.scale(-1, 1, 1);
 
   const texturePath = `${project.basePath}${scene.assets.image}`;
-
   const texture = new THREE.TextureLoader().load(texturePath);
 
   const material = new THREE.MeshBasicMaterial({
@@ -59,8 +75,9 @@ export async function init({ project, scene, viewer, openScene }) {
   const sphere = new THREE.Mesh(geometry, material);
   scene3d.add(sphere);
 
-  addControls(viewer);
+  renderHotspots(scene.hotspots, openScene);
 
+  addControls(viewer);
   animate();
 }
 
@@ -168,6 +185,11 @@ function animate() {
   animationId = requestAnimationFrame(animate);
 
   lat = Math.max(-45, Math.min(45, lat));
+  updateDeveloperView({
+  yaw: lon,
+  pitch: lat,
+  fov: camera.fov
+});
 
   const phi = THREE.MathUtils.degToRad(90 - lat);
   const theta = THREE.MathUtils.degToRad(lon);
@@ -202,6 +224,7 @@ export function resize() {
 export function update() {}
 
 export function destroy() {
+  destroyDeveloperTools();
   clearHotspots();
   removeControls();
 

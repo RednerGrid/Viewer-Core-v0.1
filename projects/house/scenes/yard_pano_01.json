@@ -2,9 +2,27 @@
   "id": "yard_pano_01",
   "title": "Панорама двора",
   "type": "panorama",
+
+  "view": {
+    "yaw": -160.0,
+    "pitch": 1.9,
+    "fov": 50
+  },
+
   "assets": {
     "image": "assets/panoramas/yard_pano_01.jpg"
   },
+
+  "hotspots": [
+    {
+      "id": "to_hall",
+      "title": "Ко входу",
+      "yaw": -160.2,
+      "pitch": 1.7,
+      "target": "hall"
+    }
+  ],
+
   "actions": [
     {
       "id": "backOverview",

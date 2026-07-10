@@ -17,3 +17,5 @@ Interactive Presentation Platform
 
 Разработка:
 2026
+
+Current version: 0.3.0
