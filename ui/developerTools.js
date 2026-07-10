@@ -13,6 +13,13 @@ let exportButtonEl = null;
 let addHotspotButtonEl = null;
 let crosshairEl = null;
 let sceneChangedCallback = null;
+let hotspotTitleInputEl = null;
+let hotspotTargetSelectEl = null;
+let currentProject = null;
+let hotspotListEl = null;
+let updateHotspotButtonEl = null;
+let deleteHotspotButtonEl = null;
+let selectedHotspotId = null;
 
 let currentView = {
   yaw: 0,
@@ -28,11 +35,32 @@ export function isDeveloperMode() {
 
 export function initDeveloperTools(options = {}) {
   if (!isDeveloperMode()) return;
-  if (panelEl) return;
 
-  sceneChangedCallback = options.onSceneChange ?? null;
-  if (panelEl) return;
+  sceneChangedCallback =
+    options.onSceneChange ?? sceneChangedCallback;
 
+  currentProject =
+    options.project ?? currentProject;
+
+  /*
+    Панель уже существует, но сцена могла измениться.
+    Поэтому обновляем её содержимое вместо выхода
+    без синхронизации.
+  */
+  if (panelEl) {
+    selectedHotspotId = null;
+
+    hotspotTitleInputEl.value = "";
+
+    updateHotspotButtonEl.disabled = true;
+    deleteHotspotButtonEl.disabled = true;
+
+    fillTargetSelect();
+    renderHotspotList();
+
+    return;
+  }
+ 
   panelEl = document.createElement("div");
   panelEl.className = "developer-tools";
 
@@ -44,6 +72,26 @@ export function initDeveloperTools(options = {}) {
       <span>Pitch: <b data-dev-pitch>0.0</b></span>
     </div>
 
+    <div class="developer-tools__section">
+      <label class="developer-tools__label">
+       Название
+       <input
+         type="text"
+         class="developer-tools__input"
+        data-dev-hotspot-title
+        placeholder="Например: В гостиную"
+       >
+     </label>
+
+     <label class="developer-tools__label">
+       Target
+       <select
+         class="developer-tools__select"
+         data-dev-hotspot-target
+        ></select>
+     </label>
+    </div>
+    
     <button
       type="button"
       class="developer-tools__button"
@@ -59,6 +107,35 @@ export function initDeveloperTools(options = {}) {
     >
       Добавить hotspot в центр
     </button>
+
+    <div class="developer-tools__section">
+  <div class="developer-tools__subtitle">
+    Hotspots сцены
+  </div>
+
+  <div
+    class="developer-tools__hotspot-list"
+    data-dev-hotspot-list
+  ></div>
+
+  <button
+    type="button"
+    class="developer-tools__button"
+    data-dev-update-hotspot
+    disabled
+  >
+    Обновить выбранный hotspot
+  </button>
+
+  <button
+    type="button"
+    class="developer-tools__button developer-tools__button--danger"
+    data-dev-delete-hotspot
+    disabled
+  >
+    Удалить выбранный hotspot
+  </button>
+</div>
 
     <button
       type="button"
@@ -94,11 +171,35 @@ export function initDeveloperTools(options = {}) {
   copyButtonEl = panelEl.querySelector("[data-dev-copy]");
   copyViewButtonEl = panelEl.querySelector("[data-dev-copy-view]");
   exportButtonEl = panelEl.querySelector("[data-dev-export]");
-  addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
+  hotspotTitleInputEl = panelEl.querySelector(
+  "[data-dev-hotspot-title]"
+);
+
+hotspotTargetSelectEl = panelEl.querySelector(
+  "[data-dev-hotspot-target]"
+);
+
+updateHotspotButtonEl = panelEl.querySelector(
+  "[data-dev-update-hotspot]"
+);
+
+deleteHotspotButtonEl = panelEl.querySelector(
+  "[data-dev-delete-hotspot]"
+);
+
+hotspotListEl = panelEl.querySelector(
+  "[data-dev-hotspot-list]"
+);
+
+fillTargetSelect();
+renderHotspotList();
   copyViewButtonEl.addEventListener("click", saveCurrentView);
   exportButtonEl.addEventListener("click", exportScene);
   copyButtonEl.addEventListener("click", copyCurrentHotspot);
+  addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
   addHotspotButtonEl.addEventListener("click", addCurrentHotspot);
+  updateHotspotButtonEl.addEventListener("click", updateSelectedHotspot);
+  deleteHotspotButtonEl.addEventListener("click", deleteSelectedHotspot);
   
 }
 
@@ -168,14 +269,30 @@ if (crosshairEl) {
   }
 
   if (copyViewButtonEl) {
-    copyViewButtonEl.removeEventListener("click", copyCurrentView);
-  }
+  copyViewButtonEl.removeEventListener(
+    "click",
+    saveCurrentView
+  );
+}
 
   if (exportButtonEl) {
     exportButtonEl.removeEventListener(
         "click",
         exportScene
     );
+}
+if (updateHotspotButtonEl) {
+  updateHotspotButtonEl.removeEventListener(
+    "click",
+    updateSelectedHotspot
+  );
+}
+
+if (deleteHotspotButtonEl) {
+  deleteHotspotButtonEl.removeEventListener(
+    "click",
+    deleteSelectedHotspot
+  );
 }
 
   panelEl = null;
@@ -187,6 +304,13 @@ if (crosshairEl) {
   exportButtonEl = null;
   crosshairEl = null;
   sceneChangedCallback = null;
+  hotspotTitleInputEl = null;
+  hotspotTargetSelectEl = null;
+  currentProject = null;
+  hotspotListEl = null;
+  updateHotspotButtonEl = null;
+  deleteHotspotButtonEl = null;
+  selectedHotspotId = null;
   
 }
 
@@ -215,16 +339,35 @@ function addCurrentHotspot() {
     return;
   }
 
-  const existingHotspots = editableScene.hotspots ?? [];
+  const title = hotspotTitleInputEl.value.trim();
+  const target = hotspotTargetSelectEl.value;
 
-  const nextNumber = existingHotspots.length + 1;
+  if (!title) {
+    alert("Укажи название hotspot.");
+    hotspotTitleInputEl.focus();
+    return;
+  }
+
+  if (!target) {
+    alert("Выбери целевую сцену.");
+    return;
+  }
+
+  if (!Array.isArray(editableScene.hotspots)) {
+    editableScene.hotspots = [];
+  }
+
+  const hotspotId = createHotspotId(
+    target,
+    editableScene.hotspots
+  );
 
   const hotspot = {
-    id: `hotspot_${String(nextNumber).padStart(3, "0")}`,
-    title: "Новая точка",
+    id: hotspotId,
+    title,
     yaw: Number(currentView.yaw.toFixed(1)),
     pitch: Number(currentView.pitch.toFixed(1)),
-    target: "scene_id"
+    target
   };
 
   updateScene(scene => {
@@ -236,12 +379,214 @@ function addCurrentHotspot() {
   });
 
   addHotspotButtonEl.textContent = "Hotspot добавлен";
+  hotspotTitleInputEl.value = "";
 
   setTimeout(() => {
     addHotspotButtonEl.textContent =
       "Добавить hotspot в центр";
   }, 1200);
 
+  selectedHotspotId = hotspot.id;
+
+renderHotspotList();
+notifySceneChanged();
+}
+
+function createHotspotId(target, existingHotspots) {
+  const baseId = `to_${target}`
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "");
+
+  const usedIds = new Set(
+    existingHotspots.map(hotspot => hotspot.id)
+  );
+
+  if (!usedIds.has(baseId)) {
+    return baseId;
+  }
+
+  let number = 2;
+
+  while (usedIds.has(`${baseId}_${number}`)) {
+    number++;
+  }
+
+  return `${baseId}_${number}`;
+}
+
+function fillTargetSelect() {
+  if (!hotspotTargetSelectEl) return;
+
+  hotspotTargetSelectEl.innerHTML = "";
+
+  const editableScene = getEditableScene();
+  const currentSceneId = editableScene?.id;
+
+  const scenes = currentProject?.scenes ?? {};
+
+  Object.values(scenes).forEach(scene => {
+    /*
+      Текущую сцену пока исключаем:
+      переход из hall в hall обычно не нужен.
+    */
+    if (scene.id === currentSceneId) {
+      return;
+    }
+
+    const option = document.createElement("option");
+
+    option.value = scene.id;
+    option.textContent =
+      `${scene.title || scene.id} — ${scene.id}`;
+
+    hotspotTargetSelectEl.appendChild(option);
+  });
+}
+
+function renderHotspotList() {
+  if (!hotspotListEl) return;
+
+  const editableScene = getEditableScene();
+  const hotspots = editableScene?.hotspots ?? [];
+
+  hotspotListEl.innerHTML = "";
+
+  if (hotspots.length === 0) {
+    const emptyEl = document.createElement("div");
+    emptyEl.className = "developer-tools__empty";
+    emptyEl.textContent = "Hotspots пока нет";
+
+    hotspotListEl.appendChild(emptyEl);
+    return;
+  }
+
+  hotspots.forEach(hotspot => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "developer-tools__hotspot-item";
+    button.dataset.hotspotId = hotspot.id;
+
+    if (hotspot.id === selectedHotspotId) {
+      button.classList.add("active");
+    }
+
+    button.innerHTML = `
+      <span>${hotspot.title || hotspot.id}</span>
+      <small>${hotspot.target || "Без target"}</small>
+    `;
+
+    button.addEventListener("click", () => {
+      selectHotspot(hotspot.id);
+    });
+
+    hotspotListEl.appendChild(button);
+  });
+}
+
+function selectHotspot(hotspotId) {
+  const editableScene = getEditableScene();
+
+  const hotspot = editableScene?.hotspots?.find(
+    item => item.id === hotspotId
+  );
+
+  if (!hotspot) return;
+
+  selectedHotspotId = hotspot.id;
+
+  hotspotTitleInputEl.value = hotspot.title ?? "";
+  hotspotTargetSelectEl.value = hotspot.target ?? "";
+
+  updateHotspotButtonEl.disabled = false;
+  deleteHotspotButtonEl.disabled = false;
+
+  renderHotspotList();
+}
+
+function updateSelectedHotspot() {
+  if (!selectedHotspotId) {
+    alert("Сначала выбери hotspot.");
+    return;
+  }
+
+  const title = hotspotTitleInputEl.value.trim();
+  const target = hotspotTargetSelectEl.value;
+
+  if (!title) {
+    alert("Укажи название hotspot.");
+    hotspotTitleInputEl.focus();
+    return;
+  }
+
+  if (!target) {
+    alert("Выбери целевую сцену.");
+    return;
+  }
+
+  updateScene(scene => {
+    const hotspot = scene.hotspots?.find(
+      item => item.id === selectedHotspotId
+    );
+
+    if (!hotspot) return;
+
+    hotspot.title = title;
+    hotspot.target = target;
+    hotspot.yaw = Number(currentView.yaw.toFixed(1));
+    hotspot.pitch = Number(currentView.pitch.toFixed(1));
+  });
+
+  updateHotspotButtonEl.textContent = "Hotspot обновлён";
+
+  setTimeout(() => {
+    updateHotspotButtonEl.textContent =
+      "Обновить выбранный hotspot";
+  }, 1200);
+
+  renderHotspotList();
+  notifySceneChanged();
+}
+
+function deleteSelectedHotspot() {
+  if (!selectedHotspotId) {
+    alert("Сначала выбери hotspot.");
+    return;
+  }
+
+  const editableScene = getEditableScene();
+
+  const hotspot = editableScene?.hotspots?.find(
+    item => item.id === selectedHotspotId
+  );
+
+  if (!hotspot) return;
+
+  const confirmed = confirm(
+    `Удалить hotspot «${hotspot.title}»?`
+  );
+
+  if (!confirmed) return;
+
+  updateScene(scene => {
+    scene.hotspots = (scene.hotspots ?? []).filter(
+      item => item.id !== selectedHotspotId
+    );
+  });
+
+  selectedHotspotId = null;
+
+  hotspotTitleInputEl.value = "";
+  updateHotspotButtonEl.disabled = true;
+  deleteHotspotButtonEl.disabled = true;
+
+  renderHotspotList();
+  notifySceneChanged();
+}
+
+function notifySceneChanged() {
   if (sceneChangedCallback) {
     sceneChangedCallback(getEditableScene());
   }

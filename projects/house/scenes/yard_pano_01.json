@@ -17,8 +17,14 @@
       "yaw": -160.2,
       "pitch": 1.7,
       "target": "hall"
+    },
+    {
+      "id": "to_kitchen",
+      "title": "360",
+      "yaw": -168,
+      "pitch": -3.9,
+      "target": "house360"
     }
-
   ],
   "actions": [
     {

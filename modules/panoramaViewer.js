@@ -29,6 +29,8 @@ export async function init({ project, scene, viewer, openScene }) {
 
   renderToolbar(scene.actions, openScene);
   initDeveloperTools({
+  project,
+
   onSceneChange: editableScene => {
     renderHotspots(
       editableScene.hotspots ?? [],
@@ -253,4 +255,5 @@ export function destroy() {
   camera = null;
   animationId = null;
   activePointers.clear();
+
 }
