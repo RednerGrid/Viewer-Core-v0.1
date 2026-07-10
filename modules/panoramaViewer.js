@@ -28,7 +28,14 @@ export async function init({ project, scene, viewer, openScene }) {
   viewerRef = viewer;
 
   renderToolbar(scene.actions, openScene);
-  initDeveloperTools();
+  initDeveloperTools({
+  onSceneChange: editableScene => {
+    renderHotspots(
+      editableScene.hotspots ?? [],
+      openScene
+    );
+  }
+});
 
   // Каждый раз сбрасываем состояние управления
   isDown = false;

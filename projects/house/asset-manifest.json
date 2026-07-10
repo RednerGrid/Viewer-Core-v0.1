@@ -1,0 +1,789 @@
+{
+  "schemaVersion": 2,
+  "builderVersion": "0.3.0",
+  "projectId": "house",
+  "generatedAt": "2026-07-10T13:23:11.637Z",
+  "images": [
+    {
+      "path": "object360/house/frames/Rot_001.jpg",
+      "size": 576184
+    },
+    {
+      "path": "object360/house/frames/Rot_002.jpg",
+      "size": 572783
+    },
+    {
+      "path": "object360/house/frames/Rot_003.jpg",
+      "size": 570811
+    },
+    {
+      "path": "object360/house/frames/Rot_004.jpg",
+      "size": 569047
+    },
+    {
+      "path": "object360/house/frames/Rot_005.jpg",
+      "size": 567686
+    },
+    {
+      "path": "object360/house/frames/Rot_006.jpg",
+      "size": 565795
+    },
+    {
+      "path": "object360/house/frames/Rot_007.jpg",
+      "size": 565453
+    },
+    {
+      "path": "object360/house/frames/Rot_008.jpg",
+      "size": 565530
+    },
+    {
+      "path": "object360/house/frames/Rot_009.jpg",
+      "size": 565995
+    },
+    {
+      "path": "object360/house/frames/Rot_010.jpg",
+      "size": 566975
+    },
+    {
+      "path": "object360/house/frames/Rot_011.jpg",
+      "size": 565561
+    },
+    {
+      "path": "object360/house/frames/Rot_012.jpg",
+      "size": 563298
+    },
+    {
+      "path": "object360/house/frames/Rot_013.jpg",
+      "size": 559414
+    },
+    {
+      "path": "object360/house/frames/Rot_014.jpg",
+      "size": 556927
+    },
+    {
+      "path": "object360/house/frames/Rot_015.jpg",
+      "size": 556169
+    },
+    {
+      "path": "object360/house/frames/Rot_016.jpg",
+      "size": 554968
+    },
+    {
+      "path": "object360/house/frames/Rot_017.jpg",
+      "size": 555434
+    },
+    {
+      "path": "object360/house/frames/Rot_018.jpg",
+      "size": 556352
+    },
+    {
+      "path": "object360/house/frames/Rot_019.jpg",
+      "size": 554576
+    },
+    {
+      "path": "object360/house/frames/Rot_020.jpg",
+      "size": 551944
+    },
+    {
+      "path": "object360/house/frames/Rot_021.jpg",
+      "size": 552480
+    },
+    {
+      "path": "object360/house/frames/Rot_022.jpg",
+      "size": 551511
+    },
+    {
+      "path": "object360/house/frames/Rot_023.jpg",
+      "size": 550148
+    },
+    {
+      "path": "object360/house/frames/Rot_024.jpg",
+      "size": 548800
+    },
+    {
+      "path": "object360/house/frames/Rot_025.jpg",
+      "size": 549283
+    },
+    {
+      "path": "object360/house/frames/Rot_026.jpg",
+      "size": 550533
+    },
+    {
+      "path": "object360/house/frames/Rot_027.jpg",
+      "size": 551015
+    },
+    {
+      "path": "object360/house/frames/Rot_028.jpg",
+      "size": 552497
+    },
+    {
+      "path": "object360/house/frames/Rot_029.jpg",
+      "size": 553814
+    },
+    {
+      "path": "object360/house/frames/Rot_030.jpg",
+      "size": 555583
+    },
+    {
+      "path": "object360/house/frames/Rot_031.jpg",
+      "size": 555762
+    },
+    {
+      "path": "object360/house/frames/Rot_032.jpg",
+      "size": 556351
+    },
+    {
+      "path": "object360/house/frames/Rot_033.jpg",
+      "size": 554162
+    },
+    {
+      "path": "object360/house/frames/Rot_034.jpg",
+      "size": 556068
+    },
+    {
+      "path": "object360/house/frames/Rot_035.jpg",
+      "size": 556086
+    },
+    {
+      "path": "object360/house/frames/Rot_036.jpg",
+      "size": 559670
+    },
+    {
+      "path": "object360/house/frames/Rot_037.jpg",
+      "size": 561229
+    },
+    {
+      "path": "object360/house/frames/Rot_038.jpg",
+      "size": 563380
+    },
+    {
+      "path": "object360/house/frames/Rot_039.jpg",
+      "size": 565688
+    },
+    {
+      "path": "object360/house/frames/Rot_040.jpg",
+      "size": 566298
+    },
+    {
+      "path": "object360/house/frames/Rot_041.jpg",
+      "size": 564214
+    },
+    {
+      "path": "object360/house/frames/Rot_042.jpg",
+      "size": 561640
+    },
+    {
+      "path": "object360/house/frames/Rot_043.jpg",
+      "size": 560379
+    },
+    {
+      "path": "object360/house/frames/Rot_044.jpg",
+      "size": 562869
+    },
+    {
+      "path": "object360/house/frames/Rot_045.jpg",
+      "size": 561727
+    },
+    {
+      "path": "object360/house/frames/Rot_046.jpg",
+      "size": 562246
+    },
+    {
+      "path": "object360/house/frames/Rot_047.jpg",
+      "size": 562249
+    },
+    {
+      "path": "object360/house/frames/Rot_048.jpg",
+      "size": 565273
+    },
+    {
+      "path": "object360/house/frames/Rot_049.jpg",
+      "size": 566736
+    },
+    {
+      "path": "object360/house/frames/Rot_050.jpg",
+      "size": 566690
+    },
+    {
+      "path": "object360/house/frames/Rot_051.jpg",
+      "size": 567205
+    },
+    {
+      "path": "object360/house/frames/Rot_052.jpg",
+      "size": 564904
+    },
+    {
+      "path": "object360/house/frames/Rot_053.jpg",
+      "size": 564991
+    },
+    {
+      "path": "object360/house/frames/Rot_054.jpg",
+      "size": 564211
+    },
+    {
+      "path": "object360/house/frames/Rot_055.jpg",
+      "size": 568705
+    },
+    {
+      "path": "object360/house/frames/Rot_056.jpg",
+      "size": 569145
+    },
+    {
+      "path": "object360/house/frames/Rot_057.jpg",
+      "size": 571518
+    },
+    {
+      "path": "object360/house/frames/Rot_058.jpg",
+      "size": 573076
+    },
+    {
+      "path": "object360/house/frames/Rot_059.jpg",
+      "size": 576914
+    },
+    {
+      "path": "object360/house/frames/Rot_060.jpg",
+      "size": 577449
+    },
+    {
+      "path": "object360/house/frames/Rot_061.jpg",
+      "size": 577049
+    },
+    {
+      "path": "object360/house/frames/Rot_062.jpg",
+      "size": 577289
+    },
+    {
+      "path": "object360/house/frames/Rot_063.jpg",
+      "size": 578707
+    },
+    {
+      "path": "object360/house/frames/Rot_064.jpg",
+      "size": 579196
+    },
+    {
+      "path": "object360/house/frames/Rot_065.jpg",
+      "size": 580161
+    },
+    {
+      "path": "object360/house/frames/Rot_066.jpg",
+      "size": 581257
+    },
+    {
+      "path": "object360/house/frames/Rot_067.jpg",
+      "size": 585038
+    },
+    {
+      "path": "object360/house/frames/Rot_068.jpg",
+      "size": 588359
+    },
+    {
+      "path": "object360/house/frames/Rot_069.jpg",
+      "size": 589655
+    },
+    {
+      "path": "object360/house/frames/Rot_070.jpg",
+      "size": 586461
+    },
+    {
+      "path": "object360/house/frames/Rot_071.jpg",
+      "size": 585751
+    },
+    {
+      "path": "object360/house/frames/Rot_072.jpg",
+      "size": 584482
+    },
+    {
+      "path": "object360/house/frames/Rot_073.jpg",
+      "size": 586205
+    },
+    {
+      "path": "object360/house/frames/Rot_074.jpg",
+      "size": 589940
+    },
+    {
+      "path": "object360/house/frames/Rot_075.jpg",
+      "size": 591342
+    },
+    {
+      "path": "object360/house/frames/Rot_076.jpg",
+      "size": 590567
+    },
+    {
+      "path": "object360/house/frames/Rot_077.jpg",
+      "size": 589252
+    },
+    {
+      "path": "object360/house/frames/Rot_078.jpg",
+      "size": 588007
+    },
+    {
+      "path": "object360/house/frames/Rot_079.jpg",
+      "size": 587315
+    },
+    {
+      "path": "object360/house/frames/Rot_080.jpg",
+      "size": 587597
+    },
+    {
+      "path": "object360/house/frames/Rot_081.jpg",
+      "size": 586263
+    },
+    {
+      "path": "object360/house/frames/Rot_082.jpg",
+      "size": 582165
+    },
+    {
+      "path": "object360/house/frames/Rot_083.jpg",
+      "size": 581025
+    },
+    {
+      "path": "object360/house/frames/Rot_084.jpg",
+      "size": 577240
+    },
+    {
+      "path": "object360/house/frames/Rot_085.jpg",
+      "size": 577939
+    },
+    {
+      "path": "object360/house/frames/Rot_086.jpg",
+      "size": 578188
+    },
+    {
+      "path": "object360/house/frames/Rot_087.jpg",
+      "size": 578382
+    },
+    {
+      "path": "object360/house/frames/Rot_088.jpg",
+      "size": 573396
+    },
+    {
+      "path": "object360/house/frames/Rot_089.jpg",
+      "size": 571622
+    },
+    {
+      "path": "object360/house/frames/Rot_090.jpg",
+      "size": 568781
+    },
+    {
+      "path": "object360/house/frames/Rot_091.jpg",
+      "size": 567586
+    },
+    {
+      "path": "object360/house/frames/Rot_092.jpg",
+      "size": 566147
+    },
+    {
+      "path": "object360/house/frames/Rot_093.jpg",
+      "size": 564754
+    },
+    {
+      "path": "object360/house/frames/Rot_094.jpg",
+      "size": 560282
+    },
+    {
+      "path": "object360/house/frames/Rot_095.jpg",
+      "size": 561107
+    },
+    {
+      "path": "object360/house/frames/Rot_096.jpg",
+      "size": 560207
+    },
+    {
+      "path": "object360/house/frames/Rot_097.jpg",
+      "size": 562693
+    },
+    {
+      "path": "object360/house/frames/Rot_098.jpg",
+      "size": 563271
+    },
+    {
+      "path": "object360/house/frames/Rot_099.jpg",
+      "size": 563496
+    },
+    {
+      "path": "object360/house/frames/Rot_100.jpg",
+      "size": 562542
+    },
+    {
+      "path": "object360/house/frames/Rot_101.jpg",
+      "size": 561230
+    },
+    {
+      "path": "object360/house/frames/Rot_102.jpg",
+      "size": 557627
+    },
+    {
+      "path": "object360/house/frames/Rot_103.jpg",
+      "size": 555839
+    },
+    {
+      "path": "object360/house/frames/Rot_104.jpg",
+      "size": 552758
+    },
+    {
+      "path": "object360/house/frames/Rot_105.jpg",
+      "size": 549854
+    },
+    {
+      "path": "object360/house/frames/Rot_106.jpg",
+      "size": 548356
+    },
+    {
+      "path": "object360/house/frames/Rot_107.jpg",
+      "size": 547891
+    },
+    {
+      "path": "object360/house/frames/Rot_108.jpg",
+      "size": 547357
+    },
+    {
+      "path": "object360/house/frames/Rot_109.jpg",
+      "size": 545374
+    },
+    {
+      "path": "object360/house/frames/Rot_110.jpg",
+      "size": 542119
+    },
+    {
+      "path": "object360/house/frames/Rot_111.jpg",
+      "size": 542127
+    },
+    {
+      "path": "object360/house/frames/Rot_112.jpg",
+      "size": 541903
+    },
+    {
+      "path": "object360/house/frames/Rot_113.jpg",
+      "size": 541621
+    },
+    {
+      "path": "object360/house/frames/Rot_114.jpg",
+      "size": 540306
+    },
+    {
+      "path": "object360/house/frames/Rot_115.jpg",
+      "size": 541036
+    },
+    {
+      "path": "object360/house/frames/Rot_116.jpg",
+      "size": 539594
+    },
+    {
+      "path": "object360/house/frames/Rot_117.jpg",
+      "size": 538986
+    },
+    {
+      "path": "object360/house/frames/Rot_118.jpg",
+      "size": 537601
+    },
+    {
+      "path": "object360/house/frames/Rot_119.jpg",
+      "size": 540600
+    },
+    {
+      "path": "object360/house/frames/Rot_120.jpg",
+      "size": 541124
+    },
+    {
+      "path": "object360/house/frames/Rot_121.jpg",
+      "size": 542082
+    },
+    {
+      "path": "object360/house/frames/Rot_122.jpg",
+      "size": 542978
+    },
+    {
+      "path": "object360/house/frames/Rot_123.jpg",
+      "size": 543284
+    },
+    {
+      "path": "object360/house/frames/Rot_124.jpg",
+      "size": 543015
+    },
+    {
+      "path": "object360/house/frames/Rot_125.jpg",
+      "size": 543918
+    },
+    {
+      "path": "object360/house/frames/Rot_126.jpg",
+      "size": 545914
+    },
+    {
+      "path": "object360/house/frames/Rot_127.jpg",
+      "size": 549322
+    },
+    {
+      "path": "object360/house/frames/Rot_128.jpg",
+      "size": 552751
+    },
+    {
+      "path": "object360/house/frames/Rot_129.jpg",
+      "size": 557171
+    },
+    {
+      "path": "object360/house/frames/Rot_130.jpg",
+      "size": 559211
+    },
+    {
+      "path": "object360/house/frames/Rot_131.jpg",
+      "size": 558974
+    },
+    {
+      "path": "object360/house/frames/Rot_132.jpg",
+      "size": 560466
+    },
+    {
+      "path": "object360/house/frames/Rot_133.jpg",
+      "size": 562755
+    },
+    {
+      "path": "object360/house/frames/Rot_134.jpg",
+      "size": 568122
+    },
+    {
+      "path": "object360/house/frames/Rot_135.jpg",
+      "size": 570026
+    },
+    {
+      "path": "object360/house/frames/Rot_136.jpg",
+      "size": 571928
+    },
+    {
+      "path": "object360/house/frames/Rot_137.jpg",
+      "size": 573662
+    },
+    {
+      "path": "object360/house/frames/Rot_138.jpg",
+      "size": 573627
+    },
+    {
+      "path": "object360/house/frames/Rot_139.jpg",
+      "size": 575876
+    },
+    {
+      "path": "object360/house/frames/Rot_140.jpg",
+      "size": 576464
+    },
+    {
+      "path": "object360/house/frames/Rot_141.jpg",
+      "size": 576040
+    },
+    {
+      "path": "object360/house/frames/Rot_142.jpg",
+      "size": 575255
+    },
+    {
+      "path": "object360/house/frames/Rot_143.jpg",
+      "size": 575750
+    },
+    {
+      "path": "object360/house/frames/Rot_144.jpg",
+      "size": 576670
+    },
+    {
+      "path": "object360/house/frames/Rot_145.jpg",
+      "size": 573982
+    },
+    {
+      "path": "object360/house/frames/Rot_146.jpg",
+      "size": 575502
+    },
+    {
+      "path": "object360/house/frames/Rot_147.jpg",
+      "size": 576923
+    },
+    {
+      "path": "object360/house/frames/Rot_148.jpg",
+      "size": 577341
+    },
+    {
+      "path": "object360/house/frames/Rot_149.jpg",
+      "size": 576859
+    },
+    {
+      "path": "object360/house/frames/Rot_150.jpg",
+      "size": 577585
+    },
+    {
+      "path": "object360/house/frames/Rot_151.jpg",
+      "size": 578023
+    },
+    {
+      "path": "object360/house/frames/Rot_152.jpg",
+      "size": 580487
+    },
+    {
+      "path": "object360/house/frames/Rot_153.jpg",
+      "size": 582507
+    },
+    {
+      "path": "object360/house/frames/Rot_154.jpg",
+      "size": 582522
+    },
+    {
+      "path": "object360/house/frames/Rot_155.jpg",
+      "size": 581431
+    },
+    {
+      "path": "object360/house/frames/Rot_156.jpg",
+      "size": 583491
+    },
+    {
+      "path": "object360/house/frames/Rot_157.jpg",
+      "size": 583923
+    },
+    {
+      "path": "object360/house/frames/Rot_158.jpg",
+      "size": 585467
+    },
+    {
+      "path": "object360/house/frames/Rot_159.jpg",
+      "size": 586948
+    },
+    {
+      "path": "object360/house/frames/Rot_160.jpg",
+      "size": 587019
+    },
+    {
+      "path": "object360/house/frames/Rot_161.jpg",
+      "size": 585916
+    },
+    {
+      "path": "object360/house/frames/Rot_162.jpg",
+      "size": 585112
+    },
+    {
+      "path": "object360/house/frames/Rot_163.jpg",
+      "size": 583290
+    },
+    {
+      "path": "object360/house/frames/Rot_164.jpg",
+      "size": 586351
+    },
+    {
+      "path": "object360/house/frames/Rot_165.jpg",
+      "size": 588153
+    },
+    {
+      "path": "object360/house/frames/Rot_166.jpg",
+      "size": 588396
+    },
+    {
+      "path": "object360/house/frames/Rot_167.jpg",
+      "size": 589293
+    },
+    {
+      "path": "object360/house/frames/Rot_168.jpg",
+      "size": 591668
+    },
+    {
+      "path": "object360/house/frames/Rot_169.jpg",
+      "size": 589046
+    },
+    {
+      "path": "object360/house/frames/Rot_170.jpg",
+      "size": 589852
+    },
+    {
+      "path": "object360/house/frames/Rot_171.jpg",
+      "size": 589046
+    },
+    {
+      "path": "object360/house/frames/Rot_172.jpg",
+      "size": 590508
+    },
+    {
+      "path": "object360/house/frames/Rot_173.jpg",
+      "size": 588877
+    },
+    {
+      "path": "object360/house/frames/Rot_174.jpg",
+      "size": 587869
+    },
+    {
+      "path": "object360/house/frames/Rot_175.jpg",
+      "size": 586069
+    },
+    {
+      "path": "object360/house/frames/Rot_176.jpg",
+      "size": 586032
+    },
+    {
+      "path": "object360/house/frames/Rot_177.jpg",
+      "size": 584005
+    },
+    {
+      "path": "object360/house/frames/Rot_178.jpg",
+      "size": 581143
+    },
+    {
+      "path": "object360/house/frames/Rot_179.jpg",
+      "size": 578036
+    },
+    {
+      "path": "object360/house/frames/Rot_180.jpg",
+      "size": 577706
+    },
+    {
+      "path": "overview/day.jpg",
+      "size": 3154051
+    },
+    {
+      "path": "overview/evening.jpg",
+      "size": 2824004
+    },
+    {
+      "path": "overview/house_hover.png",
+      "size": 6833216
+    },
+    {
+      "path": "overview/idmap.png",
+      "size": 94947
+    },
+    {
+      "path": "panoramas/hall.jpg",
+      "size": 4626369
+    },
+    {
+      "path": "panoramas/kitchen.jpg",
+      "size": 6766257
+    },
+    {
+      "path": "panoramas/living_room.jpg",
+      "size": 3101752
+    },
+    {
+      "path": "panoramas/yard_pano_01.jpg",
+      "size": 19331151
+    }
+  ],
+  "videos": [
+    {
+      "path": "videos/promo.mp4",
+      "size": 0
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/brochure.pdf",
+      "size": 0
+    }
+  ],
+  "sequences": [
+    {
+      "id": "house",
+      "key": "object360:house",
+      "type": "object360",
+      "path": "object360/house/frames/",
+      "filePrefix": "Rot_",
+      "fileExtension": "jpg",
+      "padding": 3,
+      "frameCount": 180,
+      "firstFrameNumber": 1,
+      "lastFrameNumber": 180,
+      "firstFrame": "Rot_001.jpg",
+      "lastFrame": "Rot_180.jpg",
+      "missingFrames": []
+    }
+  ]
+}

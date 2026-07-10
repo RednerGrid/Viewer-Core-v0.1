@@ -1,5 +1,7 @@
 import { renderToolbar } from "../ui/toolbar.js";
-import { loadFrames } from "../core/assetManager.js";
+import {
+  loadSequenceProgressive
+} from "../core/assetManager.js";
 import { showLoading, updateLoading, hideLoading } from "../ui/loading.js";
 
 let viewerRef = null;
@@ -7,23 +9,46 @@ let canvas = null;
 let context = null;
 
 let images = [];
-let currentIndex = 0;
 let frameCount = 0;
+
+let animationId = null;
+
+let currentIndex = 0;
+let currentAngle = 0;
 
 let isDragging = false;
 let lastX = 0;
-let velocity = 0;
-let animationId = null;
 
-let sensitivity = 8;
-let friction = 0.94;
+/*
+  Скорость вращения теперь задаётся в градусах
+  на один пиксель движения мыши.
+*/
+let degreesPerPixel = 0.4;
+
+/*
+  Угловая скорость инерции:
+  градусов за кадр анимации.
+*/
+let rotationVelocity = 0;
+let friction = 0.95;
 
 export async function init({ project, scene, viewer, openScene }) {
   viewerRef = viewer;
 
   renderToolbar(scene.actions, openScene);
+  const sequenceKey = scene.assets.sequence;
 
-  frameCount = scene.assets.frameCount;
+  const sequence = project.assetManifest?.sequences.find(
+  item => item.key === sequenceKey
+  );
+
+  if (!sequence) {
+    throw new Error(
+    `Секвенция не найдена в manifest: ${sequenceKey}`
+  );
+  }
+
+  frameCount = sequence.frameCount;
   currentIndex = 0;
   images = [];
 
@@ -35,22 +60,44 @@ export async function init({ project, scene, viewer, openScene }) {
 
   showLoading("Загрузка 360°");
 
-  images = await loadFrames({
-    basePath: `${project.basePath}${scene.assets.framesPath}`,
-    frameCount: scene.assets.frameCount,
-    filePrefix: scene.assets.filePrefix,
-    fileExtension: scene.assets.fileExtension,
-    padding: scene.assets.padding,
-    onProgress: updateLoading
-  });
+const progressiveLoad = await loadSequenceProgressive({
+  basePath: `${project.basePath}assets/${sequence.path}`,
 
-  hideLoading();
+  frameCount: sequence.frameCount,
+  firstFrameNumber: sequence.firstFrameNumber ?? 1,
 
-  setupCanvasSize();
-  render();
+  filePrefix: sequence.filePrefix,
+  fileExtension: sequence.fileExtension,
+  padding: sequence.padding,
 
-  addControls();
-  animate();
+  startIndex: 0,
+  concurrency: 6,
+
+  onProgress: updateLoading
+});
+
+images = progressiveLoad.images;
+
+canvas.width = progressiveLoad.firstImage.naturalWidth;
+canvas.height = progressiveLoad.firstImage.naturalHeight;
+
+currentAngle = 0;
+currentIndex = 0;
+
+render();
+hideLoading();
+
+addControls();
+animate();
+
+progressiveLoad.complete.then(({ failedFrames }) => {
+  if (failedFrames.length > 0) {
+    console.warn(
+      "Не загружены кадры секвенции:",
+      failedFrames
+    );
+  }
+});
 }
 
 function setupCanvasSize() {
@@ -60,26 +107,92 @@ function setupCanvasSize() {
   canvas.height = firstImage.naturalHeight;
 }
 
+function findNearestLoadedFrame(targetIndex) {
+  if (images[targetIndex]) {
+    return targetIndex;
+  }
+
+  for (let offset = 1; offset < frameCount; offset++) {
+    const forward =
+      (targetIndex + offset) % frameCount;
+
+    const backward =
+      (targetIndex - offset + frameCount) % frameCount;
+
+    if (images[forward]) {
+      return forward;
+    }
+
+    if (images[backward]) {
+      return backward;
+    }
+  }
+
+  return null;
+}
+
 function render() {
-  const img = images[currentIndex];
+  if (!context || !canvas || images.length === 0) {
+    return;
+  }
 
-  if (!img) return;
+  const loadedIndex =
+    findNearestLoadedFrame(currentIndex);
 
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(img, 0, 0, canvas.width, canvas.height);
+  if (loadedIndex === null) {
+    return;
+  }
+
+  const image = images[loadedIndex];
+
+  context.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  context.drawImage(
+    image,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
 }
 
 function normalizeIndex(index) {
   return ((index % frameCount) + frameCount) % frameCount;
 }
 
-function moveViewer(deltaX) {
-  const frameDelta = Math.round(deltaX / sensitivity);
+function normalizeAngle(angle) {
+  return ((angle % 360) + 360) % 360;
+}
 
-  if (frameDelta !== 0) {
-    currentIndex = normalizeIndex(currentIndex + frameDelta);
-    render();
-  }
+function angleToFrameIndex(angle) {
+  const normalizedAngle = normalizeAngle(angle);
+
+  return Math.round(
+    (normalizedAngle / 360) * frameCount
+  ) % frameCount;
+}
+
+function rotateByDegrees(deltaDegrees) {
+  currentAngle = normalizeAngle(
+    currentAngle + deltaDegrees
+  );
+
+  currentIndex = angleToFrameIndex(currentAngle);
+
+  render();
+}
+
+function moveViewer(deltaX) {
+  const deltaDegrees = deltaX * degreesPerPixel;
+
+  rotateByDegrees(deltaDegrees);
+
+  return deltaDegrees;
 }
 
 function addControls() {
@@ -106,7 +219,7 @@ function onPointerDown(e) {
 
   isDragging = true;
   lastX = e.clientX;
-  velocity = 0;
+  rotationVelocity = 0;
 
   viewerRef.setPointerCapture(e.pointerId);
 }
@@ -117,10 +230,9 @@ function onPointerMove(e) {
   if (!isDragging) return;
 
   const deltaX = e.clientX - lastX;
+  const deltaDegrees = moveViewer(deltaX);
 
-  moveViewer(deltaX);
-
-  velocity = deltaX;
+  rotationVelocity = deltaDegrees;
   lastX = e.clientX;
 }
 
@@ -135,9 +247,12 @@ function onPointerEnd(e) {
 function animate() {
   animationId = requestAnimationFrame(animate);
 
-  if (!isDragging && Math.abs(velocity) > 0.1) {
-    moveViewer(velocity);
-    velocity *= friction;
+  if (
+    !isDragging &&
+    Math.abs(rotationVelocity) > 0.01
+  ) {
+    rotateByDegrees(rotationVelocity);
+    rotationVelocity *= friction;
   }
 }
 
@@ -163,5 +278,6 @@ export function destroy() {
   currentIndex = 0;
   frameCount = 0;
   isDragging = false;
-  velocity = 0;
+  currentAngle = 0;
+  rotationVelocity = 0;
 }

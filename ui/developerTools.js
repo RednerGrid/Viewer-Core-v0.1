@@ -1,7 +1,18 @@
+import {
+  getEditableScene,
+  updateScene
+} from "../editor/editorState.js";
+
+import { exportScene } from "../editor/exportScene.js";
+
 let panelEl = null;
 let coordinatesEl = null;
 let copyButtonEl = null;
 let copyViewButtonEl = null;
+let exportButtonEl = null;
+let addHotspotButtonEl = null;
+let crosshairEl = null;
+let sceneChangedCallback = null;
 
 let currentView = {
   yaw: 0,
@@ -9,7 +20,17 @@ let currentView = {
   fov: 50
 };
 
-export function initDeveloperTools() {
+export function isDeveloperMode() {
+  const params = new URLSearchParams(window.location.search);
+
+  return params.get("dev") === "1";
+}
+
+export function initDeveloperTools(options = {}) {
+  if (!isDeveloperMode()) return;
+  if (panelEl) return;
+
+  sceneChangedCallback = options.onSceneChange ?? null;
   if (panelEl) return;
 
   panelEl = document.createElement("div");
@@ -34,15 +55,37 @@ export function initDeveloperTools() {
     <button
       type="button"
       class="developer-tools__button"
+      data-dev-add-hotspot
+    >
+      Добавить hotspot в центр
+    </button>
+
+    <button
+      type="button"
+      class="developer-tools__button"
       data-dev-copy-view
     >
-      Скопировать стартовый вид
+      Сделать текущий вид стартовым
+    </button>
+
+    <button
+      type="button"
+      class="developer-tools__button"
+      data-dev-export
+    >
+      Экспорт сцены
     </button>
 
   `;
 
   document.body.appendChild(panelEl);
 
+  crosshairEl = document.createElement("div");
+  crosshairEl.className = "developer-crosshair";
+  crosshairEl.setAttribute("aria-hidden", "true");
+
+  document.body.appendChild(crosshairEl);
+  
   coordinatesEl = {
     yaw: panelEl.querySelector("[data-dev-yaw]"),
     pitch: panelEl.querySelector("[data-dev-pitch]")
@@ -50,8 +93,13 @@ export function initDeveloperTools() {
 
   copyButtonEl = panelEl.querySelector("[data-dev-copy]");
   copyViewButtonEl = panelEl.querySelector("[data-dev-copy-view]");
-  copyViewButtonEl.addEventListener("click", copyCurrentView);
+  exportButtonEl = panelEl.querySelector("[data-dev-export]");
+  addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
+  copyViewButtonEl.addEventListener("click", saveCurrentView);
+  exportButtonEl.addEventListener("click", exportScene);
   copyButtonEl.addEventListener("click", copyCurrentHotspot);
+  addHotspotButtonEl.addEventListener("click", addCurrentHotspot);
+  
 }
 
 export function updateDeveloperView({ yaw, pitch, fov }) {
@@ -91,8 +139,29 @@ async function copyCurrentHotspot() {
 
 export function destroyDeveloperTools() {
   if (copyButtonEl) {
-    copyButtonEl.removeEventListener("click", copyCurrentHotspot);
+    copyViewButtonEl.removeEventListener(
+  "click",
+  saveCurrentView
+);
   }
+
+if (addHotspotButtonEl) {
+  addHotspotButtonEl.removeEventListener(
+    "click",
+    addCurrentHotspot
+  );
+}
+
+if (exportButtonEl) {
+  exportButtonEl.removeEventListener(
+    "click",
+    exportScene
+  );
+}
+
+if (crosshairEl) {
+  crosshairEl.remove();
+}
 
   if (panelEl) {
     panelEl.remove();
@@ -102,33 +171,78 @@ export function destroyDeveloperTools() {
     copyViewButtonEl.removeEventListener("click", copyCurrentView);
   }
 
+  if (exportButtonEl) {
+    exportButtonEl.removeEventListener(
+        "click",
+        exportScene
+    );
+}
+
   panelEl = null;
   coordinatesEl = null;
   copyButtonEl = null;
   copyViewButtonEl = null;
+  exportButtonEl = null;
+  addHotspotButtonEl = null;
+  exportButtonEl = null;
+  crosshairEl = null;
+  sceneChangedCallback = null;
   
 }
 
-async function copyCurrentView() {
-  const view = {
-    view: {
+function saveCurrentView() {
+  updateScene(scene => {
+    scene.view = {
       yaw: Number(currentView.yaw.toFixed(1)),
       pitch: Number(currentView.pitch.toFixed(1)),
       fov: Number(currentView.fov.toFixed(1))
-    }
+    };
+  });
+
+  copyViewButtonEl.textContent = "Стартовый вид обновлён";
+
+  setTimeout(() => {
+    copyViewButtonEl.textContent =
+      "Сделать текущий вид стартовым";
+  }, 1200);
+}
+
+function addCurrentHotspot() {
+  const editableScene = getEditableScene();
+
+  if (!editableScene) {
+    alert("Нет активной сцены.");
+    return;
+  }
+
+  const existingHotspots = editableScene.hotspots ?? [];
+
+  const nextNumber = existingHotspots.length + 1;
+
+  const hotspot = {
+    id: `hotspot_${String(nextNumber).padStart(3, "0")}`,
+    title: "Новая точка",
+    yaw: Number(currentView.yaw.toFixed(1)),
+    pitch: Number(currentView.pitch.toFixed(1)),
+    target: "scene_id"
   };
 
-  const text = JSON.stringify(view, null, 2);
+  updateScene(scene => {
+    if (!Array.isArray(scene.hotspots)) {
+      scene.hotspots = [];
+    }
 
-  try {
-    await navigator.clipboard.writeText(text);
+    scene.hotspots.push(hotspot);
+  });
 
-    copyViewButtonEl.textContent = "Скопировано";
+  addHotspotButtonEl.textContent = "Hotspot добавлен";
 
-    setTimeout(() => {
-      copyViewButtonEl.textContent = "Скопировать стартовый вид";
-    }, 1200);
-  } catch (error) {
-    console.error("Не удалось скопировать стартовый вид:", error);
+  setTimeout(() => {
+    addHotspotButtonEl.textContent =
+      "Добавить hotspot в центр";
+  }, 1200);
+
+  if (sceneChangedCallback) {
+    sceneChangedCallback(getEditableScene());
   }
 }

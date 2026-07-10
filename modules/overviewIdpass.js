@@ -37,7 +37,9 @@ export async function init({ project, scene, viewer, openScene }) {
   idCanvas.width = idImage.naturalWidth;
   idCanvas.height = idImage.naturalHeight;
 
-  idContext = idCanvas.getContext("2d");
+  idContext = idCanvas.getContext("2d", {
+  willReadFrequently: true
+  });
   idContext.drawImage(idImage, 0, 0);
 
   addControls(openScene);

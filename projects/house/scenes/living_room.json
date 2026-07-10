@@ -12,6 +12,13 @@
     "yaw": -354.2,
     "pitch": 1.6,
     "target": "hall"
+  },
+  {
+    "id": "kitchen",
+    "title": "В кухню",
+    "yaw": -354.2,
+    "pitch": 15,
+    "target": "kitchen"
   }
 ],
   "actions": [

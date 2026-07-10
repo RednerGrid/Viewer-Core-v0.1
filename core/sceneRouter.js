@@ -1,5 +1,6 @@
 import { openModule } from "./moduleManager.js";
 import { fadeOut, fadeIn } from "../ui/transition.js";
+import { beginEditing } from "../editor/editorState.js";
 
 let isTransitioning = false;
 
@@ -30,6 +31,8 @@ export async function openScene(project, sceneId) {
   };
 
   await openModule(context);
+
+    beginEditing(scene);
 
   await fadeIn();
 
