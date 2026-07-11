@@ -1,5 +1,7 @@
 import {
   getEditableScene,
+  getIsDirty,
+  markClean,
   updateScene
 } from "../editor/editorState.js";
 
@@ -20,6 +22,10 @@ let hotspotListEl = null;
 let updateHotspotButtonEl = null;
 let deleteHotspotButtonEl = null;
 let selectedHotspotId = null;
+let dirtyStateEl = null;
+let sceneTitleInputEl = null;
+let updateSceneTitleButtonEl = null;
+let setViewCallback = null;
 
 let currentView = {
   yaw: 0,
@@ -38,6 +44,9 @@ export function initDeveloperTools(options = {}) {
 
   sceneChangedCallback =
     options.onSceneChange ?? sceneChangedCallback;
+  
+  setViewCallback =
+    options.setView ?? setViewCallback;
 
   currentProject =
     options.project ?? currentProject;
@@ -57,6 +66,8 @@ export function initDeveloperTools(options = {}) {
 
     fillTargetSelect();
     renderHotspotList();
+    renderDirtyState();
+    renderSceneProperties();
 
     return;
   }
@@ -65,95 +76,132 @@ export function initDeveloperTools(options = {}) {
   panelEl.className = "developer-tools";
 
   panelEl.innerHTML = `
-    <div class="developer-tools__title">Developer Mode</div>
-
-    <div class="developer-tools__coordinates">
-      <span>Yaw: <b data-dev-yaw>0.0</b></span>
-      <span>Pitch: <b data-dev-pitch>0.0</b></span>
-    </div>
-
-    <div class="developer-tools__section">
-      <label class="developer-tools__label">
-       Название
-       <input
-         type="text"
-         class="developer-tools__input"
-        data-dev-hotspot-title
-        placeholder="Например: В гостиную"
-       >
-     </label>
-
-     <label class="developer-tools__label">
-       Target
-       <select
-         class="developer-tools__select"
-         data-dev-hotspot-target
-        ></select>
-     </label>
-    </div>
-    
-    <button
-      type="button"
-      class="developer-tools__button"
-      data-dev-copy
-    >
-      Скопировать hotspot
-    </button>
-
-    <button
-      type="button"
-      class="developer-tools__button"
-      data-dev-add-hotspot
-    >
-      Добавить hotspot в центр
-    </button>
-
-    <div class="developer-tools__section">
-  <div class="developer-tools__subtitle">
-    Hotspots сцены
-  </div>
+  <div class="developer-tools__title">Developer Mode</div>
 
   <div
-    class="developer-tools__hotspot-list"
-    data-dev-hotspot-list
-  ></div>
+    class="developer-tools__status"
+    data-dev-dirty-state
+  >
+    Scene saved
+  </div>
+
+  <div class="developer-tools__coordinates">
+    <span>Yaw: <b data-dev-yaw>0.0</b></span>
+    <span>Pitch: <b data-dev-pitch>0.0</b></span>
+  </div>
+
+  <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      Scene
+    </div>
+
+    <label class="developer-tools__label">
+      Название сцены
+
+      <input
+        type="text"
+        class="developer-tools__input"
+        data-dev-scene-title
+        placeholder="Название сцены"
+      >
+    </label>
+
+    <button
+      type="button"
+      class="developer-tools__button"
+      data-dev-update-scene-title
+    >
+      Обновить название сцены
+    </button>
+  </div>
+
+  <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      Hotspot
+    </div>
+
+    <label class="developer-tools__label">
+      Название
+
+      <input
+        type="text"
+        class="developer-tools__input"
+        data-dev-hotspot-title
+        placeholder="Например: В гостиную"
+      >
+    </label>
+
+    <label class="developer-tools__label">
+      Target
+
+      <select
+        class="developer-tools__select"
+        data-dev-hotspot-target
+      ></select>
+    </label>
+  </div>
 
   <button
     type="button"
     class="developer-tools__button"
-    data-dev-update-hotspot
-    disabled
+    data-dev-copy
   >
-    Обновить выбранный hotspot
+    Скопировать hotspot
   </button>
 
   <button
     type="button"
-    class="developer-tools__button developer-tools__button--danger"
-    data-dev-delete-hotspot
-    disabled
+    class="developer-tools__button"
+    data-dev-add-hotspot
   >
-    Удалить выбранный hotspot
+    Добавить hotspot в центр
   </button>
-</div>
+
+  <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      Hotspots сцены
+    </div>
+
+    <div
+      class="developer-tools__hotspot-list"
+      data-dev-hotspot-list
+    ></div>
 
     <button
       type="button"
       class="developer-tools__button"
-      data-dev-copy-view
+      data-dev-update-hotspot
+      disabled
     >
-      Сделать текущий вид стартовым
+      Обновить выбранный hotspot
     </button>
 
     <button
       type="button"
-      class="developer-tools__button"
-      data-dev-export
+      class="developer-tools__button developer-tools__button--danger"
+      data-dev-delete-hotspot
+      disabled
     >
-      Экспорт сцены
+      Удалить выбранный hotspot
     </button>
+  </div>
 
-  `;
+  <button
+    type="button"
+    class="developer-tools__button"
+    data-dev-copy-view
+  >
+    Сделать текущий вид стартовым
+  </button>
+
+  <button
+    type="button"
+    class="developer-tools__button"
+    data-dev-export
+  >
+    Экспорт сцены
+  </button>
+`;
 
   document.body.appendChild(panelEl);
 
@@ -171,35 +219,32 @@ export function initDeveloperTools(options = {}) {
   copyButtonEl = panelEl.querySelector("[data-dev-copy]");
   copyViewButtonEl = panelEl.querySelector("[data-dev-copy-view]");
   exportButtonEl = panelEl.querySelector("[data-dev-export]");
-  hotspotTitleInputEl = panelEl.querySelector(
-  "[data-dev-hotspot-title]"
-);
+  addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
 
-hotspotTargetSelectEl = panelEl.querySelector(
-  "[data-dev-hotspot-target]"
-);
+  hotspotTitleInputEl = panelEl.querySelector("[data-dev-hotspot-title]");
+  hotspotTargetSelectEl = panelEl.querySelector("[data-dev-hotspot-target]");
+  hotspotListEl = panelEl.querySelector("[data-dev-hotspot-list]");
 
-updateHotspotButtonEl = panelEl.querySelector(
-  "[data-dev-update-hotspot]"
-);
+  updateHotspotButtonEl = panelEl.querySelector("[data-dev-update-hotspot]");
+  deleteHotspotButtonEl = panelEl.querySelector("[data-dev-delete-hotspot]");
 
-deleteHotspotButtonEl = panelEl.querySelector(
-  "[data-dev-delete-hotspot]"
-);
+  dirtyStateEl = panelEl.querySelector("[data-dev-dirty-state]");
+  sceneTitleInputEl = panelEl.querySelector("[data-dev-scene-title]");
+  updateSceneTitleButtonEl = panelEl.querySelector("[data-dev-update-scene-title]");
 
-hotspotListEl = panelEl.querySelector(
-  "[data-dev-hotspot-list]"
-);
+  fillTargetSelect();
+  renderHotspotList();
+  renderDirtyState();
+  renderSceneProperties();
 
-fillTargetSelect();
-renderHotspotList();
   copyViewButtonEl.addEventListener("click", saveCurrentView);
-  exportButtonEl.addEventListener("click", exportScene);
+  exportButtonEl.addEventListener("click", exportCurrentScene);
   copyButtonEl.addEventListener("click", copyCurrentHotspot);
   addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
   addHotspotButtonEl.addEventListener("click", addCurrentHotspot);
   updateHotspotButtonEl.addEventListener("click", updateSelectedHotspot);
   deleteHotspotButtonEl.addEventListener("click", deleteSelectedHotspot);
+  updateSceneTitleButtonEl.addEventListener("click", updateSceneTitle);
   
 }
 
@@ -240,60 +285,40 @@ async function copyCurrentHotspot() {
 
 export function destroyDeveloperTools() {
   if (copyButtonEl) {
-    copyViewButtonEl.removeEventListener(
-  "click",
-  saveCurrentView
-);
+    copyButtonEl.removeEventListener("click", copyCurrentHotspot);
   }
 
-if (addHotspotButtonEl) {
-  addHotspotButtonEl.removeEventListener(
-    "click",
-    addCurrentHotspot
-  );
-}
+  if (copyViewButtonEl) {
+    copyViewButtonEl.removeEventListener("click", saveCurrentView);
+  }
 
-if (exportButtonEl) {
-  exportButtonEl.removeEventListener(
-    "click",
-    exportScene
-  );
-}
+  if (addHotspotButtonEl) {
+    addHotspotButtonEl.removeEventListener("click", addCurrentHotspot);
+  }
 
-if (crosshairEl) {
-  crosshairEl.remove();
-}
+  if (exportButtonEl) {
+    exportButtonEl.removeEventListener("click", exportCurrentScene);
+  }
+
+  if (updateHotspotButtonEl) {
+    updateHotspotButtonEl.removeEventListener("click", updateSelectedHotspot);
+  }
+
+  if (deleteHotspotButtonEl) {
+    deleteHotspotButtonEl.removeEventListener("click", deleteSelectedHotspot);
+  }
+
+  if (updateSceneTitleButtonEl) {
+    updateSceneTitleButtonEl.removeEventListener("click", updateSceneTitle);
+  }
+
+  if (crosshairEl) {
+    crosshairEl.remove();
+  }
 
   if (panelEl) {
     panelEl.remove();
   }
-
-  if (copyViewButtonEl) {
-  copyViewButtonEl.removeEventListener(
-    "click",
-    saveCurrentView
-  );
-}
-
-  if (exportButtonEl) {
-    exportButtonEl.removeEventListener(
-        "click",
-        exportScene
-    );
-}
-if (updateHotspotButtonEl) {
-  updateHotspotButtonEl.removeEventListener(
-    "click",
-    updateSelectedHotspot
-  );
-}
-
-if (deleteHotspotButtonEl) {
-  deleteHotspotButtonEl.removeEventListener(
-    "click",
-    deleteSelectedHotspot
-  );
-}
 
   panelEl = null;
   coordinatesEl = null;
@@ -301,7 +326,6 @@ if (deleteHotspotButtonEl) {
   copyViewButtonEl = null;
   exportButtonEl = null;
   addHotspotButtonEl = null;
-  exportButtonEl = null;
   crosshairEl = null;
   sceneChangedCallback = null;
   hotspotTitleInputEl = null;
@@ -311,7 +335,10 @@ if (deleteHotspotButtonEl) {
   updateHotspotButtonEl = null;
   deleteHotspotButtonEl = null;
   selectedHotspotId = null;
-  
+  dirtyStateEl = null;
+  sceneTitleInputEl = null;
+  updateSceneTitleButtonEl = null;
+  setViewCallback = null;
 }
 
 function saveCurrentView() {
@@ -323,7 +350,10 @@ function saveCurrentView() {
     };
   });
 
-  copyViewButtonEl.textContent = "Стартовый вид обновлён";
+  notifySceneChanged();
+
+  copyViewButtonEl.textContent =
+    "Стартовый вид обновлён";
 
   setTimeout(() => {
     copyViewButtonEl.textContent =
@@ -479,6 +509,9 @@ function renderHotspotList() {
     `;
 
     button.addEventListener("click", () => {
+      console.log("Hotspot clicked:", hotspot.id);
+      console.log("Editable scene:", getEditableScene());
+
       selectHotspot(hotspot.id);
     });
 
@@ -493,7 +526,22 @@ function selectHotspot(hotspotId) {
     item => item.id === hotspotId
   );
 
-  if (!hotspot) return;
+  if (!hotspot) {
+    console.warn(`Hotspot не найден: ${hotspotId}`);
+    return;
+  }
+
+  if (!hotspotTitleInputEl || !hotspotTargetSelectEl) {
+    console.error("Hotspot Editor не инициализирован.");
+    return;
+  }
+
+  if (setViewCallback) {
+    setViewCallback({
+      yaw: hotspot.yaw,
+      pitch: hotspot.pitch
+    });
+  }
 
   selectedHotspotId = hotspot.id;
 
@@ -587,7 +635,105 @@ function deleteSelectedHotspot() {
 }
 
 function notifySceneChanged() {
+  renderDirtyState();
+
   if (sceneChangedCallback) {
     sceneChangedCallback(getEditableScene());
   }
+}
+
+function renderDirtyState() {
+  if (!dirtyStateEl) return;
+
+  const dirty = getIsDirty();
+
+  dirtyStateEl.textContent = dirty
+    ? "● Scene modified"
+    : "Scene saved";
+
+  dirtyStateEl.classList.toggle(
+    "is-dirty",
+    dirty
+  );
+}
+
+async function exportCurrentScene() {
+  try {
+    await exportScene();
+
+    markClean();
+    renderDirtyState();
+
+    exportButtonEl.textContent = "Сцена экспортирована";
+
+    setTimeout(() => {
+      exportButtonEl.textContent = "Экспорт сцены";
+    }, 1200);
+  } catch (error) {
+    console.error(
+      "Не удалось экспортировать сцену:",
+      error
+    );
+
+    exportButtonEl.textContent = "Ошибка экспорта";
+
+    setTimeout(() => {
+      exportButtonEl.textContent = "Экспорт сцены";
+    }, 1200);
+  }
+}
+
+function renderSceneProperties() {
+  if (!sceneTitleInputEl) return;
+
+  const editableScene = getEditableScene();
+
+  sceneTitleInputEl.value =
+    editableScene?.title ?? "";
+}
+
+function updateSceneTitle() {
+  const title = sceneTitleInputEl.value.trim();
+
+  if (!title) {
+    alert("Укажи название сцены.");
+    sceneTitleInputEl.focus();
+    return;
+  }
+
+  const editableScene = getEditableScene();
+
+  if (!editableScene) {
+    alert("Нет активной сцены.");
+    return;
+  }
+
+  /*
+    Не создаём лишнее изменение,
+    если название фактически не поменялось.
+  */
+  if (editableScene.title === title) {
+    return;
+  }
+
+  updateScene(scene => {
+    scene.title = title;
+  });
+
+  const sceneTitleEl =
+    document.getElementById("sceneTitle");
+
+  if (sceneTitleEl) {
+    sceneTitleEl.textContent = title;
+  }
+
+  notifySceneChanged();
+
+  updateSceneTitleButtonEl.textContent =
+    "Название обновлено";
+
+  setTimeout(() => {
+    updateSceneTitleButtonEl.textContent =
+      "Обновить название сцены";
+  }, 1200);
 }

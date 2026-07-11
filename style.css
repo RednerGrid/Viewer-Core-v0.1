@@ -447,3 +447,14 @@ body {
   opacity: 0.35;
   cursor: default;
 }
+
+.developer-tools__status {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.developer-tools__status.is-dirty {
+  opacity: 1;
+  font-weight: 600;
+}

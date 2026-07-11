@@ -1,10 +1,10 @@
 {
   "id": "yard_pano_01",
-  "title": "Панорама двора",
+  "title": "Панорама двора №1",
   "type": "panorama",
   "view": {
-    "yaw": -164,
-    "pitch": 22.5,
+    "yaw": -143.7,
+    "pitch": -2.6,
     "fov": 50
   },
   "assets": {
@@ -21,8 +21,8 @@
     {
       "id": "to_kitchen",
       "title": "360",
-      "yaw": -168,
-      "pitch": -3.9,
+      "yaw": -156.5,
+      "pitch": 18,
       "target": "house360"
     }
   ],

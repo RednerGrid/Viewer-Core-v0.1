@@ -28,16 +28,14 @@ export async function init({ project, scene, viewer, openScene }) {
   viewerRef = viewer;
 
   renderToolbar(scene.actions, openScene);
-  initDeveloperTools({
-  project,
 
-  onSceneChange: editableScene => {
-    renderHotspots(
-      editableScene.hotspots ?? [],
-      openScene
-    );
-  }
-});
+  initDeveloperTools({
+    project,
+    onSceneChange: editableScene => {
+      renderHotspots(editableScene.hotspots ?? [], openScene);
+    },
+    setView
+  });
 
   // Каждый раз сбрасываем состояние управления
   isDown = false;
@@ -256,4 +254,17 @@ export function destroy() {
   animationId = null;
   activePointers.clear();
 
+}
+
+function setView({
+  yaw,
+  pitch,
+  fov
+}) {
+  lon = Number(yaw);
+  lat = Number(pitch);
+
+  if (fov !== undefined) {
+    targetFov = Number(fov);
+  }
 }
