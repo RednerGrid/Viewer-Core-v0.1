@@ -3,9 +3,9 @@ import {
   getIsDirty,
   markClean,
   updateScene
-} from "../editor/editorState.js";
+} from "./editorState.js";
 
-import { exportScene } from "../editor/exportScene.js";
+import { exportScene } from "./exportScene.js";
 
 let panelEl = null;
 let coordinatesEl = null;

@@ -1,16 +1,13 @@
 import { renderToolbar } from "../ui/toolbar.js";
 import { renderHotspots, updatePanoramaHotspots, clearHotspots } from "../ui/hotspots.js";
-import {
-  initDeveloperTools,
-  updateDeveloperView,
-  destroyDeveloperTools
-} from "../ui/developerTools.js";
+
 
 let viewerRef = null;
 let renderer = null;
 let scene3d = null;
 let camera = null;
 let animationId = null;
+let editorRef = null;
 
 let lon = 0;
 let lat = 0;
@@ -24,12 +21,13 @@ const activePointers = new Map();
 let startPinchDistance = 0;
 let startPinchFov = 50;
 
-export async function init({ project, scene, viewer, openScene }) {
+export async function init({ project, scene, viewer, openScene, editor }) {
   viewerRef = viewer;
+  editorRef = editor;
 
   renderToolbar(scene.actions, openScene);
 
-  initDeveloperTools({
+  editorRef?.initDeveloperTools({
     project,
     onSceneChange: editableScene => {
       renderHotspots(editableScene.hotspots ?? [], openScene);
@@ -192,7 +190,7 @@ function animate() {
   animationId = requestAnimationFrame(animate);
 
   lat = Math.max(-45, Math.min(45, lat));
-  updateDeveloperView({
+  editorRef?.updateDeveloperView({
   yaw: lon,
   pitch: lat,
   fov: camera.fov
@@ -231,7 +229,7 @@ export function resize() {
 export function update() {}
 
 export function destroy() {
-  destroyDeveloperTools();
+  editorRef?.destroyDeveloperTools();
   clearHotspots();
   removeControls();
 
@@ -252,6 +250,7 @@ export function destroy() {
   scene3d = null;
   camera = null;
   animationId = null;
+  editorRef = null;
   activePointers.clear();
 
 }

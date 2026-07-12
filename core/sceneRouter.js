@@ -1,13 +1,10 @@
 import { openModule } from "./moduleManager.js";
 import { fadeOut, fadeIn } from "../ui/transition.js";
-import {
-  beginEditing,
-  getEditableScene
-} from "../editor/editorState.js";
+
 
 let isTransitioning = false;
 
-export async function openScene(project, sceneId) {
+export async function openScene(project, sceneId, editor = null) {
   if (isTransitioning) return;
 
   const scene = project.scenes[sceneId];
@@ -34,21 +31,23 @@ export async function openScene(project, sceneId) {
       Viewer и Developer Tools должны работать
       с одним и тем же объектом сцены.
     */
-    beginEditing(scene);
-
-    const editableScene = getEditableScene();
+    const activeScene = editor
+      ? editor.beginSceneEditing(scene)
+      : scene;
 
     const context = {
       project,
-      scene: editableScene,
+      scene: activeScene,
       viewer,
-      openScene: targetId =>
-        openScene(project, targetId)
+      editor,
+      openScene: targetId => openScene(project, targetId, editor)
     };
 
     await openModule(context);
     await fadeIn();
-  } finally {
+  } 
+  
+  finally {
     isTransitioning = false;
   }
 }
