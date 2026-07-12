@@ -11,7 +11,8 @@ export function renderHotspots(
   hotspots = [],
   openScene,
   selectHotspot = null,
-  moveHotspot = null
+  moveHotspot = null,
+  saveHotspotPosition = null
 ) {
   clearHotspots();
 
@@ -102,6 +103,18 @@ hotspotElements = hotspots.map(hotspot => {
 
     el.classList.remove("hotspot-point--dragging");
 
+    if (
+      hasDragged &&
+      item.previewPosition &&
+      saveHotspotPosition
+    ) {
+      saveHotspotPosition(
+        hotspot.id,
+        item.previewPosition
+      );
+    }
+
+    item.previewPosition = null;
     draggedHotspotId = null;
     dragPointerId = null;
   });

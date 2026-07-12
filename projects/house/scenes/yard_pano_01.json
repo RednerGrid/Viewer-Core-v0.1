@@ -14,16 +14,9 @@
     {
       "id": "to_hall",
       "title": "Крыльцо",
-      "yaw": -160.2,
-      "pitch": 1.7,
+      "yaw": -151.9,
+      "pitch": -7,
       "target": "hall"
-    },
-    {
-      "id": "to_kitchen",
-      "title": "360",
-      "yaw": -156.5,
-      "pitch": 18,
-      "target": "house360"
     }
   ],
   "actions": [

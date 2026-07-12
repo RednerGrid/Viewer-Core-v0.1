@@ -394,12 +394,13 @@ body {
 }
 
 .developer-tools__hotspot-list {
+  
   display: flex;
   flex-direction: column;
   gap: 6px;
 
   max-height: 180px;
-  margin-bottom: 10px;
+  margin-top: 10px;
   overflow-y: auto;
 }
 

@@ -43,7 +43,8 @@ export async function init({ project, scene, viewer, openScene, editor }) {
         editableScene.hotspots ?? [],
         openScene,
         editorRef?.selectHotspot ?? null,
-        getHotspotPositionFromPointer
+        getHotspotPositionFromPointer,
+        editorRef?.saveHotspotPosition ?? null
       );
     },
 
@@ -100,7 +101,8 @@ export async function init({ project, scene, viewer, openScene, editor }) {
     scene.hotspots,
     openScene,
     editorRef?.selectHotspot ?? null,
-    getHotspotPositionFromPointer
+    getHotspotPositionFromPointer,
+    editorRef?.saveHotspotPosition ?? null
   );
 
   addControls(viewer);

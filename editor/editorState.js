@@ -2,13 +2,29 @@ let originalScene = null;
 let editableScene = null;
 let isDirty = false;
 
+const originalScenes = new Map();
+const editableScenes = new Map();
+const dirtySceneIds = new Set();
+
 /**
  * Начать редактирование сцены
  */
 export function beginEditing(scene) {
   originalScene = scene;
-  editableScene = structuredClone(scene);
-  isDirty = false;
+
+  if (!originalScenes.has(scene.id)) {
+    originalScenes.set(scene.id, scene);
+  }
+
+  if (!editableScenes.has(scene.id)) {
+    editableScenes.set(
+      scene.id,
+      structuredClone(scene)
+    );
+  }
+
+  editableScene = editableScenes.get(scene.id);
+  isDirty = dirtySceneIds.has(scene.id);
 }
 
 /**
@@ -36,6 +52,9 @@ export function getIsDirty() {
  * Пометить сцену как изменённую
  */
 export function markDirty() {
+  if (!editableScene) return;
+
+  dirtySceneIds.add(editableScene.id);
   isDirty = true;
 }
 
@@ -43,6 +62,9 @@ export function markDirty() {
  * Пометить сцену как сохранённую
  */
 export function markClean() {
+  if (!editableScene) return;
+
+  dirtySceneIds.delete(editableScene.id);
   isDirty = false;
 }
 
@@ -51,7 +73,9 @@ export function markClean() {
  */
 export function setEditableScene(scene) {
   editableScene = scene;
-  isDirty = true;
+  editableScenes.set(scene.id, scene);
+
+  markDirty();
 }
 
 /**
@@ -67,15 +91,28 @@ export function updateScene(callback) {
   }
 
   callback(editableScene);
-  isDirty = true;
+
+  editableScenes.set(
+    editableScene.id,
+    editableScene
+  );
+
+  markDirty();
 }
 
 /**
- * Отменить все изменения
+ * Отменить все изменения текущей сцены
  */
 export function resetScene() {
   if (!originalScene) return;
 
   editableScene = structuredClone(originalScene);
+
+  editableScenes.set(
+    originalScene.id,
+    editableScene
+  );
+
+  dirtySceneIds.delete(originalScene.id);
   isDirty = false;
 }

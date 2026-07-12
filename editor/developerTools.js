@@ -9,7 +9,6 @@ import { exportScene } from "./exportScene.js";
 
 let panelEl = null;
 let coordinatesEl = null;
-let copyButtonEl = null;
 let copyViewButtonEl = null;
 let exportButtonEl = null;
 let addHotspotButtonEl = null;
@@ -27,6 +26,9 @@ let sceneTitleInputEl = null;
 let updateSceneTitleButtonEl = null;
 let setViewCallback = null;
 let highlightHotspotCallback = null;
+let inspectorTitleEl = null;
+let sceneInspectorEl = null;
+let hotspotInspectorEl = null;
 
 let currentView = {
   yaw: 0,
@@ -72,6 +74,7 @@ export function initDeveloperTools(options = {}) {
     renderHotspotList();
     renderDirtyState();
     renderSceneProperties();
+    renderInspector();
 
     return;
   }
@@ -79,8 +82,10 @@ export function initDeveloperTools(options = {}) {
   panelEl = document.createElement("div");
   panelEl.className = "developer-tools";
 
-  panelEl.innerHTML = `
-  <div class="developer-tools__title">Developer Mode</div>
+ panelEl.innerHTML = `
+  <div class="developer-tools__title">
+    Developer Mode
+  </div>
 
   <div
     class="developer-tools__status"
@@ -95,6 +100,19 @@ export function initDeveloperTools(options = {}) {
   </div>
 
   <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      Inspector
+    </div>
+
+    <div data-dev-inspector-title>
+      Scene
+    </div>
+  </div>
+
+  <div
+    class="developer-tools__section"
+    data-dev-scene-inspector
+  >
     <div class="developer-tools__subtitle">
       Scene
     </div>
@@ -119,7 +137,11 @@ export function initDeveloperTools(options = {}) {
     </button>
   </div>
 
-  <div class="developer-tools__section">
+  <div
+    class="developer-tools__section"
+    data-dev-hotspot-inspector
+    hidden
+  >
     <div class="developer-tools__subtitle">
       Hotspot
     </div>
@@ -143,33 +165,6 @@ export function initDeveloperTools(options = {}) {
         data-dev-hotspot-target
       ></select>
     </label>
-  </div>
-
-  <button
-    type="button"
-    class="developer-tools__button"
-    data-dev-copy
-  >
-    Скопировать hotspot
-  </button>
-
-  <button
-    type="button"
-    class="developer-tools__button"
-    data-dev-add-hotspot
-  >
-    Добавить hotspot в центр
-  </button>
-
-  <div class="developer-tools__section">
-    <div class="developer-tools__subtitle">
-      Hotspots сцены
-    </div>
-
-    <div
-      class="developer-tools__hotspot-list"
-      data-dev-hotspot-list
-    ></div>
 
     <button
       type="button"
@@ -190,21 +185,52 @@ export function initDeveloperTools(options = {}) {
     </button>
   </div>
 
-  <button
-    type="button"
-    class="developer-tools__button"
-    data-dev-copy-view
-  >
-    Сделать текущий вид стартовым
-  </button>
+  <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      Hotspots сцены
+    </div>
 
-  <button
-    type="button"
-    class="developer-tools__button"
-    data-dev-export
-  >
-    Экспорт сцены
-  </button>
+    <button
+      type="button"
+      class="developer-tools__button"
+      data-dev-add-hotspot
+    >
+      Добавить hotspot в центр
+    </button>
+
+    <div
+      class="developer-tools__hotspot-list"
+      data-dev-hotspot-list
+    ></div>
+  </div>
+
+  <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      View
+    </div>
+
+    <button
+      type="button"
+      class="developer-tools__button"
+      data-dev-copy-view
+    >
+      Сделать текущий вид стартовым
+    </button>
+  </div>
+
+  <div class="developer-tools__section">
+    <div class="developer-tools__subtitle">
+      Export
+    </div>
+
+    <button
+      type="button"
+      class="developer-tools__button"
+      data-dev-export
+    >
+      Экспорт сцены
+    </button>
+  </div>
 `;
 
   document.body.appendChild(panelEl);
@@ -220,7 +246,6 @@ export function initDeveloperTools(options = {}) {
     pitch: panelEl.querySelector("[data-dev-pitch]")
   };
 
-  copyButtonEl = panelEl.querySelector("[data-dev-copy]");
   copyViewButtonEl = panelEl.querySelector("[data-dev-copy-view]");
   exportButtonEl = panelEl.querySelector("[data-dev-export]");
   addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
@@ -236,14 +261,18 @@ export function initDeveloperTools(options = {}) {
   sceneTitleInputEl = panelEl.querySelector("[data-dev-scene-title]");
   updateSceneTitleButtonEl = panelEl.querySelector("[data-dev-update-scene-title]");
 
+  inspectorTitleEl = panelEl.querySelector("[data-dev-inspector-title]");
+  sceneInspectorEl = panelEl.querySelector("[data-dev-scene-inspector]");
+  hotspotInspectorEl = panelEl.querySelector("[data-dev-hotspot-inspector]");
+
   fillTargetSelect();
   renderHotspotList();
   renderDirtyState();
   renderSceneProperties();
+  renderInspector();
 
   copyViewButtonEl.addEventListener("click", saveCurrentView);
   exportButtonEl.addEventListener("click", exportCurrentScene);
-  copyButtonEl.addEventListener("click", copyCurrentHotspot);
   addHotspotButtonEl = panelEl.querySelector("[data-dev-add-hotspot]");
   addHotspotButtonEl.addEventListener("click", addCurrentHotspot);
   updateHotspotButtonEl.addEventListener("click", updateSelectedHotspot);
@@ -288,9 +317,6 @@ async function copyCurrentHotspot() {
 }
 
 export function destroyDeveloperTools() {
-  if (copyButtonEl) {
-    copyButtonEl.removeEventListener("click", copyCurrentHotspot);
-  }
 
   if (copyViewButtonEl) {
     copyViewButtonEl.removeEventListener("click", saveCurrentView);
@@ -326,7 +352,6 @@ export function destroyDeveloperTools() {
 
   panelEl = null;
   coordinatesEl = null;
-  copyButtonEl = null;
   copyViewButtonEl = null;
   exportButtonEl = null;
   addHotspotButtonEl = null;
@@ -344,6 +369,9 @@ export function destroyDeveloperTools() {
   updateSceneTitleButtonEl = null;
   setViewCallback = null;
   highlightHotspotCallback = null;
+  inspectorTitleEl = null;
+  sceneInspectorEl = null;
+  hotspotInspectorEl = null;
 }
 
 function saveCurrentView() {
@@ -374,23 +402,20 @@ function addCurrentHotspot() {
     return;
   }
 
-  const title = hotspotTitleInputEl.value.trim();
-  const target = hotspotTargetSelectEl.value;
-
-  if (!title) {
-    alert("Укажи название hotspot.");
-    hotspotTitleInputEl.focus();
-    return;
-  }
-
-  if (!target) {
-    alert("Выбери целевую сцену.");
-    return;
-  }
-
   if (!Array.isArray(editableScene.hotspots)) {
     editableScene.hotspots = [];
   }
+
+  const availableScenes = Object.values(
+    currentProject?.scenes ?? {}
+  ).filter(scene => scene.id !== editableScene.id);
+
+  if (availableScenes.length === 0) {
+    alert("Нет доступной целевой сцены.");
+    return;
+  }
+
+  const target = availableScenes[0].id;
 
   const hotspotId = createHotspotId(
     target,
@@ -399,7 +424,7 @@ function addCurrentHotspot() {
 
   const hotspot = {
     id: hotspotId,
-    title,
+    title: "Новый hotspot",
     yaw: Number(currentView.yaw.toFixed(1)),
     pitch: Number(currentView.pitch.toFixed(1)),
     target
@@ -413,19 +438,15 @@ function addCurrentHotspot() {
     scene.hotspots.push(hotspot);
   });
 
+  notifySceneChanged();
+  selectHotspot(hotspot.id);
+
   addHotspotButtonEl.textContent = "Hotspot добавлен";
-  hotspotTitleInputEl.value = "";
 
   setTimeout(() => {
     addHotspotButtonEl.textContent =
       "Добавить hotspot в центр";
   }, 1200);
-
-  selectedHotspotId = hotspot.id;
-  highlightHotspotCallback?.(hotspot.id);
-
-renderHotspotList();
-notifySceneChanged();
 }
 
 function createHotspotId(target, existingHotspots) {
@@ -562,6 +583,8 @@ export function selectHotspot(hotspotId) {
   updateHotspotButtonEl.disabled = false;
   deleteHotspotButtonEl.disabled = false;
 
+  renderInspector();
+  renderHotspotList();
   renderHotspotList();
 }
 
@@ -636,6 +659,7 @@ function deleteSelectedHotspot() {
   });
 
   selectedHotspotId = null;
+  renderInspector();
 
   hotspotTitleInputEl.value = "";
   updateHotspotButtonEl.disabled = true;
@@ -747,4 +771,50 @@ function updateSceneTitle() {
     updateSceneTitleButtonEl.textContent =
       "Обновить название сцены";
   }, 1200);
+}
+
+export function saveHotspotPosition(
+  hotspotId,
+  position
+) {
+  if (!position) return;
+
+  updateScene(scene => {
+    const hotspot = scene.hotspots?.find(
+      item => item.id === hotspotId
+    );
+
+    if (!hotspot) return;
+
+    hotspot.yaw = Number(position.yaw.toFixed(1));
+    hotspot.pitch = Number(position.pitch.toFixed(1));
+  });
+
+  selectedHotspotId = hotspotId;
+
+  renderHotspotList();
+  renderDirtyState();
+
+  if (sceneChangedCallback) {
+    sceneChangedCallback(getEditableScene());
+  }
+}
+
+function renderInspector() {
+  if (
+    !inspectorTitleEl ||
+    !sceneInspectorEl ||
+    !hotspotInspectorEl
+  ) {
+    return;
+  }
+
+  const hasSelectedHotspot = Boolean(selectedHotspotId);
+
+  inspectorTitleEl.textContent = hasSelectedHotspot
+    ? "Hotspot"
+    : "Scene";
+
+  sceneInspectorEl.hidden = hasSelectedHotspot;
+  hotspotInspectorEl.hidden = !hasSelectedHotspot;
 }

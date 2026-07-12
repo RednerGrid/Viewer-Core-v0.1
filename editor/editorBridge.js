@@ -7,7 +7,8 @@ export {
   initDeveloperTools,
   updateDeveloperView,
   destroyDeveloperTools,
-  selectHotspot
+  selectHotspot,
+  saveHotspotPosition
 } from "./developerTools.js";
 
 export function beginSceneEditing(scene) {
