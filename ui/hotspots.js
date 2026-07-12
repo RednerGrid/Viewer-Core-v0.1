@@ -1,7 +1,12 @@
 let hotspotLayer = null;
 let hotspotElements = [];
+let selectedHotspotId = null;
 
-export function renderHotspots(hotspots = [], openScene) {
+export function renderHotspots(
+    hotspots = [],
+    openScene,
+    selectHotspot = null
+) {
   clearHotspots();
 
   hotspotLayer = document.createElement("div");
@@ -9,6 +14,7 @@ export function renderHotspots(hotspots = [], openScene) {
 
   hotspotElements = hotspots.map(hotspot => {
     const el = document.createElement("button");
+
     el.className = "hotspot-point";
     el.title = hotspot.title;
 
@@ -16,13 +22,29 @@ export function renderHotspots(hotspots = [], openScene) {
       <span class="hotspot-dot"></span>
       <span class="hotspot-label">${hotspot.title}</span>
     `;
+    console.log("renderHotspots:", !!selectHotspot);
 
     el.addEventListener("pointerdown", e => e.stopPropagation());
     el.addEventListener("pointerup", e => e.stopPropagation());
 
     el.addEventListener("click", e => {
+      console.log(
+        "ctrl:", e.ctrlKey,
+        "meta:", e.metaKey,
+        "callback:", !!selectHotspot
+      );
+
       e.preventDefault();
       e.stopPropagation();
+
+      const editMode = e.ctrlKey || e.metaKey;
+
+      if (editMode && selectHotspot) {
+        selectPanoramaHotspot(hotspot.id);
+        selectHotspot(hotspot.id);
+        return;
+      }
+
       openScene(hotspot.target);
     });
 
@@ -35,6 +57,7 @@ export function renderHotspots(hotspots = [], openScene) {
   });
 
   document.getElementById("viewer").appendChild(hotspotLayer);
+  selectPanoramaHotspot(selectedHotspotId);
 }
 
 export function updatePanoramaHotspots(camera, renderer) {
@@ -85,4 +108,15 @@ export function clearHotspots() {
 
   hotspotLayer = null;
   hotspotElements = [];
+}
+
+export function selectPanoramaHotspot(hotspotId) {
+  selectedHotspotId = hotspotId;
+
+  hotspotElements.forEach(item => {
+    item.el.classList.toggle(
+      "hotspot-point--selected",
+      item.data.id === hotspotId
+    );
+  });
 }

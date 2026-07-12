@@ -6,7 +6,8 @@ import {
 export {
   initDeveloperTools,
   updateDeveloperView,
-  destroyDeveloperTools
+  destroyDeveloperTools,
+  selectHotspot
 } from "./developerTools.js";
 
 export function beginSceneEditing(scene) {

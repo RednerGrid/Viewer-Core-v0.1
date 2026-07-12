@@ -26,6 +26,7 @@ let dirtyStateEl = null;
 let sceneTitleInputEl = null;
 let updateSceneTitleButtonEl = null;
 let setViewCallback = null;
+let highlightHotspotCallback = null;
 
 let currentView = {
   yaw: 0,
@@ -47,6 +48,9 @@ export function initDeveloperTools(options = {}) {
   
   setViewCallback =
     options.setView ?? setViewCallback;
+
+  highlightHotspotCallback =
+    options.highlightHotspot ?? highlightHotspotCallback;
 
   currentProject =
     options.project ?? currentProject;
@@ -339,6 +343,7 @@ export function destroyDeveloperTools() {
   sceneTitleInputEl = null;
   updateSceneTitleButtonEl = null;
   setViewCallback = null;
+  highlightHotspotCallback = null;
 }
 
 function saveCurrentView() {
@@ -417,6 +422,7 @@ function addCurrentHotspot() {
   }, 1200);
 
   selectedHotspotId = hotspot.id;
+  highlightHotspotCallback?.(hotspot.id);
 
 renderHotspotList();
 notifySceneChanged();
@@ -513,13 +519,14 @@ function renderHotspotList() {
       console.log("Editable scene:", getEditableScene());
 
       selectHotspot(hotspot.id);
+      
     });
 
     hotspotListEl.appendChild(button);
   });
 }
 
-function selectHotspot(hotspotId) {
+export function selectHotspot(hotspotId) {
   const editableScene = getEditableScene();
 
   const hotspot = editableScene?.hotspots?.find(
@@ -544,6 +551,10 @@ function selectHotspot(hotspotId) {
   }
 
   selectedHotspotId = hotspot.id;
+
+  if (highlightHotspotCallback) {
+    highlightHotspotCallback(hotspot.id);
+  }
 
   hotspotTitleInputEl.value = hotspot.title ?? "";
   hotspotTargetSelectEl.value = hotspot.target ?? "";

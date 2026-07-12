@@ -1,5 +1,10 @@
 import { renderToolbar } from "../ui/toolbar.js";
-import { renderHotspots, updatePanoramaHotspots, clearHotspots } from "../ui/hotspots.js";
+import {
+  renderHotspots,
+  updatePanoramaHotspots,
+  clearHotspots,
+  selectPanoramaHotspot
+} from "../ui/hotspots.js";
 
 
 let viewerRef = null;
@@ -29,10 +34,17 @@ export async function init({ project, scene, viewer, openScene, editor }) {
 
   editorRef?.initDeveloperTools({
     project,
+
     onSceneChange: editableScene => {
-      renderHotspots(editableScene.hotspots ?? [], openScene);
+      renderHotspots(
+        editableScene.hotspots ?? [],
+        openScene,
+        editorRef?.selectHotspot ?? null
+      );
     },
-    setView
+
+    setView,
+    highlightHotspot: selectPanoramaHotspot    
   });
 
   // Каждый раз сбрасываем состояние управления
@@ -80,7 +92,11 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   const sphere = new THREE.Mesh(geometry, material);
   scene3d.add(sphere);
 
-  renderHotspots(scene.hotspots, openScene);
+  renderHotspots(
+    scene.hotspots,
+    openScene,
+    editorRef?.selectHotspot ?? null
+  );
 
   addControls(viewer);
   animate();

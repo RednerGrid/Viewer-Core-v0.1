@@ -362,7 +362,3 @@ Tools
 Projects
 
 Runtime никогда не импортирует Extensions напрямую. Extensions подключаются через публичный API.
-
-Editor может использовать Runtime.
-
-Runtime не может использовать Editor.
