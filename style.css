@@ -473,3 +473,11 @@ body {
 .hotspot-point--selected .hotspot-label {
     font-weight: 600;
 }
+
+.hotspot-point--dragging {
+  cursor: grabbing;
+}
+
+.hotspot-point--dragging .hotspot-dot {
+  transform: scale(1.5);
+}

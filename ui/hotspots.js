@@ -1,60 +1,134 @@
 let hotspotLayer = null;
 let hotspotElements = [];
 let selectedHotspotId = null;
+let draggedHotspotId = null;
+let dragPointerId = null;
+let dragStartX = 0;
+let dragStartY = 0;
+let hasDragged = false;
 
 export function renderHotspots(
-    hotspots = [],
-    openScene,
-    selectHotspot = null
+  hotspots = [],
+  openScene,
+  selectHotspot = null,
+  moveHotspot = null
 ) {
   clearHotspots();
 
   hotspotLayer = document.createElement("div");
   hotspotLayer.className = "hotspot-layer";
 
-  hotspotElements = hotspots.map(hotspot => {
-    const el = document.createElement("button");
+hotspotElements = hotspots.map(hotspot => {
+  const el = document.createElement("button");
 
-    el.className = "hotspot-point";
-    el.title = hotspot.title;
+  el.className = "hotspot-point";
+  el.title = hotspot.title;
 
-    el.innerHTML = `
-      <span class="hotspot-dot"></span>
-      <span class="hotspot-label">${hotspot.title}</span>
-    `;
-    console.log("renderHotspots:", !!selectHotspot);
+  el.innerHTML = `
+    <span class="hotspot-dot"></span>
+    <span class="hotspot-label">${hotspot.title}</span>
+  `;
 
-    el.addEventListener("pointerdown", e => e.stopPropagation());
-    el.addEventListener("pointerup", e => e.stopPropagation());
+  const item = {
+    data: hotspot,
+    el,
+    previewPosition: null
+  };
 
-    el.addEventListener("click", e => {
-      console.log(
-        "ctrl:", e.ctrlKey,
-        "meta:", e.metaKey,
-        "callback:", !!selectHotspot
-      );
+  el.addEventListener("pointerdown", e => {
+    e.stopPropagation();
 
-      e.preventDefault();
-      e.stopPropagation();
+    const editMode = e.ctrlKey || e.metaKey;
 
-      const editMode = e.ctrlKey || e.metaKey;
+    if (!editMode || !selectHotspot) return;
 
-      if (editMode && selectHotspot) {
-        selectPanoramaHotspot(hotspot.id);
-        selectHotspot(hotspot.id);
-        return;
-      }
+    e.preventDefault();
 
-      openScene(hotspot.target);
+    draggedHotspotId = hotspot.id;
+    dragPointerId = e.pointerId;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    hasDragged = false;
+
+    el.setPointerCapture(e.pointerId);
+    el.classList.add("hotspot-point--dragging");
+
+    selectHotspot(hotspot.id);
+  });
+
+  el.addEventListener("pointermove", e => {
+    if (
+      draggedHotspotId !== hotspot.id ||
+      dragPointerId !== e.pointerId
+    ) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+      hasDragged = true;
+    }
+
+    const position = moveHotspot?.({
+      clientX: e.clientX,
+      clientY: e.clientY
     });
 
-    hotspotLayer.appendChild(el);
-
-    return {
-      data: hotspot,
-      el
-    };
+    if (position) {
+      item.previewPosition = position;
+    }
   });
+
+  el.addEventListener("pointerup", e => {
+    e.stopPropagation();
+
+    if (
+      draggedHotspotId !== hotspot.id ||
+      dragPointerId !== e.pointerId
+    ) {
+      return;
+    }
+
+    e.preventDefault();
+
+    if (el.hasPointerCapture(e.pointerId)) {
+      el.releasePointerCapture(e.pointerId);
+    }
+
+    el.classList.remove("hotspot-point--dragging");
+
+    draggedHotspotId = null;
+    dragPointerId = null;
+  });
+
+  el.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (hasDragged) {
+      hasDragged = false;
+      return;
+    }
+
+    const editMode = e.ctrlKey || e.metaKey;
+
+    if (editMode && selectHotspot) {
+      selectHotspot(hotspot.id);
+      return;
+    }
+
+    openScene(hotspot.target);
+  });
+
+  hotspotLayer.appendChild(el);
+
+  return item;
+});
 
   document.getElementById("viewer").appendChild(hotspotLayer);
   selectPanoramaHotspot(selectedHotspotId);
@@ -70,10 +144,11 @@ export function updatePanoramaHotspots(camera, renderer) {
   camera.getWorldDirection(cameraDirection);
 
   hotspotElements.forEach(item => {
-    const { data, el } = item;
+    const { data, el, previewPosition } = item;
+    const position = previewPosition ?? data;
 
-    const yaw = THREE.MathUtils.degToRad(data.yaw);
-    const pitch = THREE.MathUtils.degToRad(data.pitch);
+    const yaw = THREE.MathUtils.degToRad(position.yaw);
+    const pitch = THREE.MathUtils.degToRad(position.pitch);
 
     const point = new THREE.Vector3(
       500 * Math.cos(pitch) * Math.cos(yaw),

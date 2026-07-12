@@ -23,6 +23,9 @@ let startX = 0;
 let startY = 0;
 
 const activePointers = new Map();
+const hotspotRaycaster = new THREE.Raycaster();
+const hotspotPointer = new THREE.Vector2();
+
 let startPinchDistance = 0;
 let startPinchFov = 50;
 
@@ -39,7 +42,8 @@ export async function init({ project, scene, viewer, openScene, editor }) {
       renderHotspots(
         editableScene.hotspots ?? [],
         openScene,
-        editorRef?.selectHotspot ?? null
+        editorRef?.selectHotspot ?? null,
+        getHotspotPositionFromPointer
       );
     },
 
@@ -95,7 +99,8 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   renderHotspots(
     scene.hotspots,
     openScene,
-    editorRef?.selectHotspot ?? null
+    editorRef?.selectHotspot ?? null,
+    getHotspotPositionFromPointer
   );
 
   addControls(viewer);
@@ -282,4 +287,36 @@ function setView({
   if (fov !== undefined) {
     targetFov = Number(fov);
   }
+}
+
+function getHotspotPositionFromPointer({ clientX, clientY }) {
+  if (!renderer || !camera) return null;
+
+  const rect = renderer.domElement.getBoundingClientRect();
+
+  hotspotPointer.x =
+    ((clientX - rect.left) / rect.width) * 2 - 1;
+
+  hotspotPointer.y =
+    -((clientY - rect.top) / rect.height) * 2 + 1;
+
+  hotspotRaycaster.setFromCamera(hotspotPointer, camera);
+
+  const direction =
+    hotspotRaycaster.ray.direction.clone().normalize();
+
+  const yaw = THREE.MathUtils.radToDeg(
+    Math.atan2(direction.z, direction.x)
+  );
+
+  const pitch = THREE.MathUtils.radToDeg(
+    Math.asin(
+      THREE.MathUtils.clamp(direction.y, -1, 1)
+    )
+  );
+
+  return {
+    yaw,
+    pitch
+  };
 }
