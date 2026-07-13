@@ -3,6 +3,7 @@ let currentModule = null;
 export async function loadModule(type) {
   const modules = {
     overview: () => import("../modules/overviewIdpass.js"),
+    overviewParallax: () => import("../modules/overviewParallaxViewer.js"),
     panorama: () => import("../modules/panoramaViewer.js"),
     object360: () => import("../modules/object360Viewer.js"),
     scrollAnimation: () => import("../modules/scrollAnimationViewer.js"),

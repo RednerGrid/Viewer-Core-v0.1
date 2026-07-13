@@ -1,0 +1,29 @@
+{
+  "id": "overview_parallax",
+  "title": "Dynamic Overview",
+  "type": "overviewParallax",
+  "assets": {
+    "path": "assets/overview-parallax/",
+    "framePrefix": "frame_",
+    "extension": "jpg",
+    "rows": 13,
+    "columns": 13
+  },
+  "actions": [
+    {
+      "id": "openHouse360",
+      "title": "Облет дома",
+      "target": "house360"
+    },
+    {
+      "id": "openYard",
+      "title": "Панорама двора",
+      "target": "yard_pano_01"
+    },
+    {
+      "id": "openHall",
+      "title": "Войти в дом",
+      "target": "hall"
+    }
+  ]
+}

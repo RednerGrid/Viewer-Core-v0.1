@@ -1,8 +1,9 @@
 {
   "id": "house",
   "title": "Частный дом",
-  "startScene": "overview",
+  "startScene": "overview_parallax",
   "scenes": [
+    "overview_parallax",
     "overview",
     "house360",
     "yard_pano_01",
