@@ -42,3 +42,25 @@ export async function playPanoramaTransition({
     setTexture
   });
 }
+
+function buildFramePaths({
+  basePath,
+  path,
+  framePrefix = "frame_",
+  frameCount,
+  extension = "jpg",
+  startFrame = 0,
+  padding = 4
+}) {
+  const framePaths = [];
+
+  for (let i = 0; i < frameCount; i++) {
+    const frameNumber = String(startFrame + i).padStart(padding, "0");
+
+    framePaths.push(
+      `${basePath}${path}${framePrefix}${frameNumber}.${extension}`
+    );
+  }
+
+  return framePaths;
+}
