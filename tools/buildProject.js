@@ -83,7 +83,8 @@ function getSequenceInfo(sequencePath) {
   const typeMap = {
     object360: "object360",
     animations: "animation",
-    "animated-panoramas": "animatedPanorama"
+    "animated-panoramas": "animatedPanorama",
+    "overview-parallax": "overviewParallax"
   };
 
   return {
@@ -133,6 +134,13 @@ function detectSequences(files) {
 
   const sequences = [];
 
+  const sequenceCountByPath = new Map();
+
+  for (const group of groups.values()) {
+    const count = sequenceCountByPath.get(group.path) ?? 0;
+    sequenceCountByPath.set(group.path, count + 1);
+  }
+
   for (const group of groups.values()) {
     if (group.frames.length < 2) {
       continue;
@@ -161,9 +169,21 @@ function detectSequences(files) {
 
     const sequenceInfo = getSequenceInfo(group.path);
 
+    const normalizedPrefix = group.filePrefix
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_|_$/g, "");
+
+    const hasMultipleSequences =
+      sequenceCountByPath.get(group.path) > 1;
+
+    const sequenceId = hasMultipleSequences
+      ? `${sequenceInfo.id}__${normalizedPrefix}`
+      : sequenceInfo.id;
+
     sequences.push({
-      id: sequenceInfo.id,
-      key: `${sequenceInfo.type}:${sequenceInfo.id}`,
+      id: sequenceId,
+      key: `${sequenceInfo.type}:${sequenceId}`,
       type: sequenceInfo.type,
 
       path: group.path,

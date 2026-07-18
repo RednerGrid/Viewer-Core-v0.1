@@ -19,10 +19,12 @@ let lastPointerMoveTime = 0;
 
 const frameCache = new Map();
 
-const POINTER_IMPULSE = 0.018;
-const POINTER_IDLE_DELAY = 80;
-const VELOCITY_DAMPING = 0.88;
-const RETURN_SPRING = 0.015;
+const POINTER_IMPULSE = 0.06;
+const POINTER_IDLE_DELAY = 120;
+const VELOCITY_DAMPING = 0.83;
+const RETURN_SPRING = 0.05;
+const BOUNDARY_SLOWDOWN_ZONE = 6;
+const BOUNDARY_MIN_SPEED = 0.1;
 
 export async function init({
   project,
@@ -94,10 +96,42 @@ function animate(time = performance.now()) {
   velocityHorizontal *= VELOCITY_DAMPING;
   velocityVertical *= VELOCITY_DAMPING;
 
-  currentHorizontal += velocityHorizontal;
-  currentVertical += velocityVertical;
-
   const {
+    verticalRange,
+    horizontalRange
+  } = getGridConfig();
+
+  const horizontalDistanceToBoundary =
+    horizontalRange - Math.abs(currentHorizontal);
+
+  const verticalDistanceToBoundary =
+    verticalRange - Math.abs(currentVertical);
+
+  const horizontalSlowdown = Math.max(
+    BOUNDARY_MIN_SPEED,
+    Math.min(
+      1,
+      horizontalDistanceToBoundary / BOUNDARY_SLOWDOWN_ZONE
+    )
+  );
+
+  const verticalSlowdown = Math.max(
+    BOUNDARY_MIN_SPEED,
+    Math.min(
+      1,
+      verticalDistanceToBoundary / BOUNDARY_SLOWDOWN_ZONE
+    )
+  );
+
+  currentHorizontal +=
+    velocityHorizontal * horizontalSlowdown;
+
+  currentVertical +=
+    velocityVertical * verticalSlowdown;
+
+
+
+/*   const {
     verticalRange,
     horizontalRange
   } = getGridConfig();
@@ -125,6 +159,35 @@ function animate(time = performance.now()) {
 
   if (reachedBoundary) {
     velocityHorizontal *= 0.25;
+    velocityVertical *= 0.25;
+  } */
+
+
+
+  const previousHorizontal = currentHorizontal;
+  const previousVertical = currentVertical;
+
+  currentHorizontal = Math.max(
+    -horizontalRange,
+    Math.min(horizontalRange, currentHorizontal)
+  );
+
+  currentVertical = Math.max(
+    -verticalRange,
+    Math.min(verticalRange, currentVertical)
+  );
+
+  const reachedHorizontalBoundary =
+    currentHorizontal !== previousHorizontal;
+
+  const reachedVerticalBoundary =
+    currentVertical !== previousVertical;
+
+  if (reachedHorizontalBoundary) {
+    velocityHorizontal *= 0.25;
+  }
+
+  if (reachedVerticalBoundary) {
     velocityVertical *= 0.25;
   }
 

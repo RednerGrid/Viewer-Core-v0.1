@@ -1,0 +1,17 @@
+{
+  "id": "zdepth_test",
+  "title": "ZDepth Test",
+  "type": "plxZdepth",
+  "assets": {
+  "beauty": "assets/test/beauty.jpg",
+  "depth": "assets/test/depth.png",
+
+  "nearDepth": 3,
+  "farDepth": 4,
+  "cameraShift": 0.05,
+
+
+  "overscan": 1.08,
+  "invertDepth": false
+}
+}

@@ -3,6 +3,7 @@
   "title": "Частный дом",
   "startScene": "overview_parallax",
   "scenes": [
+    "zdepth_test",
     "overview_parallax",
     "overview",
     "house360",

@@ -13,6 +13,9 @@ let scene3d = null;
 let camera = null;
 let animationId = null;
 let editorRef = null;
+let sphere = null;
+let material = null;
+let textureLoader = null;
 
 let lon = 0;
 let lat = 0;
@@ -88,13 +91,16 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   geometry.scale(-1, 1, 1);
 
   const texturePath = `${project.basePath}${scene.assets.image}`;
-  const texture = new THREE.TextureLoader().load(texturePath);
 
-  const material = new THREE.MeshBasicMaterial({
+  textureLoader = new THREE.TextureLoader();
+
+  const texture = textureLoader.load(texturePath);
+
+  material = new THREE.MeshBasicMaterial({
     map: texture
   });
 
-  const sphere = new THREE.Mesh(geometry, material);
+  sphere = new THREE.Mesh(geometry, material);
   scene3d.add(sphere);
 
   renderHotspots(
@@ -240,6 +246,19 @@ function animate() {
   updatePanoramaHotspots(camera, renderer);
 }
 
+export function setPanoramaTexture(texture) {
+  if (!material || !texture) return;
+
+  const previousTexture = material.map;
+
+  material.map = texture;
+  material.needsUpdate = true;
+
+  if (previousTexture && previousTexture !== texture) {
+    previousTexture.dispose();
+  }
+}
+
 export function resize() {
   if (!renderer || !camera) return;
 
@@ -260,6 +279,18 @@ export function destroy() {
     cancelAnimationFrame(animationId);
   }
 
+  if (material?.map) {
+    material.map.dispose();
+  }
+
+  if (material) {
+    material.dispose();
+  }
+
+  if (sphere?.geometry) {
+    sphere.geometry.dispose();
+  }
+  
   if (renderer) {
     renderer.dispose();
   }
@@ -272,6 +303,9 @@ export function destroy() {
   renderer = null;
   scene3d = null;
   camera = null;
+  sphere = null;
+  material = null;
+  textureLoader = null;
   animationId = null;
   editorRef = null;
   activePointers.clear();
@@ -321,4 +355,8 @@ function getHotspotPositionFromPointer({ clientX, clientY }) {
     yaw,
     pitch
   };
+}
+
+export function replaceTexture(path) {
+
 }

@@ -1,6 +1,6 @@
 # Viewer Architecture
 
-Version: 1.0
+Version: 1.1
 
 ---
 
@@ -175,6 +175,85 @@ Panorama Viewer отвечает за:
 - камеру;
 - hotspot;
 - управление пользователем.
+
+## Overview Parallax Viewer
+
+Overview Parallax Viewer — дополнительный режим обзорной сцены.
+
+Он не заменяет существующий статический Overview и используется как отдельный тип сцены:
+
+```text
+overviewParallax
+
+Модуль отображает заранее отрендеренную сетку ракурсов объекта и создаёт эффект небольшого орбитального движения камеры.
+
+Основные функции:
+
+загрузка центрального кадра;
+предварительная загрузка всей сетки;
+управление направлением через движение указателя;
+инерция при смене направления;
+плавный возврат в центральное положение;
+круговое ограничение максимального смещения;
+автоматическое определение центра сетки.
+
+Структура сетки задаётся в конфигурации сцены:
+
+{
+  "assets": {
+    "path": "assets/overview-parallax/",
+    "framePrefix": "frame_",
+    "extension": "jpg",
+    "rows": 13,
+    "columns": 13
+  }
+}
+
+Количество строк и колонок должно быть нечётным, чтобы сетка имела единственный центральный кадр.
+
+Пример структуры ресурсов:
+
+overview-parallax/
+
+    v_p06/
+    v_p05/
+    ...
+    v_p01/
+    v_000/
+    v_m01/
+    ...
+    v_m06/
+
+В каждой строке находятся горизонтальные кадры с последовательной нумерацией:
+
+frame_0000.jpg
+...
+frame_0006.jpg
+...
+frame_0012.jpg
+
+Центр сетки определяется автоматически:
+
+centerRow = floor(rows / 2)
+centerColumn = floor(columns / 2)
+
+Overview Parallax Viewer не содержит Editor-логики и работает как независимый Runtime-модуль.
+
+
+## В `Roadmap → Реализовано`
+
+Добавь:
+
+```md
+✓ Overview Parallax Viewer
+
+✓ Parallax frame preloading
+
+✓ Pointer-driven orbital movement
+
+✓ Circular movement constraint
+
+✓ Spring return and directional inertia
 
 Viewer не занимается:
 
@@ -504,6 +583,9 @@ develop
 - Build Pipeline
 - Deployment
 - Plugin API
+- Overview Parallax Builder validation
+- Progressive frame loading for large grids
+- Dynamic ID Pass for Overview Parallax
 
 ---
 

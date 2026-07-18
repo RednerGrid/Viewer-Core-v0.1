@@ -8,7 +8,8 @@ export async function loadModule(type) {
     object360: () => import("../modules/object360Viewer.js"),
     scrollAnimation: () => import("../modules/scrollAnimationViewer.js"),
     video: () => import("../modules/videoViewer.js"),
-    document: () => import("../modules/documentViewer.js")
+    document: () => import("../modules/documentViewer.js"),
+    plxZdepth: () => import("../modules/PLX_Zdepth.js")
   };
 
   if (!modules[type]) {

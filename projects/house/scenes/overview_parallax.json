@@ -6,8 +6,8 @@
     "path": "assets/overview-parallax/",
     "framePrefix": "frame_",
     "extension": "jpg",
-    "rows": 13,
-    "columns": 13
+    "rows":7,
+    "columns": 21
   },
   "actions": [
     {
