@@ -115,16 +115,12 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   addControls(viewer);
   animate();
 
-  const framePaths = [];
-
-  for (let i = 0; i < 80; i++) {
-    framePaths.push(
-      `${project.basePath}assets/transitions/test/frame_${String(i).padStart(4, "0")}.jpg`
-    );
-  }
-
   playPanoramaTransition({
-    framePaths,
+    basePath: project.basePath,
+    path: "assets/transitions/test/",
+    framePrefix: "frame_",
+    frameCount: 80,
+    extension: "jpg",
     fps: 20,
     reverse: false,
     setTexture: setPanoramaTexture

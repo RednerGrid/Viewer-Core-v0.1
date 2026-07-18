@@ -28,11 +28,27 @@ function wait(duration) {
 }
 
 export async function playPanoramaTransition({
-  framePaths,
+  basePath,
+  path,
+  framePrefix = "frame_",
+  frameCount,
+  extension = "jpg",
+  startFrame = 0,
+  padding = 4,
   fps = 20,
   reverse = false,
   setTexture
 }) {
+  const framePaths = buildFramePaths({
+    basePath,
+    path,
+    framePrefix,
+    frameCount,
+    extension,
+    startFrame,
+    padding
+  });
+
   const textures = await loadTextures(framePaths);
 
   playPanoramaSequence({
@@ -64,3 +80,4 @@ function buildFramePaths({
 
   return framePaths;
 }
+
