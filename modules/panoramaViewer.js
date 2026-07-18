@@ -1,3 +1,4 @@
+import { playPanoramaTransition } from "./panoramaTransitionPlayer.js";
 import { renderToolbar } from "../ui/toolbar.js";
 import {
   renderHotspots,
@@ -113,6 +114,21 @@ export async function init({ project, scene, viewer, openScene, editor }) {
 
   addControls(viewer);
   animate();
+
+  const framePaths = [];
+
+  for (let i = 0; i < 80; i++) {
+    framePaths.push(
+      `${project.basePath}assets/transitions/test/frame_${String(i).padStart(4, "0")}.jpg`
+    );
+  }
+
+  playPanoramaTransition({
+    framePaths,
+    fps: 20,
+    reverse: false,
+    setTexture: setPanoramaTexture
+  });
 }
 
 function addControls(viewer) {
@@ -247,16 +263,10 @@ function animate() {
 }
 
 export function setPanoramaTexture(texture) {
-  if (!material || !texture) return;
-
-  const previousTexture = material.map;
+  if (!material) return;
 
   material.map = texture;
   material.needsUpdate = true;
-
-  if (previousTexture && previousTexture !== texture) {
-    previousTexture.dispose();
-  }
 }
 
 export function resize() {
