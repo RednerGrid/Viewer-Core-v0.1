@@ -6,6 +6,11 @@ import {
   clearHotspots,
   selectPanoramaHotspot
 } from "../ui/hotspots.js";
+import {
+  registerViewerApi,
+  clearViewerApi
+} from "../core/viewerApi.js";
+
 
 
 let viewerRef = null;
@@ -115,9 +120,7 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   addControls(viewer);
   animate();
 
-  playTransition({
-    transition: scene.transition,
-    basePath: project.basePath,
+  registerViewerApi({
     setPanoramaTexture
   });
 }
@@ -310,6 +313,7 @@ export function destroy() {
   animationId = null;
   editorRef = null;
   activePointers.clear();
+  clearViewerApi();
 
 }
 

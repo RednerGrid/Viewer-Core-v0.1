@@ -1,5 +1,6 @@
 import { openModule } from "./moduleManager.js";
 import { fadeOut, fadeIn } from "../ui/transition.js";
+import { playTransition } from "../services/transitionService.js";
 
 
 let isTransitioning = false;
@@ -44,6 +45,12 @@ export async function openScene(project, sceneId, editor = null) {
     };
 
     await openModule(context);
+
+    await playTransition({
+      transition: activeScene.transition,
+      basePath: project.basePath
+    });
+
     await fadeIn();
   } 
   
