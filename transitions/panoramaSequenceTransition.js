@@ -1,6 +1,28 @@
 import { loadTextures } from "../services/textureLoader.js";
 
-export async function playPanoramaSequence({
+function buildFramePaths({
+  basePath,
+  path,
+  framePrefix = "frame_",
+  frameCount,
+  extension = "jpg",
+  startFrame = 0,
+  padding = 4
+}) {
+  const framePaths = [];
+
+  for (let i = 0; i < frameCount; i++) {
+    const frameNumber = String(startFrame + i).padStart(padding, "0");
+
+    framePaths.push(
+      `${basePath}${path}${framePrefix}${frameNumber}.${extension}`
+    );
+  }
+
+  return framePaths;
+}
+
+async function playPanoramaSequence({
   textures,
   fps = 20,
   reverse = false,
@@ -21,13 +43,7 @@ export async function playPanoramaSequence({
   }
 }
 
-function wait(duration) {
-  return new Promise(resolve => {
-    setTimeout(resolve, duration);
-  });
-}
-
-export async function playPanoramaTransition({
+export async function playPanoramaSequenceTransition({
   basePath,
   path,
   framePrefix = "frame_",
@@ -51,33 +67,10 @@ export async function playPanoramaTransition({
 
   const textures = await loadTextures(framePaths);
 
-  playPanoramaSequence({
+  return playPanoramaSequence({
     textures,
     fps,
     reverse,
     setTexture
   });
 }
-
-function buildFramePaths({
-  basePath,
-  path,
-  framePrefix = "frame_",
-  frameCount,
-  extension = "jpg",
-  startFrame = 0,
-  padding = 4
-}) {
-  const framePaths = [];
-
-  for (let i = 0; i < frameCount; i++) {
-    const frameNumber = String(startFrame + i).padStart(padding, "0");
-
-    framePaths.push(
-      `${basePath}${path}${framePrefix}${frameNumber}.${extension}`
-    );
-  }
-
-  return framePaths;
-}
-

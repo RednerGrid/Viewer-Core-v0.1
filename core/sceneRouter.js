@@ -46,12 +46,14 @@ export async function openScene(project, sceneId, editor = null) {
 
     await openModule(context);
 
+     await fadeIn();
+
     await playTransition({
       transition: activeScene.transition,
       basePath: project.basePath
     });
 
-    await fadeIn();
+   
   } 
   
   finally {
