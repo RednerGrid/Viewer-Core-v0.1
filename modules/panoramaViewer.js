@@ -1,4 +1,4 @@
-import { playPanoramaTransition } from "./panoramaTransitionPlayer.js";
+import { playTransition } from "../services/transitionService.js";
 import { renderToolbar } from "../ui/toolbar.js";
 import {
   renderHotspots,
@@ -115,13 +115,11 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   addControls(viewer);
   animate();
 
-if (scene.transition?.type === "panorama-sequence") {
-    playPanoramaTransition({
-      basePath: project.basePath,
-      ...scene.transition,
-      setTexture: setPanoramaTexture
-    });
-  }
+  playTransition({
+    transition: scene.transition,
+    basePath: project.basePath,
+    setPanoramaTexture
+  });
 }
 
 function addControls(viewer) {
