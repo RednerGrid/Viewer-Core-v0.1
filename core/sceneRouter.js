@@ -1,6 +1,7 @@
 import { openModule } from "./moduleManager.js";
 import { fadeOut, fadeIn } from "../ui/transition.js";
 import { playTransition } from "../services/transitionService.js";
+import { getViewerApi } from "../core/viewerApi.js";
 
 
 let isTransitioning = false;
@@ -17,14 +18,28 @@ export async function openScene(project, sceneId, editor = null) {
 
   isTransitioning = true;
 
-  try {
+try {
+  const viewerApi = getViewerApi();
+
+  const reuseViewer =
+    scene.type === "panorama" &&
+    viewerApi;
+
+  if (!reuseViewer) {
     await fadeOut();
+  }
 
-    document.getElementById("sceneTitle").textContent =
-      scene.title;
+  document.getElementById("sceneTitle").textContent =
+    scene.title;
+      const activeScene = editor
+      ? editor.beginSceneEditing(scene)
+      : scene;
 
-    const viewer = document.getElementById("viewer");
-    viewer.innerHTML = "";
+      const viewer = document.getElementById("viewer");
+
+      if (!reuseViewer) {
+        viewer.innerHTML = "";
+      }
 
     /*
       Сначала создаём редактируемую копию.
@@ -32,21 +47,42 @@ export async function openScene(project, sceneId, editor = null) {
       Viewer и Developer Tools должны работать
       с одним и тем же объектом сцены.
     */
-    const activeScene = editor
-      ? editor.beginSceneEditing(scene)
-      : scene;
+
 
     const context = {
       project,
       scene: activeScene,
       viewer,
       editor,
-      openScene: targetId => openScene(project, targetId, editor)
+      openScene: async hotspot => {
+        if (typeof hotspot === "string") {
+          return openScene(project, hotspot, editor);
+        }
+
+        if (hotspot.transition) {
+          await playTransition({
+            transition: hotspot.transition,
+            basePath: project.basePath
+          });
+        }
+
+        return openScene(project, hotspot.target, editor);
+      }
     };
 
-    await openModule(context);
+    if (reuseViewer) {
+      await getViewerApi().loadScene(
+        project,
+        activeScene,
+        context.openScene
+      );
+    } else {
+      await openModule(context);
+    }
 
-     await fadeIn();
+    if (!reuseViewer) {
+      await fadeIn();
+    }
 
     await playTransition({
       transition: activeScene.transition,

@@ -135,7 +135,7 @@ hotspotElements = hotspots.map(hotspot => {
       return;
     }
 
-    openScene(hotspot.target);
+    openScene(hotspot);
   });
 
   hotspotLayer.appendChild(el);

@@ -121,7 +121,8 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   animate();
 
   registerViewerApi({
-    setPanoramaTexture
+    setPanoramaTexture,
+    loadScene
   });
 }
 
@@ -270,6 +271,26 @@ export function resize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+async function loadScene(project, scene, openScene) {
+  const texturePath =
+    `${project.basePath}${scene.assets.image}`;
+
+  const texture = await textureLoader.loadAsync(texturePath);
+
+  setPanoramaTexture(texture);
+  setView(scene.view);
+
+  renderToolbar(scene.actions, openScene);
+
+  renderHotspots(
+    scene.hotspots ?? [],
+    openScene,
+    editorRef?.selectHotspot ?? null,
+    getHotspotPositionFromPointer,
+    editorRef?.saveHotspotPosition ?? null
+  );
 }
 
 export function update() {}
