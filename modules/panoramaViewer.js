@@ -115,16 +115,13 @@ export async function init({ project, scene, viewer, openScene, editor }) {
   addControls(viewer);
   animate();
 
-  playPanoramaTransition({
-    basePath: project.basePath,
-    path: "assets/transitions/test/",
-    framePrefix: "frame_",
-    frameCount: 80,
-    extension: "jpg",
-    fps: 20,
-    reverse: false,
-    setTexture: setPanoramaTexture
-  });
+if (scene.transition?.type === "panorama-sequence") {
+    playPanoramaTransition({
+      basePath: project.basePath,
+      ...scene.transition,
+      setTexture: setPanoramaTexture
+    });
+  }
 }
 
 function addControls(viewer) {

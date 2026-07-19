@@ -10,6 +10,19 @@
   "assets": {
     "image": "assets/panoramas/yard_pano_01.jpg"
   },
+  
+  "transition": {
+    "type": "panorama-sequence",
+    "path": "assets/transitions/test/",
+    "framePrefix": "frame_",
+    "frameCount": 80,
+    "extension": "jpg",
+    "startFrame": 0,
+    "padding": 4,
+    "fps": 20,
+    "reverse": false
+  },
+
   "hotspots": [
     {
       "id": "to_hall",
