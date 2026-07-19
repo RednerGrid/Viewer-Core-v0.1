@@ -2,37 +2,33 @@
   "id": "yard_pano_02",
   "title": "Двор 2",
   "type": "panorama",
-
   "view": {
-    "yaw": 0,
-    "pitch": 0,
+    "yaw": 49.2,
+    "pitch": -0.8,
     "fov": 60
   },
-
   "assets": {
     "image": "assets/panoramas/yard_pano_02.jpg"
   },
-
   "hotspots": [
     {
       "id": "to_yard_01",
       "title": "Назад",
-      "yaw": 180,
-      "pitch": 0,
+      "yaw": 44.7,
+      "pitch": -3.9,
       "target": "yard_pano_01",
       "transition": {
-    "type": "panorama-sequence",
-    "path": "assets/transitions/test/",
-    "framePrefix": "frame_",
-    "frameCount": 80,
-    "extension": "jpg",
-    "padding": 4,
-    "startFrame": 0,
-    "fps": 25,
-    "reverse": true
+        "type": "panorama-sequence",
+        "path": "assets/transitions/test/",
+        "framePrefix": "frame_",
+        "frameCount": 80,
+        "extension": "jpg",
+        "padding": 4,
+        "startFrame": 0,
+        "fps": 25,
+        "reverse": true
       }
     }
   ],
-
   "actions": []
 }

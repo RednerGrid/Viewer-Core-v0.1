@@ -2,23 +2,20 @@
   "id": "yard_pano_01",
   "title": "Двор 1",
   "type": "panorama",
-
   "view": {
-    "yaw": 0,
-    "pitch": 0,
+    "yaw": -140.2,
+    "pitch": 3.6,
     "fov": 60
   },
-
   "assets": {
     "image": "assets/panoramas/yard_pano_01.jpg"
   },
-
   "hotspots": [
     {
       "id": "to_yard_02",
       "title": "К следующей точке",
-      "yaw": 0,
-      "pitch": 0,
+      "yaw": -128.1,
+      "pitch": -4.1,
       "target": "yard_pano_02",
       "transition": {
         "type": "panorama-sequence",
@@ -32,6 +29,5 @@
       }
     }
   ],
-
   "actions": []
 }

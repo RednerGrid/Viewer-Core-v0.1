@@ -19,7 +19,7 @@ export function renderHotspots(
   hotspotLayer = document.createElement("div");
   hotspotLayer.className = "hotspot-layer";
 
-hotspotElements = hotspots.map(hotspot => {
+  hotspotElements = hotspots.map(hotspot => {
   const el = document.createElement("button");
 
   el.className = "hotspot-point";
@@ -145,6 +145,14 @@ hotspotElements = hotspots.map(hotspot => {
 
   document.getElementById("viewer").appendChild(hotspotLayer);
   selectPanoramaHotspot(selectedHotspotId);
+}
+
+export function hideHotspots() {
+  hotspotLayer?.style.setProperty("display", "none");
+}
+
+export function showHotspots() {
+  hotspotLayer?.style.removeProperty("display");
 }
 
 export function updatePanoramaHotspots(camera, renderer) {

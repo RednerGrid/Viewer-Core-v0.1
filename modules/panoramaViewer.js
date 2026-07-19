@@ -4,7 +4,9 @@ import {
   renderHotspots,
   updatePanoramaHotspots,
   clearHotspots,
-  selectPanoramaHotspot
+  selectPanoramaHotspot,
+  hideHotspots,
+  showHotspots
 } from "../ui/hotspots.js";
 import {
   registerViewerApi,
@@ -122,7 +124,9 @@ export async function init({ project, scene, viewer, openScene, editor }) {
 
   registerViewerApi({
     setPanoramaTexture,
-    loadScene
+    loadScene,
+    hideHotspots,
+    showHotspots
   });
 }
 
@@ -273,14 +277,32 @@ export function resize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-async function loadScene(project, scene, openScene) {
+async function loadScene(
+  project,
+  scene,
+  openScene,
+  { preserveView = false } = {}
+) {
   const texturePath =
     `${project.basePath}${scene.assets.image}`;
 
   const texture = await textureLoader.loadAsync(texturePath);
 
+  console.log("До замены:", {
+  yaw: lon,
+  pitch: lat
+  });
+  
   setPanoramaTexture(texture);
-  setView(scene.view);
+
+  console.log("После замены:", {
+  yaw: lon,
+  pitch: lat
+  });
+
+  if (!preserveView) {
+    setView(scene.view);
+  }
 
   renderToolbar(scene.actions, openScene);
 

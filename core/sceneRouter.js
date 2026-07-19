@@ -60,6 +60,10 @@ try {
         }
 
         if (hotspot.transition) {
+          const viewerApi = getViewerApi();
+
+          viewerApi?.hideHotspots();
+
           await playTransition({
             transition: hotspot.transition,
             basePath: project.basePath
@@ -70,15 +74,20 @@ try {
       }
     };
 
-    if (reuseViewer) {
-      await getViewerApi().loadScene(
-        project,
-        activeScene,
-        context.openScene
-      );
-    } else {
-      await openModule(context);
-    }
+      if (reuseViewer) {
+        const viewerApi = getViewerApi();
+
+        await viewerApi.loadScene(
+          project,
+          activeScene,
+          context.openScene,
+          { preserveView: true }
+        );
+
+        viewerApi.showHotspots();
+      } else {
+        await openModule(context);
+      }
 
     if (!reuseViewer) {
       await fadeIn();
