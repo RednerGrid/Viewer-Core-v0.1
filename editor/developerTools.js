@@ -481,6 +481,12 @@ function fillTargetSelect() {
   const editableScene = getEditableScene();
   const currentSceneId = editableScene?.id;
 
+  console.log("TARGET SELECT", {
+    currentSceneId,
+    editableScene,
+    sceneIds: Object.values(currentProject?.scenes ?? {}).map(scene => scene.id)
+  });
+
   const scenes = currentProject?.scenes ?? {};
 
   Object.values(scenes).forEach(scene => {
@@ -496,7 +502,7 @@ function fillTargetSelect() {
 
     option.value = scene.id;
     option.textContent =
-      `${scene.title || scene.id} — ${scene.id}`;
+      `${scene.id} — ${scene.title || scene.id}`;
 
     hotspotTargetSelectEl.appendChild(option);
   });

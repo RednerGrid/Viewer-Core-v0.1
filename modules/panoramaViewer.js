@@ -40,12 +40,7 @@ const hotspotPointer = new THREE.Vector2();
 let startPinchDistance = 0;
 let startPinchFov = 50;
 
-export async function init({ project, scene, viewer, openScene, editor }) {
-  viewerRef = viewer;
-  editorRef = editor;
-
-  renderToolbar(scene.actions, openScene);
-
+function syncDeveloperTools(project, openScene) {
   editorRef?.initDeveloperTools({
     project,
 
@@ -60,8 +55,17 @@ export async function init({ project, scene, viewer, openScene, editor }) {
     },
 
     setView,
-    highlightHotspot: selectPanoramaHotspot    
+    highlightHotspot: selectPanoramaHotspot
   });
+}
+
+export async function init({ project, scene, viewer, openScene, editor }) {
+  viewerRef = viewer;
+  editorRef = editor;
+
+  renderToolbar(scene.actions, openScene);
+
+  syncDeveloperTools(project, openScene);
 
   // Каждый раз сбрасываем состояние управления
   isDown = false;
@@ -313,6 +317,7 @@ async function loadScene(
     getHotspotPositionFromPointer,
     editorRef?.saveHotspotPosition ?? null
   );
+  syncDeveloperTools(project, openScene);
 }
 
 export function update() {}

@@ -24,6 +24,7 @@ export function beginEditing(scene) {
   }
 
   editableScene = editableScenes.get(scene.id);
+  console.log("BEGIN EDITING:", editableScene.id);
   isDirty = dirtySceneIds.has(scene.id);
 }
 

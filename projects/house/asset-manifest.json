@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "builderVersion": "0.3.0",
   "projectId": "house",
-  "generatedAt": "2026-07-18T18:20:56.038Z",
+  "generatedAt": "2026-08-23T20:22:38.403Z",
   "images": [
     {
       "path": "object360/house/frames/frame_0000.jpg",
@@ -1429,36 +1429,39 @@
       "size": 822249
     },
     {
-      "path": "panoramas/hall.jpg",
-      "size": 4626369
+      "path": "panoramas/Pano_01.jpg",
+      "size": 14583990
     },
     {
-      "path": "panoramas/kitchen.jpg",
-      "size": 6766257
+      "path": "panoramas/Pano_02.jpg",
+      "size": 17190594
     },
     {
-      "path": "panoramas/living_room.jpg",
-      "size": 3101752
+      "path": "panoramas/Pano_03.jpg",
+      "size": 14020573
     },
     {
-      "path": "panoramas/yard_pano_01.jpg",
-      "size": 19331151
+      "path": "panoramas/Pano_04.jpg",
+      "size": 15610001
     },
     {
-      "path": "test/beauty.jpg",
-      "size": 4825591
+      "path": "panoramas/Pano_05.jpg",
+      "size": 14042873
     },
     {
-      "path": "test/depth.png",
-      "size": 386113
+      "path": "panoramas/Pano_06.jpg",
+      "size": 13973330
+    },
+    {
+      "path": "panoramas/Pano_07.jpg",
+      "size": 13412499
+    },
+    {
+      "path": "panoramas/Pano_08.jpg",
+      "size": 11915911
     }
   ],
-  "videos": [
-    {
-      "path": "videos/promo.mp4",
-      "size": 0
-    }
-  ],
+  "videos": [],
   "documents": [
     {
       "path": "docs/brochure.pdf",
@@ -1584,6 +1587,21 @@
       "lastFrameNumber": 20,
       "firstFrame": "frame_0000.jpg",
       "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "unknown",
+      "key": "unknown:unknown",
+      "type": "unknown",
+      "path": "panoramas/",
+      "filePrefix": "Pano_",
+      "fileExtension": "jpg",
+      "padding": 2,
+      "frameCount": 8,
+      "firstFrameNumber": 1,
+      "lastFrameNumber": 8,
+      "firstFrame": "Pano_01.jpg",
+      "lastFrame": "Pano_08.jpg",
       "missingFrames": []
     }
   ]
