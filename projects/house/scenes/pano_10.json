@@ -1,0 +1,23 @@
+{
+  "id": "pano_10",
+  "title": "Pano 10",
+  "type": "panorama",
+  "view": {
+    "yaw": 0,
+    "pitch": 0,
+    "fov": 50
+  },
+  "assets": {
+    "image": "assets/panoramas/Pano_10.jpg"
+  },
+  "hotspots": [
+    {
+      "id": "to_zdepth_test",
+      "title": "Pano_05",
+      "yaw": -93.2,
+      "pitch": -9.6,
+      "target": "pano_05"
+    }
+  ],
+  "actions": []
+}
