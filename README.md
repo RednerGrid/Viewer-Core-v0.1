@@ -19,3 +19,6 @@ Interactive Presentation Platform
 2026
 
 Current version: 0.3.0
+
+npm run build:project -- house
+node tools/buildProject.js house

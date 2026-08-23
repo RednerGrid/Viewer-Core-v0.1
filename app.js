@@ -10,7 +10,11 @@ async function start() {
 
   initFullscreen();
 
-  await openScene(project, project.startScene);
+  const params = new URLSearchParams(window.location.search);
+  const editor = params.get("dev") === "1"
+    ? await import("./editor/index.js")
+    : null;
+  await openScene(project, project.startScene, editor);
 }
 
 window.addEventListener("resize", () => {

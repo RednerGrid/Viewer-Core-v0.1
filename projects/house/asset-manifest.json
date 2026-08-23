@@ -1,0 +1,1608 @@
+{
+  "schemaVersion": 2,
+  "builderVersion": "0.3.0",
+  "projectId": "house",
+  "generatedAt": "2026-08-23T20:22:38.403Z",
+  "images": [
+    {
+      "path": "object360/house/frames/frame_0000.jpg",
+      "size": 666236
+    },
+    {
+      "path": "object360/house/frames/frame_0001.jpg",
+      "size": 662521
+    },
+    {
+      "path": "object360/house/frames/frame_0002.jpg",
+      "size": 657663
+    },
+    {
+      "path": "object360/house/frames/frame_0003.jpg",
+      "size": 663970
+    },
+    {
+      "path": "object360/house/frames/frame_0004.jpg",
+      "size": 664043
+    },
+    {
+      "path": "object360/house/frames/frame_0005.jpg",
+      "size": 661403
+    },
+    {
+      "path": "object360/house/frames/frame_0006.jpg",
+      "size": 662574
+    },
+    {
+      "path": "object360/house/frames/frame_0007.jpg",
+      "size": 666902
+    },
+    {
+      "path": "object360/house/frames/frame_0008.jpg",
+      "size": 673986
+    },
+    {
+      "path": "object360/house/frames/frame_0009.jpg",
+      "size": 675022
+    },
+    {
+      "path": "object360/house/frames/frame_0010.jpg",
+      "size": 680457
+    },
+    {
+      "path": "object360/house/frames/frame_0011.jpg",
+      "size": 677901
+    },
+    {
+      "path": "object360/house/frames/frame_0012.jpg",
+      "size": 670142
+    },
+    {
+      "path": "object360/house/frames/frame_0013.jpg",
+      "size": 670627
+    },
+    {
+      "path": "object360/house/frames/frame_0014.jpg",
+      "size": 664869
+    },
+    {
+      "path": "object360/house/frames/frame_0015.jpg",
+      "size": 663569
+    },
+    {
+      "path": "object360/house/frames/frame_0016.jpg",
+      "size": 663412
+    },
+    {
+      "path": "object360/house/frames/frame_0017.jpg",
+      "size": 663685
+    },
+    {
+      "path": "object360/house/frames/frame_0018.jpg",
+      "size": 661866
+    },
+    {
+      "path": "object360/house/frames/frame_0019.jpg",
+      "size": 661039
+    },
+    {
+      "path": "object360/house/frames/frame_0020.jpg",
+      "size": 660766
+    },
+    {
+      "path": "object360/house/frames/frame_0021.jpg",
+      "size": 653705
+    },
+    {
+      "path": "object360/house/frames/frame_0022.jpg",
+      "size": 655713
+    },
+    {
+      "path": "object360/house/frames/frame_0023.jpg",
+      "size": 650612
+    },
+    {
+      "path": "object360/house/frames/frame_0024.jpg",
+      "size": 653974
+    },
+    {
+      "path": "object360/house/frames/frame_0025.jpg",
+      "size": 659265
+    },
+    {
+      "path": "object360/house/frames/frame_0026.jpg",
+      "size": 658766
+    },
+    {
+      "path": "object360/house/frames/frame_0027.jpg",
+      "size": 659105
+    },
+    {
+      "path": "object360/house/frames/frame_0028.jpg",
+      "size": 667112
+    },
+    {
+      "path": "object360/house/frames/frame_0029.jpg",
+      "size": 669052
+    },
+    {
+      "path": "object360/house/frames/frame_0030.jpg",
+      "size": 665768
+    },
+    {
+      "path": "object360/house/frames/frame_0031.jpg",
+      "size": 668894
+    },
+    {
+      "path": "object360/house/frames/frame_0032.jpg",
+      "size": 667605
+    },
+    {
+      "path": "object360/house/frames/frame_0033.jpg",
+      "size": 667813
+    },
+    {
+      "path": "object360/house/frames/frame_0034.jpg",
+      "size": 674847
+    },
+    {
+      "path": "object360/house/frames/frame_0035.jpg",
+      "size": 675202
+    },
+    {
+      "path": "object360/house/frames/frame_0036.jpg",
+      "size": 677965
+    },
+    {
+      "path": "object360/house/frames/frame_0037.jpg",
+      "size": 668627
+    },
+    {
+      "path": "object360/house/frames/frame_0038.jpg",
+      "size": 675928
+    },
+    {
+      "path": "object360/house/frames/frame_0039.jpg",
+      "size": 675178
+    },
+    {
+      "path": "object360/house/frames/frame_0040.jpg",
+      "size": 667422
+    },
+    {
+      "path": "object360/house/frames/frame_0041.jpg",
+      "size": 658465
+    },
+    {
+      "path": "object360/house/frames/frame_0042.jpg",
+      "size": 658898
+    },
+    {
+      "path": "object360/house/frames/frame_0043.jpg",
+      "size": 655308
+    },
+    {
+      "path": "object360/house/frames/frame_0044.jpg",
+      "size": 648102
+    },
+    {
+      "path": "object360/house/frames/frame_0045.jpg",
+      "size": 649085
+    },
+    {
+      "path": "object360/house/frames/frame_0046.jpg",
+      "size": 650361
+    },
+    {
+      "path": "object360/house/frames/frame_0047.jpg",
+      "size": 652999
+    },
+    {
+      "path": "object360/house/frames/frame_0048.jpg",
+      "size": 646835
+    },
+    {
+      "path": "object360/house/frames/frame_0049.jpg",
+      "size": 647868
+    },
+    {
+      "path": "object360/house/frames/frame_0050.jpg",
+      "size": 648827
+    },
+    {
+      "path": "object360/house/frames/frame_0051.jpg",
+      "size": 642751
+    },
+    {
+      "path": "object360/house/frames/frame_0052.jpg",
+      "size": 637605
+    },
+    {
+      "path": "object360/house/frames/frame_0053.jpg",
+      "size": 636390
+    },
+    {
+      "path": "object360/house/frames/frame_0054.jpg",
+      "size": 643304
+    },
+    {
+      "path": "object360/house/frames/frame_0055.jpg",
+      "size": 644218
+    },
+    {
+      "path": "object360/house/frames/frame_0056.jpg",
+      "size": 643507
+    },
+    {
+      "path": "object360/house/frames/frame_0057.jpg",
+      "size": 645272
+    },
+    {
+      "path": "object360/house/frames/frame_0058.jpg",
+      "size": 650825
+    },
+    {
+      "path": "object360/house/frames/frame_0059.jpg",
+      "size": 654136
+    },
+    {
+      "path": "object360/house/frames/frame_0060.jpg",
+      "size": 654351
+    },
+    {
+      "path": "object360/house/frames/frame_0061.jpg",
+      "size": 652800
+    },
+    {
+      "path": "object360/house/frames/frame_0062.jpg",
+      "size": 659483
+    },
+    {
+      "path": "object360/house/frames/frame_0063.jpg",
+      "size": 659743
+    },
+    {
+      "path": "object360/house/frames/frame_0064.jpg",
+      "size": 667652
+    },
+    {
+      "path": "object360/house/frames/frame_0065.jpg",
+      "size": 673592
+    },
+    {
+      "path": "object360/house/frames/frame_0066.jpg",
+      "size": 682111
+    },
+    {
+      "path": "object360/house/frames/frame_0067.jpg",
+      "size": 683677
+    },
+    {
+      "path": "object360/house/frames/frame_0068.jpg",
+      "size": 687925
+    },
+    {
+      "path": "object360/house/frames/frame_0069.jpg",
+      "size": 681165
+    },
+    {
+      "path": "object360/house/frames/frame_0070.jpg",
+      "size": 676200
+    },
+    {
+      "path": "object360/house/frames/frame_0071.jpg",
+      "size": 672969
+    },
+    {
+      "path": "object360/house/frames/frame_0072.jpg",
+      "size": 677691
+    },
+    {
+      "path": "object360/house/frames/frame_0073.jpg",
+      "size": 681314
+    },
+    {
+      "path": "object360/house/frames/frame_0074.jpg",
+      "size": 685605
+    },
+    {
+      "path": "object360/house/frames/frame_0075.jpg",
+      "size": 685348
+    },
+    {
+      "path": "object360/house/frames/frame_0076.jpg",
+      "size": 685718
+    },
+    {
+      "path": "object360/house/frames/frame_0077.jpg",
+      "size": 684372
+    },
+    {
+      "path": "object360/house/frames/frame_0078.jpg",
+      "size": 678752
+    },
+    {
+      "path": "object360/house/frames/frame_0079.jpg",
+      "size": 683795
+    },
+    {
+      "path": "object360/house/frames/frame_0080.jpg",
+      "size": 679370
+    },
+    {
+      "path": "object360/house/frames/frame_0081.jpg",
+      "size": 674624
+    },
+    {
+      "path": "object360/house/frames/frame_0082.jpg",
+      "size": 671827
+    },
+    {
+      "path": "object360/house/frames/frame_0083.jpg",
+      "size": 669899
+    },
+    {
+      "path": "object360/house/frames/frame_0084.jpg",
+      "size": 668967
+    },
+    {
+      "path": "object360/house/frames/frame_0085.jpg",
+      "size": 673636
+    },
+    {
+      "path": "object360/house/frames/frame_0086.jpg",
+      "size": 677240
+    },
+    {
+      "path": "object360/house/frames/frame_0087.jpg",
+      "size": 668675
+    },
+    {
+      "path": "object360/house/frames/frame_0088.jpg",
+      "size": 659959
+    },
+    {
+      "path": "object360/house/frames/frame_0089.jpg",
+      "size": 649273
+    },
+    {
+      "path": "object360/house/frames/frame_0090.jpg",
+      "size": 647772
+    },
+    {
+      "path": "object360/house/frames/frame_0091.jpg",
+      "size": 649334
+    },
+    {
+      "path": "object360/house/frames/frame_0092.jpg",
+      "size": 647157
+    },
+    {
+      "path": "object360/house/frames/frame_0093.jpg",
+      "size": 640131
+    },
+    {
+      "path": "object360/house/frames/frame_0094.jpg",
+      "size": 649115
+    },
+    {
+      "path": "object360/house/frames/frame_0095.jpg",
+      "size": 650328
+    },
+    {
+      "path": "object360/house/frames/frame_0096.jpg",
+      "size": 654174
+    },
+    {
+      "path": "object360/house/frames/frame_0097.jpg",
+      "size": 658054
+    },
+    {
+      "path": "object360/house/frames/frame_0098.jpg",
+      "size": 664972
+    },
+    {
+      "path": "object360/house/frames/frame_0099.jpg",
+      "size": 665668
+    },
+    {
+      "path": "object360/house/frames/frame_0100.jpg",
+      "size": 663169
+    },
+    {
+      "path": "object360/house/frames/frame_0101.jpg",
+      "size": 670867
+    },
+    {
+      "path": "object360/house/frames/frame_0102.jpg",
+      "size": 671248
+    },
+    {
+      "path": "object360/house/frames/frame_0103.jpg",
+      "size": 662778
+    },
+    {
+      "path": "object360/house/frames/frame_0104.jpg",
+      "size": 656399
+    },
+    {
+      "path": "object360/house/frames/frame_0105.jpg",
+      "size": 658583
+    },
+    {
+      "path": "object360/house/frames/frame_0106.jpg",
+      "size": 656999
+    },
+    {
+      "path": "object360/house/frames/frame_0107.jpg",
+      "size": 661039
+    },
+    {
+      "path": "object360/house/frames/frame_0108.jpg",
+      "size": 657106
+    },
+    {
+      "path": "object360/house/frames/frame_0109.jpg",
+      "size": 649343
+    },
+    {
+      "path": "object360/house/frames/frame_0110.jpg",
+      "size": 647758
+    },
+    {
+      "path": "object360/house/frames/frame_0111.jpg",
+      "size": 648086
+    },
+    {
+      "path": "object360/house/frames/frame_0112.jpg",
+      "size": 645882
+    },
+    {
+      "path": "object360/house/frames/frame_0113.jpg",
+      "size": 647097
+    },
+    {
+      "path": "object360/house/frames/frame_0114.jpg",
+      "size": 646501
+    },
+    {
+      "path": "object360/house/frames/frame_0115.jpg",
+      "size": 645030
+    },
+    {
+      "path": "object360/house/frames/frame_0116.jpg",
+      "size": 643429
+    },
+    {
+      "path": "object360/house/frames/frame_0117.jpg",
+      "size": 643540
+    },
+    {
+      "path": "object360/house/frames/frame_0118.jpg",
+      "size": 646256
+    },
+    {
+      "path": "object360/house/frames/frame_0119.jpg",
+      "size": 644484
+    },
+    {
+      "path": "object360/house/frames/frame_0120.jpg",
+      "size": 642177
+    },
+    {
+      "path": "object360/house/frames/frame_0121.jpg",
+      "size": 647512
+    },
+    {
+      "path": "object360/house/frames/frame_0122.jpg",
+      "size": 647386
+    },
+    {
+      "path": "object360/house/frames/frame_0123.jpg",
+      "size": 647361
+    },
+    {
+      "path": "object360/house/frames/frame_0124.jpg",
+      "size": 649140
+    },
+    {
+      "path": "object360/house/frames/frame_0125.jpg",
+      "size": 649266
+    },
+    {
+      "path": "object360/house/frames/frame_0126.jpg",
+      "size": 649903
+    },
+    {
+      "path": "object360/house/frames/frame_0127.jpg",
+      "size": 656904
+    },
+    {
+      "path": "object360/house/frames/frame_0128.jpg",
+      "size": 664157
+    },
+    {
+      "path": "object360/house/frames/frame_0129.jpg",
+      "size": 665836
+    },
+    {
+      "path": "object360/house/frames/frame_0130.jpg",
+      "size": 667146
+    },
+    {
+      "path": "object360/house/frames/frame_0131.jpg",
+      "size": 667421
+    },
+    {
+      "path": "object360/house/frames/frame_0132.jpg",
+      "size": 673091
+    },
+    {
+      "path": "object360/house/frames/frame_0133.jpg",
+      "size": 679768
+    },
+    {
+      "path": "object360/house/frames/frame_0134.jpg",
+      "size": 682425
+    },
+    {
+      "path": "object360/house/frames/frame_0135.jpg",
+      "size": 687065
+    },
+    {
+      "path": "object360/house/frames/frame_0136.jpg",
+      "size": 685478
+    },
+    {
+      "path": "object360/house/frames/frame_0137.jpg",
+      "size": 679688
+    },
+    {
+      "path": "object360/house/frames/frame_0138.jpg",
+      "size": 679154
+    },
+    {
+      "path": "object360/house/frames/frame_0139.jpg",
+      "size": 676226
+    },
+    {
+      "path": "object360/house/frames/frame_0140.jpg",
+      "size": 669506
+    },
+    {
+      "path": "object360/house/frames/frame_0141.jpg",
+      "size": 668753
+    },
+    {
+      "path": "object360/house/frames/frame_0142.jpg",
+      "size": 665853
+    },
+    {
+      "path": "object360/house/frames/frame_0143.jpg",
+      "size": 663031
+    },
+    {
+      "path": "object360/house/frames/frame_0144.jpg",
+      "size": 664586
+    },
+    {
+      "path": "object360/house/frames/frame_0145.jpg",
+      "size": 665992
+    },
+    {
+      "path": "object360/house/frames/frame_0146.jpg",
+      "size": 665194
+    },
+    {
+      "path": "object360/house/frames/frame_0147.jpg",
+      "size": 664024
+    },
+    {
+      "path": "object360/house/frames/frame_0148.jpg",
+      "size": 663182
+    },
+    {
+      "path": "object360/house/frames/frame_0149.jpg",
+      "size": 667910
+    },
+    {
+      "path": "object360/house/frames/frame_0150.jpg",
+      "size": 669742
+    },
+    {
+      "path": "object360/house/frames/frame_0151.jpg",
+      "size": 670759
+    },
+    {
+      "path": "object360/house/frames/frame_0152.jpg",
+      "size": 677308
+    },
+    {
+      "path": "object360/house/frames/frame_0153.jpg",
+      "size": 682906
+    },
+    {
+      "path": "object360/house/frames/frame_0154.jpg",
+      "size": 681699
+    },
+    {
+      "path": "object360/house/frames/frame_0155.jpg",
+      "size": 688839
+    },
+    {
+      "path": "object360/house/frames/frame_0156.jpg",
+      "size": 687217
+    },
+    {
+      "path": "object360/house/frames/frame_0157.jpg",
+      "size": 688482
+    },
+    {
+      "path": "object360/house/frames/frame_0158.jpg",
+      "size": 689639
+    },
+    {
+      "path": "object360/house/frames/frame_0159.jpg",
+      "size": 685730
+    },
+    {
+      "path": "object360/house/frames/frame_0160.jpg",
+      "size": 687559
+    },
+    {
+      "path": "object360/house/frames/frame_0161.jpg",
+      "size": 683835
+    },
+    {
+      "path": "object360/house/frames/frame_0162.jpg",
+      "size": 677869
+    },
+    {
+      "path": "object360/house/frames/frame_0163.jpg",
+      "size": 683297
+    },
+    {
+      "path": "object360/house/frames/frame_0164.jpg",
+      "size": 685936
+    },
+    {
+      "path": "object360/house/frames/frame_0165.jpg",
+      "size": 682559
+    },
+    {
+      "path": "object360/house/frames/frame_0166.jpg",
+      "size": 687250
+    },
+    {
+      "path": "object360/house/frames/frame_0167.jpg",
+      "size": 685993
+    },
+    {
+      "path": "object360/house/frames/frame_0168.jpg",
+      "size": 683285
+    },
+    {
+      "path": "object360/house/frames/frame_0169.jpg",
+      "size": 690956
+    },
+    {
+      "path": "object360/house/frames/frame_0170.jpg",
+      "size": 691732
+    },
+    {
+      "path": "object360/house/frames/frame_0171.jpg",
+      "size": 699832
+    },
+    {
+      "path": "object360/house/frames/frame_0172.jpg",
+      "size": 696362
+    },
+    {
+      "path": "object360/house/frames/frame_0173.jpg",
+      "size": 694908
+    },
+    {
+      "path": "object360/house/frames/frame_0174.jpg",
+      "size": 692685
+    },
+    {
+      "path": "object360/house/frames/frame_0175.jpg",
+      "size": 694179
+    },
+    {
+      "path": "object360/house/frames/frame_0176.jpg",
+      "size": 694636
+    },
+    {
+      "path": "object360/house/frames/frame_0177.jpg",
+      "size": 688210
+    },
+    {
+      "path": "object360/house/frames/frame_0178.jpg",
+      "size": 684081
+    },
+    {
+      "path": "overview/day.jpg",
+      "size": 3154051
+    },
+    {
+      "path": "overview/evening.jpg",
+      "size": 2824004
+    },
+    {
+      "path": "overview/house_hover.png",
+      "size": 6833216
+    },
+    {
+      "path": "overview/idmap.png",
+      "size": 94947
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0000.jpg",
+      "size": 808328
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0001.jpg",
+      "size": 809506
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0002.jpg",
+      "size": 810367
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0003.jpg",
+      "size": 810111
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0004.jpg",
+      "size": 812123
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0005.jpg",
+      "size": 811758
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0006.jpg",
+      "size": 811926
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0007.jpg",
+      "size": 813335
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0008.jpg",
+      "size": 813838
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0009.jpg",
+      "size": 814718
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0010.jpg",
+      "size": 815515
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0011.jpg",
+      "size": 816100
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0012.jpg",
+      "size": 816903
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0013.jpg",
+      "size": 817219
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0014.jpg",
+      "size": 817702
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0015.jpg",
+      "size": 818207
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0016.jpg",
+      "size": 818145
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0017.jpg",
+      "size": 820016
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0018.jpg",
+      "size": 820106
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0019.jpg",
+      "size": 821568
+    },
+    {
+      "path": "overview-parallax/v_000/frame_0020.jpg",
+      "size": 820622
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0000.jpg",
+      "size": 807862
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0001.jpg",
+      "size": 808491
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0002.jpg",
+      "size": 808967
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0003.jpg",
+      "size": 810860
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0004.jpg",
+      "size": 810417
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0005.jpg",
+      "size": 810622
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0006.jpg",
+      "size": 812285
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0007.jpg",
+      "size": 812644
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0008.jpg",
+      "size": 813604
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0009.jpg",
+      "size": 814782
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0010.jpg",
+      "size": 816108
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0011.jpg",
+      "size": 815190
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0012.jpg",
+      "size": 816376
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0013.jpg",
+      "size": 817304
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0014.jpg",
+      "size": 817101
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0015.jpg",
+      "size": 818386
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0016.jpg",
+      "size": 817276
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0017.jpg",
+      "size": 817334
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0018.jpg",
+      "size": 819962
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0019.jpg",
+      "size": 820457
+    },
+    {
+      "path": "overview-parallax/v_m01/frame_0020.jpg",
+      "size": 821442
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0000.jpg",
+      "size": 801557
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0000_1.jpg",
+      "size": 1197735
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0001.jpg",
+      "size": 801919
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0001_1.jpg",
+      "size": 1200380
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0002.jpg",
+      "size": 802743
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0002_1.jpg",
+      "size": 1201096
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0003.jpg",
+      "size": 803433
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0003_1.jpg",
+      "size": 1202436
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0004.jpg",
+      "size": 802650
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0004_1.jpg",
+      "size": 1204994
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0005.jpg",
+      "size": 803262
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0005_1.jpg",
+      "size": 1206444
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0006.jpg",
+      "size": 804385
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0006_1.jpg",
+      "size": 1207769
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0007.jpg",
+      "size": 804473
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0007_1.jpg",
+      "size": 1209026
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0008.jpg",
+      "size": 805665
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0008_1.jpg",
+      "size": 1209986
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0009.jpg",
+      "size": 806500
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0009_1.jpg",
+      "size": 1212234
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0010.jpg",
+      "size": 807590
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0010_1.jpg",
+      "size": 1213063
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0011.jpg",
+      "size": 808855
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0011_1.jpg",
+      "size": 1215996
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0012.jpg",
+      "size": 808852
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0012_1.jpg",
+      "size": 1216786
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0013.jpg",
+      "size": 809184
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0014.jpg",
+      "size": 809656
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0015.jpg",
+      "size": 809797
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0016.jpg",
+      "size": 809870
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0017.jpg",
+      "size": 810746
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0018.jpg",
+      "size": 810293
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0019.jpg",
+      "size": 811550
+    },
+    {
+      "path": "overview-parallax/v_m02/frame_0020.jpg",
+      "size": 813019
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0000.jpg",
+      "size": 800471
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0000_1.jpg",
+      "size": 1198056
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0001.jpg",
+      "size": 801151
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0001_1.jpg",
+      "size": 1199426
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0002.jpg",
+      "size": 801457
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0002_1.jpg",
+      "size": 1201094
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0003.jpg",
+      "size": 802267
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0003_1.jpg",
+      "size": 1202957
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0004.jpg",
+      "size": 804185
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0004_1.jpg",
+      "size": 1204305
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0005.jpg",
+      "size": 803232
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0005_1.jpg",
+      "size": 1206284
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0006.jpg",
+      "size": 803483
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0006_1.jpg",
+      "size": 1205506
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0007.jpg",
+      "size": 805057
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0007_1.jpg",
+      "size": 1208341
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0008.jpg",
+      "size": 805902
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0008_1.jpg",
+      "size": 1210733
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0009.jpg",
+      "size": 806256
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0009_1.jpg",
+      "size": 1212517
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0010.jpg",
+      "size": 806976
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0010_1.jpg",
+      "size": 1213217
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0011.jpg",
+      "size": 807118
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0011_1.jpg",
+      "size": 1215165
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0012.jpg",
+      "size": 807752
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0012_1.jpg",
+      "size": 1216768
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0013.jpg",
+      "size": 808527
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0014.jpg",
+      "size": 808055
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0015.jpg",
+      "size": 808929
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0016.jpg",
+      "size": 810500
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0017.jpg",
+      "size": 809956
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0018.jpg",
+      "size": 810349
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0019.jpg",
+      "size": 810833
+    },
+    {
+      "path": "overview-parallax/v_m03/frame_0020.jpg",
+      "size": 811729
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0000.jpg",
+      "size": 807402
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0001.jpg",
+      "size": 809553
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0002.jpg",
+      "size": 810156
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0003.jpg",
+      "size": 810121
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0004.jpg",
+      "size": 811528
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0005.jpg",
+      "size": 812783
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0006.jpg",
+      "size": 812036
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0007.jpg",
+      "size": 812620
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0008.jpg",
+      "size": 813539
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0009.jpg",
+      "size": 815195
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0010.jpg",
+      "size": 815040
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0011.jpg",
+      "size": 816842
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0012.jpg",
+      "size": 817616
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0013.jpg",
+      "size": 818573
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0014.jpg",
+      "size": 819731
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0015.jpg",
+      "size": 819435
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0016.jpg",
+      "size": 819358
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0017.jpg",
+      "size": 820604
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0018.jpg",
+      "size": 819978
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0019.jpg",
+      "size": 822238
+    },
+    {
+      "path": "overview-parallax/v_p01/frame_0020.jpg",
+      "size": 821353
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0000.jpg",
+      "size": 808541
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0001.jpg",
+      "size": 810564
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0002.jpg",
+      "size": 811205
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0003.jpg",
+      "size": 811872
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0004.jpg",
+      "size": 812095
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0005.jpg",
+      "size": 812928
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0006.jpg",
+      "size": 812905
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0007.jpg",
+      "size": 813952
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0008.jpg",
+      "size": 814291
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0009.jpg",
+      "size": 815284
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0010.jpg",
+      "size": 817113
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0011.jpg",
+      "size": 816844
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0012.jpg",
+      "size": 818101
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0013.jpg",
+      "size": 817038
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0014.jpg",
+      "size": 817919
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0015.jpg",
+      "size": 819413
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0016.jpg",
+      "size": 819716
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0017.jpg",
+      "size": 820082
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0018.jpg",
+      "size": 820479
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0019.jpg",
+      "size": 819764
+    },
+    {
+      "path": "overview-parallax/v_p02/frame_0020.jpg",
+      "size": 821234
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0000.jpg",
+      "size": 811324
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0001.jpg",
+      "size": 810662
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0002.jpg",
+      "size": 811359
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0003.jpg",
+      "size": 811645
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0004.jpg",
+      "size": 811274
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0005.jpg",
+      "size": 814074
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0006.jpg",
+      "size": 813591
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0007.jpg",
+      "size": 814272
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0008.jpg",
+      "size": 815561
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0009.jpg",
+      "size": 814476
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0010.jpg",
+      "size": 816409
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0011.jpg",
+      "size": 818049
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0012.jpg",
+      "size": 818254
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0013.jpg",
+      "size": 818559
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0014.jpg",
+      "size": 819463
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0015.jpg",
+      "size": 819886
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0016.jpg",
+      "size": 820525
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0017.jpg",
+      "size": 820316
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0018.jpg",
+      "size": 821415
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0019.jpg",
+      "size": 821659
+    },
+    {
+      "path": "overview-parallax/v_p03/frame_0020.jpg",
+      "size": 822249
+    },
+    {
+      "path": "panoramas/Pano_01.jpg",
+      "size": 14583990
+    },
+    {
+      "path": "panoramas/Pano_02.jpg",
+      "size": 17190594
+    },
+    {
+      "path": "panoramas/Pano_03.jpg",
+      "size": 14020573
+    },
+    {
+      "path": "panoramas/Pano_04.jpg",
+      "size": 15610001
+    },
+    {
+      "path": "panoramas/Pano_05.jpg",
+      "size": 14042873
+    },
+    {
+      "path": "panoramas/Pano_06.jpg",
+      "size": 13973330
+    },
+    {
+      "path": "panoramas/Pano_07.jpg",
+      "size": 13412499
+    },
+    {
+      "path": "panoramas/Pano_08.jpg",
+      "size": 11915911
+    }
+  ],
+  "videos": [],
+  "documents": [
+    {
+      "path": "docs/brochure.pdf",
+      "size": 0
+    }
+  ],
+  "sequences": [
+    {
+      "id": "house",
+      "key": "object360:house",
+      "type": "object360",
+      "path": "object360/house/frames/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 179,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 178,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0178.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_000",
+      "key": "overviewParallax:v_000",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_000/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_m01",
+      "key": "overviewParallax:v_m01",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_m01/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_m02__frame",
+      "key": "overviewParallax:v_m02__frame",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_m02/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_m03__frame",
+      "key": "overviewParallax:v_m03__frame",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_m03/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_p01",
+      "key": "overviewParallax:v_p01",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_p01/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_p02",
+      "key": "overviewParallax:v_p02",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_p02/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "v_p03",
+      "key": "overviewParallax:v_p03",
+      "type": "overviewParallax",
+      "path": "overview-parallax/v_p03/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 21,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 20,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0020.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "unknown",
+      "key": "unknown:unknown",
+      "type": "unknown",
+      "path": "panoramas/",
+      "filePrefix": "Pano_",
+      "fileExtension": "jpg",
+      "padding": 2,
+      "frameCount": 8,
+      "firstFrameNumber": 1,
+      "lastFrameNumber": 8,
+      "firstFrame": "Pano_01.jpg",
+      "lastFrame": "Pano_08.jpg",
+      "missingFrames": []
+    }
+  ]
+}

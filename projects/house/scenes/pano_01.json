@@ -1,0 +1,37 @@
+{
+  "id": "pano_01",
+  "title": "Pano 01",
+  "type": "panorama",
+  "view": {
+    "yaw": -28.8,
+    "pitch": -1.8,
+    "fov": 50
+  },
+  "assets": {
+    "image": "assets/panoramas/Pano_01.jpg"
+  },
+  "hotspots": [
+    {
+      "id": "to_zdepth_test",
+      "title": "Pano_2",
+      "yaw": 0.6,
+      "pitch": -10.2,
+      "target": "pano_02"
+    },
+    {
+      "id": "to_zdepth_test_2",
+      "title": "Pano_3",
+      "yaw": -42.2,
+      "pitch": -9,
+      "target": "pano_03"
+    },
+    {
+      "id": "to_zdepth_test_3",
+      "title": "Pano_5",
+      "yaw": -19.6,
+      "pitch": -3.2,
+      "target": "pano_05"
+    }
+  ],
+  "actions": []
+}

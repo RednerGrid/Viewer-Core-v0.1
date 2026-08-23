@@ -1,9 +1,12 @@
 import { openModule } from "./moduleManager.js";
 import { fadeOut, fadeIn } from "../ui/transition.js";
+import { playTransition } from "../services/transitionService.js";
+import { getViewerApi } from "../core/viewerApi.js";
+
 
 let isTransitioning = false;
 
-export async function openScene(project, sceneId) {
+export async function openScene(project, sceneId, editor = null) {
   if (isTransitioning) return;
 
   const scene = project.scenes[sceneId];
@@ -15,23 +18,90 @@ export async function openScene(project, sceneId) {
 
   isTransitioning = true;
 
-  await fadeOut();
+try {
+  const viewerApi = getViewerApi();
 
-  document.getElementById("sceneTitle").textContent = scene.title;
+  const reuseViewer =
+    scene.type === "panorama" &&
+    viewerApi;
 
-  const viewer = document.getElementById("viewer");
-  viewer.innerHTML = "";
+  if (!reuseViewer) {
+    await fadeOut();
+  }
 
-  const context = {
-    project,
-    scene,
-    viewer,
-    openScene: (targetId) => openScene(project, targetId)
-  };
+  document.getElementById("sceneTitle").textContent =
+    scene.title;
+      const activeScene = editor
+      ? editor.beginSceneEditing(scene)
+      : scene;
 
-  await openModule(context);
+      const viewer = document.getElementById("viewer");
 
-  await fadeIn();
+      if (!reuseViewer) {
+        viewer.innerHTML = "";
+      }
 
-  isTransitioning = false;
+    /*
+      Сначала создаём редактируемую копию.
+
+      Viewer и Developer Tools должны работать
+      с одним и тем же объектом сцены.
+    */
+
+
+    const context = {
+      project,
+      scene: activeScene,
+      viewer,
+      editor,
+      openScene: async hotspot => {
+        if (typeof hotspot === "string") {
+          return openScene(project, hotspot, editor);
+        }
+
+        if (hotspot.transition) {
+          const viewerApi = getViewerApi();
+
+          viewerApi?.hideHotspots();
+
+          await playTransition({
+            transition: hotspot.transition,
+            basePath: project.basePath
+          });
+        }
+
+        return openScene(project, hotspot.target, editor);
+      }
+    };
+
+      if (reuseViewer) {
+        const viewerApi = getViewerApi();
+
+        await viewerApi.loadScene(
+          project,
+          activeScene,
+          context.openScene,
+          { preserveView: true }
+        );
+
+        viewerApi.showHotspots();
+      } else {
+        await openModule(context);
+      }
+
+    if (!reuseViewer) {
+      await fadeIn();
+    }
+
+    await playTransition({
+      transition: activeScene.transition,
+      basePath: project.basePath
+    });
+
+   
+  } 
+  
+  finally {
+    isTransitioning = false;
+  }
 }

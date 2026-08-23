@@ -1,16 +1,29 @@
+import { playTransition } from "../services/transitionService.js";
 import { renderToolbar } from "../ui/toolbar.js";
-import { renderHotspots, updatePanoramaHotspots, clearHotspots } from "../ui/hotspots.js";
 import {
-  initDeveloperTools,
-  updateDeveloperView,
-  destroyDeveloperTools
-} from "../ui/developerTools.js";
+  renderHotspots,
+  updatePanoramaHotspots,
+  clearHotspots,
+  selectPanoramaHotspot,
+  hideHotspots,
+  showHotspots
+} from "../ui/hotspots.js";
+import {
+  registerViewerApi,
+  clearViewerApi
+} from "../core/viewerApi.js";
+
+
 
 let viewerRef = null;
 let renderer = null;
 let scene3d = null;
 let camera = null;
 let animationId = null;
+let editorRef = null;
+let sphere = null;
+let material = null;
+let textureLoader = null;
 
 let lon = 0;
 let lat = 0;
@@ -21,14 +34,38 @@ let startX = 0;
 let startY = 0;
 
 const activePointers = new Map();
+const hotspotRaycaster = new THREE.Raycaster();
+const hotspotPointer = new THREE.Vector2();
+
 let startPinchDistance = 0;
 let startPinchFov = 50;
 
-export async function init({ project, scene, viewer, openScene }) {
+function syncDeveloperTools(project, openScene) {
+  editorRef?.initDeveloperTools({
+    project,
+
+    onSceneChange: editableScene => {
+      renderHotspots(
+        editableScene.hotspots ?? [],
+        openScene,
+        editorRef?.selectHotspot ?? null,
+        getHotspotPositionFromPointer,
+        editorRef?.saveHotspotPosition ?? null
+      );
+    },
+
+    setView,
+    highlightHotspot: selectPanoramaHotspot
+  });
+}
+
+export async function init({ project, scene, viewer, openScene, editor }) {
   viewerRef = viewer;
+  editorRef = editor;
 
   renderToolbar(scene.actions, openScene);
-  initDeveloperTools();
+
+  syncDeveloperTools(project, openScene);
 
   // Каждый раз сбрасываем состояние управления
   isDown = false;
@@ -66,19 +103,35 @@ export async function init({ project, scene, viewer, openScene }) {
   geometry.scale(-1, 1, 1);
 
   const texturePath = `${project.basePath}${scene.assets.image}`;
-  const texture = new THREE.TextureLoader().load(texturePath);
 
-  const material = new THREE.MeshBasicMaterial({
+  textureLoader = new THREE.TextureLoader();
+
+  const texture = textureLoader.load(texturePath);
+
+  material = new THREE.MeshBasicMaterial({
     map: texture
   });
 
-  const sphere = new THREE.Mesh(geometry, material);
+  sphere = new THREE.Mesh(geometry, material);
   scene3d.add(sphere);
 
-  renderHotspots(scene.hotspots, openScene);
+  renderHotspots(
+    scene.hotspots,
+    openScene,
+    editorRef?.selectHotspot ?? null,
+    getHotspotPositionFromPointer,
+    editorRef?.saveHotspotPosition ?? null
+  );
 
   addControls(viewer);
   animate();
+
+  registerViewerApi({
+    setPanoramaTexture,
+    loadScene,
+    hideHotspots,
+    showHotspots
+  });
 }
 
 function addControls(viewer) {
@@ -185,7 +238,7 @@ function animate() {
   animationId = requestAnimationFrame(animate);
 
   lat = Math.max(-45, Math.min(45, lat));
-  updateDeveloperView({
+  editorRef?.updateDeveloperView({
   yaw: lon,
   pitch: lat,
   fov: camera.fov
@@ -212,6 +265,13 @@ function animate() {
   updatePanoramaHotspots(camera, renderer);
 }
 
+export function setPanoramaTexture(texture) {
+  if (!material) return;
+
+  material.map = texture;
+  material.needsUpdate = true;
+}
+
 export function resize() {
   if (!renderer || !camera) return;
 
@@ -221,10 +281,49 @@ export function resize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+async function loadScene(
+  project,
+  scene,
+  openScene,
+  { preserveView = false } = {}
+) {
+  const texturePath =
+    `${project.basePath}${scene.assets.image}`;
+
+  const texture = await textureLoader.loadAsync(texturePath);
+
+  console.log("До замены:", {
+  yaw: lon,
+  pitch: lat
+  });
+  
+  setPanoramaTexture(texture);
+
+  console.log("После замены:", {
+  yaw: lon,
+  pitch: lat
+  });
+
+  if (!preserveView) {
+    setView(scene.view);
+  }
+
+  renderToolbar(scene.actions, openScene);
+
+  renderHotspots(
+    scene.hotspots ?? [],
+    openScene,
+    editorRef?.selectHotspot ?? null,
+    getHotspotPositionFromPointer,
+    editorRef?.saveHotspotPosition ?? null
+  );
+  syncDeveloperTools(project, openScene);
+}
+
 export function update() {}
 
 export function destroy() {
-  destroyDeveloperTools();
+  editorRef?.destroyDeveloperTools();
   clearHotspots();
   removeControls();
 
@@ -232,6 +331,18 @@ export function destroy() {
     cancelAnimationFrame(animationId);
   }
 
+  if (material?.map) {
+    material.map.dispose();
+  }
+
+  if (material) {
+    material.dispose();
+  }
+
+  if (sphere?.geometry) {
+    sphere.geometry.dispose();
+  }
+  
   if (renderer) {
     renderer.dispose();
   }
@@ -244,6 +355,61 @@ export function destroy() {
   renderer = null;
   scene3d = null;
   camera = null;
+  sphere = null;
+  material = null;
+  textureLoader = null;
   animationId = null;
+  editorRef = null;
   activePointers.clear();
+  clearViewerApi();
+
+}
+
+function setView({
+  yaw,
+  pitch,
+  fov
+}) {
+  lon = Number(yaw);
+  lat = Number(pitch);
+
+  if (fov !== undefined) {
+    targetFov = Number(fov);
+  }
+}
+
+function getHotspotPositionFromPointer({ clientX, clientY }) {
+  if (!renderer || !camera) return null;
+
+  const rect = renderer.domElement.getBoundingClientRect();
+
+  hotspotPointer.x =
+    ((clientX - rect.left) / rect.width) * 2 - 1;
+
+  hotspotPointer.y =
+    -((clientY - rect.top) / rect.height) * 2 + 1;
+
+  hotspotRaycaster.setFromCamera(hotspotPointer, camera);
+
+  const direction =
+    hotspotRaycaster.ray.direction.clone().normalize();
+
+  const yaw = THREE.MathUtils.radToDeg(
+    Math.atan2(direction.z, direction.x)
+  );
+
+  const pitch = THREE.MathUtils.radToDeg(
+    Math.asin(
+      THREE.MathUtils.clamp(direction.y, -1, 1)
+    )
+  );
+
+  return {
+    yaw,
+    pitch
+  };
+}
+
+export function replaceTexture(path) {
+
 }

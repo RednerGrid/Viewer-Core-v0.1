@@ -3,12 +3,8 @@
   "title": "Облет дома",
   "type": "object360",
   "assets": {
-    "framesPath": "assets/object360/house/frames/",
-    "frameCount": 89,
-    "filePrefix": "frame_",
-    "fileExtension": "jpg",
-    "padding": 4
-  },
+  "sequence": "object360:house"
+},
   "actions": [
     {
       "id": "backOverview",
