@@ -31,6 +31,13 @@
       "yaw": -19.6,
       "pitch": -3.2,
       "target": "pano_05"
+    },
+    {
+      "id": "to_zdepth_test_4",
+      "title": "Pano_11",
+      "yaw": -95,
+      "pitch": -6.2,
+      "target": "pano_11"
     }
   ],
   "actions": []
