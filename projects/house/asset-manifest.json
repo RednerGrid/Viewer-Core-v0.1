@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "builderVersion": "0.3.0",
   "projectId": "house",
-  "generatedAt": "2026-08-23T20:22:38.403Z",
+  "generatedAt": "2026-08-23T20:50:36.931Z",
   "images": [
     {
       "path": "object360/house/frames/frame_0000.jpg",
@@ -1459,6 +1459,18 @@
     {
       "path": "panoramas/Pano_08.jpg",
       "size": 11915911
+    },
+    {
+      "path": "panoramas/Pano_09.jpg",
+      "size": 14094922
+    },
+    {
+      "path": "panoramas/Pano_10.jpg",
+      "size": 19567668
+    },
+    {
+      "path": "panoramas/Pano_11.jpg",
+      "size": 16198708
     }
   ],
   "videos": [],
@@ -1597,11 +1609,11 @@
       "filePrefix": "Pano_",
       "fileExtension": "jpg",
       "padding": 2,
-      "frameCount": 8,
+      "frameCount": 11,
       "firstFrameNumber": 1,
-      "lastFrameNumber": 8,
+      "lastFrameNumber": 11,
       "firstFrame": "Pano_01.jpg",
-      "lastFrame": "Pano_08.jpg",
+      "lastFrame": "Pano_11.jpg",
       "missingFrames": []
     }
   ]
