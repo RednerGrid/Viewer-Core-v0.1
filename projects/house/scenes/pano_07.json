@@ -30,7 +30,13 @@
       "title": "Pano_01",
       "yaw": -200.2,
       "pitch": -2.8,
-      "target": "pano_01"
+      "target": "pano_01",
+      "transition": {
+        "type": "panorama-video",
+        "path": "assets/transitions/forward.mp4",
+        "reversePath": "assets/transitions/reverse.mp4"
+      }
+      
     },
     {
       "id": "to_zdepth_test_4",

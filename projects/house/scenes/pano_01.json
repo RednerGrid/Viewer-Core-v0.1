@@ -28,8 +28,8 @@
     {
       "id": "to_zdepth_test_3",
       "title": "Pano_5",
-      "yaw": -19.6,
-      "pitch": -3.2,
+      "yaw": -18.8,
+      "pitch": -3.8,
       "target": "pano_05"
     },
     {
@@ -38,6 +38,18 @@
       "yaw": -95,
       "pitch": -6.2,
       "target": "pano_11"
+    },
+    {
+      "id": "to_zdepth_test_5",
+      "title": "Pano_07",
+      "yaw": -21.6,
+      "pitch": -2.6,
+      "target": "pano_07",
+      "transition": {
+        "type": "panorama-video",
+        "path": "assets/transitions/reverse.mp4",
+        "reversePath": "assets/transitions/forward.mp4"
+      }
     }
   ],
   "actions": []
