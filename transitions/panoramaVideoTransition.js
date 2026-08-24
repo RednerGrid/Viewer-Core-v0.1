@@ -1,4 +1,9 @@
+const MOVE_SPEED = 0.8;
+const START_SPEED = 0.12;
 
+const ACCELERATION_TIME = 300;
+const DECELERATION_TIME = 180;
+let speedAnimationId = null;
 
 export async function playPanoramaVideoTransition({
   basePath,
@@ -40,6 +45,7 @@ export async function playPanoramaVideoTransition({
   reverseTexture.needsUpdate = true;
 
   let activeDirection = null;
+ 
 
   setTexture(forwardTexture);
 
@@ -65,6 +71,17 @@ export async function playPanoramaVideoTransition({
       }
 
       setTexture(forwardTexture);
+      forwardVideo.playbackRate = START_SPEED;
+
+      activeDirection = "forward";
+
+      await forwardVideo.play();
+
+      animatePlaybackRate(
+        forwardVideo,
+        MOVE_SPEED,
+        ACCELERATION_TIME
+      );
 
       activeDirection = "forward";
 
@@ -95,6 +112,17 @@ export async function playPanoramaVideoTransition({
     }
 
       setTexture(reverseTexture);
+      reverseVideo.playbackRate = START_SPEED;
+
+      activeDirection = "reverse";
+
+      await reverseVideo.play();
+
+      animatePlaybackRate(
+        reverseVideo,
+        MOVE_SPEED,
+        ACCELERATION_TIME
+      );
 
       activeDirection = "reverse";
 
@@ -109,8 +137,25 @@ export async function playPanoramaVideoTransition({
     };
 
     const stop = () => {
-      forwardVideo.pause();
-      reverseVideo.pause();      
+      const activeVideo =
+        activeDirection === "forward"
+          ? forwardVideo
+          : activeDirection === "reverse"
+            ? reverseVideo
+            : null;
+
+      if (!activeVideo || activeVideo.paused) {
+        return;
+      }
+
+      animatePlaybackRate(
+        activeVideo,
+        START_SPEED,
+        DECELERATION_TIME,
+        () => {
+          activeVideo.pause();
+        }
+      );
     };
 
     const onKeyDown = event => {
@@ -251,4 +296,47 @@ function waitForSeek(video) {
       { once: true }
     );
   });
+}
+
+function animatePlaybackRate(
+  video,
+  targetRate,
+  duration,
+  onComplete = null
+) {
+  if (speedAnimationId) {
+    cancelAnimationFrame(speedAnimationId);
+  }
+
+  const startRate = video.playbackRate;
+  const startTime = performance.now();
+
+  const step = now => {
+    const progress = Math.min(
+      1,
+      (now - startTime) / duration
+    );
+
+    // плавное ease-out
+    const eased =
+      1 - Math.pow(1 - progress, 3);
+
+    video.playbackRate =
+      startRate +
+      (targetRate - startRate) * eased;
+
+    if (progress < 1) {
+      speedAnimationId =
+        requestAnimationFrame(step);
+
+      return;
+    }
+
+    speedAnimationId = null;
+
+    onComplete?.();
+  };
+
+  speedAnimationId =
+    requestAnimationFrame(step);
 }

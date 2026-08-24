@@ -31,7 +31,11 @@
     {
       "id": "openYard",
       "title": "Панорама двора",
-      "target": "pano_01"
+      "target": "pano_07",
+      "transition": {
+      "type": "video",
+      "path": "assets/transitions/day_forward.mp4"
+      }
     },
     {
       "id": "openHall",
