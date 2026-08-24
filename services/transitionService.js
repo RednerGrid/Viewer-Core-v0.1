@@ -7,9 +7,14 @@ import {
   playPanoramaVideoTransition
 } from "../transitions/panoramaVideoTransition.js";
 
+import {
+  playVideoTransition
+} from "../transitions/videoTransition.js";
+
 const transitionPlayers = {
   "panorama-sequence": playPanoramaSequenceTransition,
-  "panorama-video": playPanoramaVideoTransition
+  "panorama-video": playPanoramaVideoTransition,
+  "video": playVideoTransition
 };
 
 export function playTransition({
@@ -30,14 +35,9 @@ export function playTransition({
 
   const viewerApi = getViewerApi();
 
-  if (!viewerApi) {
-    console.warn("API активного Viewer не зарегистрирован");
-    return;
-  }
-
   return player({
     basePath,
     ...transition,
-    setTexture: viewerApi.setPanoramaTexture
+    setTexture: viewerApi?.setPanoramaTexture
   });
 }

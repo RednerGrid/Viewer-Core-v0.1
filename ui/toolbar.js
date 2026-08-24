@@ -8,7 +8,7 @@ export function renderToolbar(actions = [], openScene) {
     button.textContent = action.title;
 
     button.addEventListener("click", () => {
-      openScene(action.target);
+      openScene(action);
     });
 
     toolbar.appendChild(button);
