@@ -59,18 +59,35 @@ try {
           return openScene(project, hotspot, editor);
         }
 
-        if (hotspot.transition) {
-          const viewerApi = getViewerApi();
+    if (hotspot.transition) {
+      const viewerApi = getViewerApi();
 
-          viewerApi?.hideHotspots();
+      viewerApi?.hideHotspots();
 
-          await playTransition({
-            transition: hotspot.transition,
-            basePath: project.basePath
-          });
-        }
+      const result = await playTransition({
+        transition: hotspot.transition,
+        basePath: project.basePath
+      });
 
-        return openScene(project, hotspot.target, editor);
+      if (result === "backward") {
+        await viewerApi.loadScene(
+          project,
+          activeScene,
+          context.openScene,
+          { preserveView: true }
+        );
+
+        viewerApi.showHotspots();
+
+        return;
+      }
+    }
+
+    return openScene(
+      project,
+      hotspot.target,
+      editor
+    );
       }
     };
 

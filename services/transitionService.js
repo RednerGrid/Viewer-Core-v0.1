@@ -3,8 +3,13 @@ import {
   playPanoramaSequenceTransition
 } from "../transitions/panoramaSequenceTransition.js";
 
+import {
+  playPanoramaVideoTransition
+} from "../transitions/panoramaVideoTransition.js";
+
 const transitionPlayers = {
-  "panorama-sequence": playPanoramaSequenceTransition
+  "panorama-sequence": playPanoramaSequenceTransition,
+  "panorama-video": playPanoramaVideoTransition
 };
 
 export function playTransition({

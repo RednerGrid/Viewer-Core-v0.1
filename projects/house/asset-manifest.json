@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "builderVersion": "0.3.0",
   "projectId": "house",
-  "generatedAt": "2026-08-23T20:50:36.931Z",
+  "generatedAt": "2026-08-24T05:50:48.689Z",
   "images": [
     {
       "path": "object360/house/frames/frame_0000.jpg",
@@ -1471,6 +1471,290 @@
     {
       "path": "panoramas/Pano_11.jpg",
       "size": 16198708
+    },
+    {
+      "path": "transitions/01/frame_0000.jpg",
+      "size": 7729217
+    },
+    {
+      "path": "transitions/01/frame_0001.jpg",
+      "size": 7906818
+    },
+    {
+      "path": "transitions/01/frame_0002.jpg",
+      "size": 7979498
+    },
+    {
+      "path": "transitions/01/frame_0003.jpg",
+      "size": 7997233
+    },
+    {
+      "path": "transitions/01/frame_0004.jpg",
+      "size": 8014882
+    },
+    {
+      "path": "transitions/01/frame_0005.jpg",
+      "size": 8065869
+    },
+    {
+      "path": "transitions/01/frame_0006.jpg",
+      "size": 8063768
+    },
+    {
+      "path": "transitions/01/frame_0007.jpg",
+      "size": 8062197
+    },
+    {
+      "path": "transitions/01/frame_0008.jpg",
+      "size": 8089006
+    },
+    {
+      "path": "transitions/01/frame_0009.jpg",
+      "size": 8127553
+    },
+    {
+      "path": "transitions/01/frame_0010.jpg",
+      "size": 8130720
+    },
+    {
+      "path": "transitions/01/frame_0011.jpg",
+      "size": 8140214
+    },
+    {
+      "path": "transitions/01/frame_0012.jpg",
+      "size": 8134520
+    },
+    {
+      "path": "transitions/01/frame_0013.jpg",
+      "size": 8105218
+    },
+    {
+      "path": "transitions/01/frame_0014.jpg",
+      "size": 8077377
+    },
+    {
+      "path": "transitions/01/frame_0015.jpg",
+      "size": 8053991
+    },
+    {
+      "path": "transitions/01/frame_0016.jpg",
+      "size": 8077630
+    },
+    {
+      "path": "transitions/01/frame_0017.jpg",
+      "size": 8106236
+    },
+    {
+      "path": "transitions/01/frame_0018.jpg",
+      "size": 8131300
+    },
+    {
+      "path": "transitions/01/frame_0019.jpg",
+      "size": 8137434
+    },
+    {
+      "path": "transitions/01/frame_0020.jpg",
+      "size": 8142370
+    },
+    {
+      "path": "transitions/01/frame_0021.jpg",
+      "size": 8127073
+    },
+    {
+      "path": "transitions/01/frame_0022.jpg",
+      "size": 8080353
+    },
+    {
+      "path": "transitions/01/frame_0023.jpg",
+      "size": 8068137
+    },
+    {
+      "path": "transitions/01/frame_0024.jpg",
+      "size": 8084680
+    },
+    {
+      "path": "transitions/01/frame_0025.jpg",
+      "size": 8075744
+    },
+    {
+      "path": "transitions/01/frame_0026.jpg",
+      "size": 8188008
+    },
+    {
+      "path": "transitions/01/frame_0027.jpg",
+      "size": 8273114
+    },
+    {
+      "path": "transitions/01/frame_0028.jpg",
+      "size": 8392837
+    },
+    {
+      "path": "transitions/01/frame_0029.jpg",
+      "size": 8501588
+    },
+    {
+      "path": "transitions/01/frame_0030.jpg",
+      "size": 8601925
+    },
+    {
+      "path": "transitions/01/frame_0031.jpg",
+      "size": 8671618
+    },
+    {
+      "path": "transitions/01/frame_0032.jpg",
+      "size": 8713052
+    },
+    {
+      "path": "transitions/01/frame_0033.jpg",
+      "size": 8766874
+    },
+    {
+      "path": "transitions/01/frame_0034.jpg",
+      "size": 8775735
+    },
+    {
+      "path": "transitions/01/frame_0035.jpg",
+      "size": 8776631
+    },
+    {
+      "path": "transitions/01/frame_0036.jpg",
+      "size": 8742626
+    },
+    {
+      "path": "transitions/01/frame_0037.jpg",
+      "size": 8756141
+    },
+    {
+      "path": "transitions/01/frame_0038.jpg",
+      "size": 8788538
+    },
+    {
+      "path": "transitions/01/frame_0039.jpg",
+      "size": 8795357
+    },
+    {
+      "path": "transitions/01/frame_0040.jpg",
+      "size": 8743536
+    },
+    {
+      "path": "transitions/01/frame_0041.jpg",
+      "size": 8755173
+    },
+    {
+      "path": "transitions/01/frame_0042.jpg",
+      "size": 8731031
+    },
+    {
+      "path": "transitions/01/frame_0043.jpg",
+      "size": 8653562
+    },
+    {
+      "path": "transitions/01/frame_0044.jpg",
+      "size": 8515054
+    },
+    {
+      "path": "transitions/01/frame_0045.jpg",
+      "size": 8365176
+    },
+    {
+      "path": "transitions/01/frame_0046.jpg",
+      "size": 8223419
+    },
+    {
+      "path": "transitions/01/frame_0047.jpg",
+      "size": 8149929
+    },
+    {
+      "path": "transitions/01/frame_0048.jpg",
+      "size": 8090438
+    },
+    {
+      "path": "transitions/01/frame_0049.jpg",
+      "size": 8050584
+    },
+    {
+      "path": "transitions/01/frame_0050.jpg",
+      "size": 8127515
+    },
+    {
+      "path": "transitions/01/frame_0051.jpg",
+      "size": 8231049
+    },
+    {
+      "path": "transitions/01/frame_0052.jpg",
+      "size": 8284307
+    },
+    {
+      "path": "transitions/01/frame_0053.jpg",
+      "size": 8204163
+    },
+    {
+      "path": "transitions/01/frame_0054.jpg",
+      "size": 8047673
+    },
+    {
+      "path": "transitions/01/frame_0055.jpg",
+      "size": 7772138
+    },
+    {
+      "path": "transitions/01/frame_0056.jpg",
+      "size": 7334826
+    },
+    {
+      "path": "transitions/01/frame_0057.jpg",
+      "size": 6756943
+    },
+    {
+      "path": "transitions/01/frame_0058.jpg",
+      "size": 6374489
+    },
+    {
+      "path": "transitions/01/frame_0059.jpg",
+      "size": 6070349
+    },
+    {
+      "path": "transitions/01/frame_0060.jpg",
+      "size": 5869124
+    },
+    {
+      "path": "transitions/01/frame_0061.jpg",
+      "size": 5793544
+    },
+    {
+      "path": "transitions/01/frame_0062.jpg",
+      "size": 5794375
+    },
+    {
+      "path": "transitions/01/frame_0063.jpg",
+      "size": 5915199
+    },
+    {
+      "path": "transitions/01/frame_0064.jpg",
+      "size": 6070662
+    },
+    {
+      "path": "transitions/01/frame_0065.jpg",
+      "size": 6385435
+    },
+    {
+      "path": "transitions/01/frame_0066.jpg",
+      "size": 6807501
+    },
+    {
+      "path": "transitions/01/frame_0067.jpg",
+      "size": 7443299
+    },
+    {
+      "path": "transitions/01/frame_0068.jpg",
+      "size": 7843521
+    },
+    {
+      "path": "transitions/01/frame_0069.jpg",
+      "size": 8041566
+    },
+    {
+      "path": "transitions/01/frame_0070.jpg",
+      "size": 8273959
     }
   ],
   "videos": [],
@@ -1614,6 +1898,21 @@
       "lastFrameNumber": 11,
       "firstFrame": "Pano_01.jpg",
       "lastFrame": "Pano_11.jpg",
+      "missingFrames": []
+    },
+    {
+      "id": "01",
+      "key": "unknown:01",
+      "type": "unknown",
+      "path": "transitions/01/",
+      "filePrefix": "frame_",
+      "fileExtension": "jpg",
+      "padding": 4,
+      "frameCount": 71,
+      "firstFrameNumber": 0,
+      "lastFrameNumber": 70,
+      "firstFrame": "frame_0000.jpg",
+      "lastFrame": "frame_0070.jpg",
       "missingFrames": []
     }
   ]
