@@ -13,7 +13,9 @@ import {
   clearViewerApi
 } from "../core/viewerApi.js";
 
-
+import {
+  loadAssets
+} from "../services/assetLoader.js";
 
 let viewerRef = null;
 let renderer = null;
@@ -106,7 +108,18 @@ export async function init({ project, scene, viewer, openScene, editor }) {
 
   textureLoader = new THREE.TextureLoader();
 
-  const texture = textureLoader.load(texturePath);
+  const assets = await loadAssets(
+    [texturePath],
+    {
+      title: "Загрузка панорамы"
+    }
+  );
+
+  const texture = await textureLoader.loadAsync(
+    assets.urls[0]
+  );
+
+  assets.revoke();
 
   material = new THREE.MeshBasicMaterial({
     map: texture
@@ -290,19 +303,21 @@ async function loadScene(
   const texturePath =
     `${project.basePath}${scene.assets.image}`;
 
-  const texture = await textureLoader.loadAsync(texturePath);
+  const assets = await loadAssets(
+    [texturePath],
+    {
+      title: "Загрузка панорамы"
+    }
+  );
 
-  console.log("До замены:", {
-  yaw: lon,
-  pitch: lat
-  });
+  const texture = await textureLoader.loadAsync(
+    assets.urls[0]
+  );
+
   
   setPanoramaTexture(texture);
 
-  console.log("После замены:", {
-  yaw: lon,
-  pitch: lat
-  });
+  assets.revoke();
 
   if (!preserveView) {
     setView(scene.view);

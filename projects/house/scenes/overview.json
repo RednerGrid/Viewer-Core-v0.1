@@ -38,9 +38,9 @@
       }
     },
     {
-      "id": "openHall",
-      "title": "Войти в дом",
-      "target": "hall"
+      "id": "openoverview_parallax",
+      "title": "Параллакс",
+      "target": "overview_parallax"
     }
   ]
 }
