@@ -1,3 +1,7 @@
+import {
+  loadVideosWithProgress
+} from "../services/videoLoader.js";
+
 const MOVE_SPEED = 0.8;
 const START_SPEED = 0.12;
 
@@ -11,41 +15,43 @@ export async function playPanoramaVideoTransition({
   reversePath,
   setTexture
 }) {
-    console.log("PANORAMA VIDEO", {
-  path,
-  reversePath
-});
   if (!path || !reversePath) return;
   if (typeof setTexture !== "function") return;
 
-  const forwardVideo = createVideo(`${basePath}${path}`);
-  const reverseVideo = createVideo(`${basePath}${reversePath}`);
+  const [
+    forwardUrl,
+    reverseUrl
+  ] = await loadVideosWithProgress(
+    [
+      `${basePath}${path}`,
+      `${basePath}${reversePath}`
+    ],
+    {
+      title: "Загрузка маршрута"
+    }
+  );
+
+  const forwardVideo = createVideo(forwardUrl);
+  const reverseVideo = createVideo(reverseUrl);
 
   await Promise.all([
     waitForVideo(forwardVideo),
     waitForVideo(reverseVideo)
   ]);
 
-  console.log("VIDEOS READY", {
-  forwardDuration: forwardVideo.duration,
-  reverseDuration: reverseVideo.duration,
-  forwardReadyState: forwardVideo.readyState,
-  reverseReadyState: reverseVideo.readyState
-});
+  await primeVideo(forwardVideo);
+  await primeVideo(reverseVideo);
 
   const forwardTexture =
     new THREE.VideoTexture(forwardVideo);
 
   const reverseTexture =
     new THREE.VideoTexture(reverseVideo);
-  await primeVideo(forwardVideo);
-  await primeVideo(reverseVideo);
 
   forwardTexture.needsUpdate = true;
   reverseTexture.needsUpdate = true;
 
   let activeDirection = null;
- 
 
   setTexture(forwardTexture);
 
@@ -67,28 +73,28 @@ export async function playPanoramaVideoTransition({
 
         forwardVideo.currentTime =
           (1 - progress) * forwardVideo.duration;
-          await waitForSeek(forwardVideo);
+
+        await waitForSeek(forwardVideo);
       }
 
       setTexture(forwardTexture);
+
       forwardVideo.playbackRate = START_SPEED;
-
-      activeDirection = "forward";
-
-      await forwardVideo.play();
-
-      animatePlaybackRate(
-        forwardVideo,
-        MOVE_SPEED,
-        ACCELERATION_TIME
-      );
-
       activeDirection = "forward";
 
       try {
         await forwardVideo.play();
+
+        animatePlaybackRate(
+          forwardVideo,
+          MOVE_SPEED,
+          ACCELERATION_TIME
+        );
       } catch (error) {
-        console.warn("Не удалось запустить видео:", error);
+        console.warn(
+          "Не удалось запустить видео:",
+          error
+        );
       }
     };
 
@@ -102,32 +108,29 @@ export async function playPanoramaVideoTransition({
 
       forwardVideo.pause();
 
-    if (activeDirection === "forward") {
-      const progress =
-        forwardVideo.currentTime / forwardVideo.duration;
+      if (activeDirection === "forward") {
+        const progress =
+          forwardVideo.currentTime / forwardVideo.duration;
 
-      reverseVideo.currentTime =
-        (1 - progress) * reverseVideo.duration;
+        reverseVideo.currentTime =
+          (1 - progress) * reverseVideo.duration;
+
         await waitForSeek(reverseVideo);
-    }
+      }
 
       setTexture(reverseTexture);
+
       reverseVideo.playbackRate = START_SPEED;
-
-      activeDirection = "reverse";
-
-      await reverseVideo.play();
-
-      animatePlaybackRate(
-        reverseVideo,
-        MOVE_SPEED,
-        ACCELERATION_TIME
-      );
-
       activeDirection = "reverse";
 
       try {
         await reverseVideo.play();
+
+        animatePlaybackRate(
+          reverseVideo,
+          MOVE_SPEED,
+          ACCELERATION_TIME
+        );
       } catch (error) {
         console.warn(
           "Не удалось запустить reverse video:",
@@ -159,7 +162,6 @@ export async function playPanoramaVideoTransition({
     };
 
     const onKeyDown = event => {
-        console.log("KEY DOWN:", event.code);
       if (event.repeat) return;
 
       if (event.code === "KeyW") {

@@ -3,6 +3,8 @@ let loadingTextEl = null;
 let loadingBarEl = null;
 
 export function showLoading(title = "Загрузка") {
+  console.log("SHOW LOADING CALLED", title);
+
   hideLoading();
 
   loadingEl = document.createElement("div");
@@ -20,6 +22,9 @@ export function showLoading(title = "Загрузка") {
 
   document.body.appendChild(loadingEl);
 
+
+  console.log("LOADER ELEMENT:", loadingEl);
+
   loadingTextEl = loadingEl.querySelector(".loading-text");
   loadingBarEl = loadingEl.querySelector(".loading-progress-bar");
 }
@@ -34,6 +39,8 @@ export function updateLoading({ loaded, total, progress }) {
 }
 
 export function hideLoading() {
+  console.log("HIDE LOADING CALLED");
+
   if (loadingEl) {
     loadingEl.remove();
   }
