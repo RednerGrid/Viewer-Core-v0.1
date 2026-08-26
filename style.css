@@ -491,3 +491,20 @@ body {
   user-select: none;
   pointer-events: none;
 }
+
+.route-slider {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+
+  width: min(520px, calc(100vw - 48px));
+  z-index: 10000;
+}
+
+.route-slider__input {
+  width: 100%;
+  height: 32px;
+  cursor: pointer;
+  touch-action: none;
+}

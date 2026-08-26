@@ -1,5 +1,9 @@
 import { renderToolbar } from "../ui/toolbar.js";
 
+import {
+  loadAssets
+} from "../services/assetLoader.js";
+
 let viewerRef = null;
 let imageEl = null;
 let projectRef = null;
@@ -56,8 +60,9 @@ export async function init({
 
   viewer.appendChild(imageEl);
 
+  await preloadFrames();
+
   renderFrame(0, 0);
-  preloadFrames();
 
   viewer.addEventListener("pointermove", onPointerMove);
   viewer.addEventListener("pointerleave", onPointerLeave);
@@ -232,13 +237,15 @@ function renderFrame(vertical, horizontal) {
   renderedHorizontal = horizontal;
 }
 
-function preloadFrames() {
+async function preloadFrames() {
   if (!projectRef || !sceneRef) return;
 
   const {
     verticalRange,
     horizontalRange
   } = getGridConfig();
+
+  const paths = [];
 
   for (
     let vertical = -verticalRange;
@@ -250,27 +257,61 @@ function preloadFrames() {
       horizontal <= horizontalRange;
       horizontal++
     ) {
-      const path = getFramePath(vertical, horizontal);
+      const path =
+        getFramePath(vertical, horizontal);
 
-      if (frameCache.has(path)) {
-        continue;
+      if (!frameCache.has(path)) {
+        paths.push(path);
       }
-
-      const image = new Image();
-
-      image.onload = () => {
-        frameCache.set(path, image);
-      };
-
-      image.onerror = () => {
-        console.warn(
-          `Не удалось загрузить кадр Overview: ${path}`
-        );
-      };
-
-      image.src = path;
     }
   }
+
+  if (paths.length === 0) {
+    return;
+  }
+
+  const assets = await loadAssets(
+    paths,
+    {
+      title: "Загрузка обзора"
+    }
+  );
+
+  await Promise.all(
+    paths.map((path, index) =>
+      createCachedImage(
+        path,
+        assets.urls[index]
+      )
+    )
+  );
+
+  // assets.revoke(); ← пока НЕ вызываем
+
+}
+
+function createCachedImage(
+  path,
+  objectUrl
+) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => {
+      frameCache.set(path, image);
+      resolve();
+    };
+
+    image.onerror = () => {
+      reject(
+        new Error(
+          `Не удалось декодировать кадр Overview: ${path}`
+        )
+      );
+    };
+
+    image.src = objectUrl;
+  });
 }
 
 function getFramePath(vertical, horizontal) {

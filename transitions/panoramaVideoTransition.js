@@ -1,13 +1,20 @@
 import {
-  loadVideosWithProgress
-} from "../services/videoLoader.js";
+  loadAssets
+} from "../services/assetLoader.js";
+
+import {
+  showRouteSlider,
+  updateRouteSlider,
+  hideRouteSlider
+} from "../ui/routeSlider.js";
 
 const MOVE_SPEED = 0.8;
 const START_SPEED = 0.12;
 
 const ACCELERATION_TIME = 300;
 const DECELERATION_TIME = 180;
-let speedAnimationId = null;
+
+  let speedAnimationId = null;
 
 export async function playPanoramaVideoTransition({
   basePath,
@@ -18,10 +25,7 @@ export async function playPanoramaVideoTransition({
   if (!path || !reversePath) return;
   if (typeof setTexture !== "function") return;
 
-  const [
-    forwardUrl,
-    reverseUrl
-  ] = await loadVideosWithProgress(
+  const assets = await loadAssets(
     [
       `${basePath}${path}`,
       `${basePath}${reversePath}`
@@ -31,8 +35,11 @@ export async function playPanoramaVideoTransition({
     }
   );
 
-  const forwardVideo = createVideo(forwardUrl);
-  const reverseVideo = createVideo(reverseUrl);
+  const forwardVideo =
+    createVideo(assets.urls[0]);
+
+  const reverseVideo =
+    createVideo(assets.urls[1]);
 
   await Promise.all([
     waitForVideo(forwardVideo),
@@ -53,7 +60,50 @@ export async function playPanoramaVideoTransition({
 
   let activeDirection = null;
 
+
   setTexture(forwardTexture);
+
+  showRouteSlider({
+    progress: 0,
+
+    onInput: async progress => {
+      forwardVideo.pause();
+      reverseVideo.pause();
+
+      forwardVideo.currentTime =
+        progress * forwardVideo.duration;
+
+      activeDirection = "forward";
+
+      await waitForSeek(forwardVideo);
+
+      setTexture(forwardTexture);
+    }
+  });
+
+  let sliderAnimationId = null;
+
+  const updateSlider = () => {
+    let progress = 0;
+
+    if (activeDirection === "reverse") {
+      progress =
+        1 -
+        reverseVideo.currentTime /
+          reverseVideo.duration;
+    } else {
+      progress =
+        forwardVideo.currentTime /
+          forwardVideo.duration;
+    }
+
+    updateRouteSlider(progress);
+
+    sliderAnimationId =
+      requestAnimationFrame(updateSlider);
+  };
+
+  updateSlider();
 
   return new Promise(resolve => {
 
@@ -195,6 +245,18 @@ export async function playPanoramaVideoTransition({
     const cleanup = () => {
       stop();
 
+      if (sliderAnimationId) {
+        cancelAnimationFrame(sliderAnimationId);
+        sliderAnimationId = null;
+      }
+
+      hideRouteSlider();
+
+      window.removeEventListener(
+        "keydown",
+        onKeyDown
+      );
+
       window.removeEventListener(
         "keydown",
         onKeyDown
@@ -217,6 +279,11 @@ export async function playPanoramaVideoTransition({
 
       forwardVideo.pause();
       reverseVideo.pause();
+
+      forwardTexture.dispose();
+      reverseTexture.dispose();
+
+      assets.revoke();
     };
 
     window.addEventListener(

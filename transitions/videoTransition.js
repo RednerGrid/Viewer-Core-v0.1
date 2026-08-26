@@ -1,13 +1,6 @@
 import {
-  loadVideosWithProgress
-} from "../services/videoLoader.js";
-
-import {
-  showLoading,
-  updateLoading,
-  hideLoading
-} from "../ui/loading.js";
-
+  loadAssets
+} from "../services/assetLoader.js";
 
 export async function playVideoTransition({
   basePath,
@@ -15,20 +8,24 @@ export async function playVideoTransition({
 }) {
   if (!path) return;
 
-  const viewer = document.getElementById("viewer");
+  const viewer =
+    document.getElementById("viewer");
 
   if (!viewer) return;
 
-  const [videoUrl] = await loadVideosWithProgress(
-    [`${basePath}${path}`],
+  const assets = await loadAssets(
+    [
+      `${basePath}${path}`
+    ],
     {
       title: "Загрузка перехода"
     }
   );
 
-  const video = document.createElement("video");
+  const video =
+    document.createElement("video");
 
-  video.src = videoUrl;
+  video.src = assets.urls[0];
   video.muted = true;
   video.playsInline = true;
   video.preload = "auto";
@@ -42,7 +39,34 @@ export async function playVideoTransition({
 
   viewer.appendChild(video);
 
-  await new Promise((resolve, reject) => {
+  await waitForVideo(video);
+
+  await video.play();
+
+  await new Promise(resolve => {
+    video.addEventListener(
+      "ended",
+      resolve,
+      { once: true }
+    );
+  });
+
+  video.pause();
+
+  /*
+    Пока НЕ revoke().
+    Последний кадр должен оставаться видимым
+    до закрытия текущей сцены Router'ом.
+  */
+
+  return {
+    coversSceneChange: true,
+    cleanup: assets.revoke
+  };
+}
+
+function waitForVideo(video) {
+  return new Promise((resolve, reject) => {
     if (video.readyState >= 3) {
       resolve();
       return;
@@ -62,20 +86,4 @@ export async function playVideoTransition({
 
     video.load();
   });
-
-  await video.play();
-
-  await new Promise(resolve => {
-    video.addEventListener(
-      "ended",
-      resolve,
-      { once: true }
-    );
-  });
-
-  video.pause();
-
-  return {
-    coversSceneChange: true
-  };
 }
