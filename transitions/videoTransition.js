@@ -25,10 +25,14 @@ export async function playVideoTransition({
   const video =
     document.createElement("video");
 
-  video.src = assets.urls[0];
   video.muted = true;
+  video.defaultMuted = true;
+
   video.playsInline = true;
+  video.autoplay = true;
   video.preload = "auto";
+
+  video.setAttribute("muted", "");
   video.setAttribute("playsinline", "");
   video.setAttribute("webkit-playsinline", "");
 
@@ -41,20 +45,25 @@ export async function playVideoTransition({
 
   viewer.appendChild(video);
 
+  /*
+    src задаём уже после того,
+    как video настроено и находится в DOM.
+  */
+  video.src = assets.urls[0];
+
   await waitForVideo(video);
 
-    //временный блок
   try {
     await video.play();
-    console.log("VIDEO PLAY OK");
   } catch (error) {
-    console.error(
-      "VIDEO PLAY FAILED",
+    console.warn(
+      "Autoplay blocked:",
       error.name,
       error.message
     );
-  }
 
+    await waitForUserPlay(video, viewer);
+  }
 
   await new Promise(resolve => {
     video.addEventListener(
@@ -66,16 +75,58 @@ export async function playVideoTransition({
 
   video.pause();
 
-  /*
-    Пока НЕ revoke().
-    Последний кадр должен оставаться видимым
-    до закрытия текущей сцены Router'ом.
-  */
-
   return {
     coversSceneChange: true,
     cleanup: assets.revoke
   };
+}
+
+function waitForUserPlay(video, viewer) {
+  return new Promise(resolve => {
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.textContent = "Продолжить";
+
+    button.style.position = "absolute";
+    button.style.left = "50%";
+    button.style.top = "50%";
+    button.style.transform =
+      "translate(-50%, -50%)";
+
+    button.style.zIndex = "21";
+
+    button.style.padding = "14px 22px";
+    button.style.border = "0";
+    button.style.borderRadius = "12px";
+
+    button.style.background =
+      "rgba(20, 20, 20, 0.8)";
+
+    button.style.color = "#fff";
+    button.style.fontSize = "16px";
+
+    viewer.appendChild(button);
+
+    button.addEventListener(
+      "click",
+      async () => {
+        try {
+          await video.play();
+
+          button.remove();
+          resolve();
+        } catch (error) {
+          console.error(
+            "VIDEO PLAY FAILED:",
+            error
+          );
+        }
+      },
+      { once: true }
+    );
+  });
 }
 
 function waitForVideo(video) {
