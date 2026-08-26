@@ -1,7 +1,7 @@
 {
   "id": "house",
   "title": "Частный дом",
-  "startScene": "overview_parallax",
+  "startScene": "overview",
   "scenes": [
     "zdepth_test",
     "overview_parallax",

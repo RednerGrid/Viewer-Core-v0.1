@@ -1,3 +1,14 @@
+import {
+  loadVideosWithProgress
+} from "../services/videoLoader.js";
+
+import {
+  showLoading,
+  updateLoading,
+  hideLoading
+} from "../ui/loading.js";
+
+
 export async function playVideoTransition({
   basePath,
   path
@@ -8,9 +19,16 @@ export async function playVideoTransition({
 
   if (!viewer) return;
 
+  const [videoUrl] = await loadVideosWithProgress(
+    [`${basePath}${path}`],
+    {
+      title: "Загрузка перехода"
+    }
+  );
+
   const video = document.createElement("video");
 
-  video.src = `${basePath}${path}`;
+  video.src = videoUrl;
   video.muted = true;
   video.playsInline = true;
   video.preload = "auto";
@@ -25,6 +43,11 @@ export async function playVideoTransition({
   viewer.appendChild(video);
 
   await new Promise((resolve, reject) => {
+    if (video.readyState >= 3) {
+      resolve();
+      return;
+    }
+
     video.addEventListener(
       "canplay",
       resolve,
@@ -51,4 +74,8 @@ export async function playVideoTransition({
   });
 
   video.pause();
+
+  return {
+    coversSceneChange: true
+  };
 }
