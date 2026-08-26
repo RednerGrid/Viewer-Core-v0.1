@@ -63,6 +63,25 @@ export async function playPanoramaVideoTransition({
 
   setTexture(forwardTexture);
 
+  const getRouteProgress = () => {
+    if (activeDirection === "reverse") {
+      if (!reverseVideo.duration) return 0;
+
+      return (
+        1 -
+        reverseVideo.currentTime /
+          reverseVideo.duration
+      );
+    }
+
+    if (!forwardVideo.duration) return 0;
+
+    return (
+      forwardVideo.currentTime /
+      forwardVideo.duration
+    );
+  };
+
   showRouteSlider({
     progress: 0,
 
@@ -108,6 +127,9 @@ export async function playPanoramaVideoTransition({
   return new Promise(resolve => {
 
     const playForward = async () => {
+      if (getRouteProgress() >= 0.999) {
+      return;
+      }
       if (
         activeDirection === "forward" &&
         !forwardVideo.paused
@@ -149,6 +171,10 @@ export async function playPanoramaVideoTransition({
     };
 
     const playReverse = async () => {
+      if (getRouteProgress() <= 0.001) {
+        return;
+      }
+
       if (
         activeDirection === "reverse" &&
         !reverseVideo.paused
