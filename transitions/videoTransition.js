@@ -29,6 +29,8 @@ export async function playVideoTransition({
   video.muted = true;
   video.playsInline = true;
   video.preload = "auto";
+  video.setAttribute("playsinline", "");
+  video.setAttribute("webkit-playsinline", "");
 
   video.style.position = "absolute";
   video.style.inset = "0";
@@ -41,7 +43,18 @@ export async function playVideoTransition({
 
   await waitForVideo(video);
 
-  await video.play();
+    //временный блок
+  try {
+    await video.play();
+    console.log("VIDEO PLAY OK");
+  } catch (error) {
+    console.error(
+      "VIDEO PLAY FAILED",
+      error.name,
+      error.message
+    );
+  }
+
 
   await new Promise(resolve => {
     video.addEventListener(
