@@ -9,7 +9,8 @@ export async function loadModule(type) {
     scrollAnimation: () => import("../modules/scrollAnimationViewer.js"),
     video: () => import("../modules/videoViewer.js"),
     document: () => import("../modules/documentViewer.js"),
-    plxZdepth: () => import("../modules/PLX_Zdepth.js")
+    plxZdepth: () => import("../modules/PLX_Zdepth.js"),
+    route_graph: () => import("../modules/routeGraphViewer.js")
   };
 
   if (!modules[type]) {

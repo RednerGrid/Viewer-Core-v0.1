@@ -596,3 +596,56 @@ body {
 .route-slider__input:active::-moz-range-thumb {
   cursor: grabbing;
 }
+
+.route-gate {
+  --gate-offset: 0px;
+  --gate-strength: 0;
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 80px;
+  height: min(55vh, 420px);
+
+  transform:
+    translate(
+      calc(-50% + var(--gate-offset)),
+      -50%
+    );
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      calc(0.2 + var(--gate-strength) * 0.6)
+    );
+
+  border-radius: 4px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      calc(var(--gate-strength) * 0.04)
+    );
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+
+  z-index: 10;
+}
+
+.route-gate.active {
+  opacity: 1;
+}

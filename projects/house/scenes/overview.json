@@ -38,6 +38,11 @@
       }
     },
     {
+      "id": "openRouteGraph",
+      "title": "Прогулка по участку",
+      "target": "yard_graph"
+    },
+    {
       "id": "openoverview_parallax",
       "title": "Параллакс",
       "target": "overview_parallax"

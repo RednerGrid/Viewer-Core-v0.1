@@ -220,9 +220,38 @@ function validateScene(scene, expectedSceneId) {
     );
   }
 
-  if (!scene.assets || typeof scene.assets !== "object") {
+  if (
+    scene.type !== "route_graph" &&
+    !scene.assets
+  ) {
     throw new Error(
-      `В сцене "${expectedSceneId}" отсутствует объект "assets".`
+      `В сцене "${scene.id}" отсутствует объект "assets".`
     );
+  }
+
+  if (scene.type === "route_graph") {
+    if (!scene.graph) {
+      throw new Error(
+        `В сцене "${scene.id}" отсутствует объект "graph".`
+      );
+    }
+
+    if (!scene.graph.startNode) {
+      throw new Error(
+        `В сцене "${scene.id}" отсутствует "graph.startNode".`
+      );
+    }
+
+    if (!scene.graph.nodes) {
+      throw new Error(
+        `В сцене "${scene.id}" отсутствует "graph.nodes".`
+      );
+    }
+
+    if (!scene.graph.edges) {
+      throw new Error(
+        `В сцене "${scene.id}" отсутствует "graph.edges".`
+      );
+    }
   }
 }
