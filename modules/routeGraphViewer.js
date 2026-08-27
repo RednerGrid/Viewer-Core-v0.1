@@ -19,9 +19,7 @@ import {
   destroyRouteGates
 } from "../graph/routeGateRenderer.js";
 
-import {
-  playRouteEdge
-} from "../graph/routeEdgePlayer.js";
+import { playRouteFrameEdge } from "./routeFrameEdgePlayer.js";
 
 
 
@@ -818,16 +816,20 @@ async function activateCurrentEdge() {
       selectedEdge.targetPanoramaId
     );
 
-    const result =
-      await playRouteEdge({
-        project: projectRef,
-        edge: selectedEdge,
-        sourcePanorama: currentPanorama,
-        targetPanorama,
-        setTexture:
-          setPanoramaTexture,
-        textureLoader
-      });
+    console.log(
+      "PLAY WEBCODECS",
+      selectedEdge.id,
+      selectedEdge.edge.motion
+    );
+
+    const result = await playRouteFrameEdge({
+      project: projectRef,
+      edge: selectedEdge,
+      sourcePanorama: currentPanorama,
+      targetPanorama,
+      setTexture: setPanoramaTexture,
+      textureLoader
+    });
 
     console.log(
       "ROUTE FINISHED",

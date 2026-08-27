@@ -8,8 +8,8 @@ import {
   hideRouteSlider
 } from "../ui/routeSlider.js";
 
-const MOVE_SPEED = 0.8;
-const START_SPEED = 0.12;
+const MOVE_SPEED = 1;
+const START_SPEED = 1;
 
 const ACCELERATION_TIME = 300;
 const DECELERATION_TIME = 180;
