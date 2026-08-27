@@ -34,8 +34,8 @@
         "from": "node_01",
         "to": "node_02",
 
-        "fromYaw": 142.2,
-        "toYaw": 0,
+        "fromYaw": 177,
+        "toYaw": -45,
 
         "forward": "assets/route-graph/edge_01_02_forward.mp4",
         "reverse": "assets/route-graph/edge_01_02_reverse.mp4"
@@ -46,11 +46,11 @@
         "from": "node_01",
         "to": "node_03",
 
-        "fromYaw": 6.2,
-        "toYaw": 0,
+        "fromYaw": -16,
+        "toYaw": 165,
 
-        "forward": "assets/route-graph/edge_01_03_forward.mp4",
-        "reverse": "assets/route-graph/edge_01_03_reverse.mp4"
+        "forward": "assets/route-graph/edge_01_07_forward.mp4",
+        "reverse": "assets/route-graph/edge_07_01_reverse.mp4"
       }
     }
   },

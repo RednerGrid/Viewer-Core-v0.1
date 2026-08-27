@@ -9,13 +9,14 @@ import {
 } from "../graph/routeGraph.js";
 
 import {
-  selectDirection
+  selectDirections
 } from "../graph/directionSelector.js";
 
 import {
-  initRouteGate,
-  updateRouteGate,
-  destroyRouteGate
+  initRouteGates,
+  updateRouteGates,
+  hideRouteGates,
+  destroyRouteGates
 } from "../graph/routeGateRenderer.js";
 
 import {
@@ -43,7 +44,9 @@ let graph = null;
 let currentNode = null;
 
 let activeEdge = null;
+let activeGateEdgeId = null;
 let isMoving = false;
+let visibleGateEdgeId = null;
 let pointerDownX = 0;
 let pointerDownY = 0;
 let pointerMoved = false;
@@ -65,7 +68,9 @@ let startPinchFov = 50;
 
 const activePointers = new Map();
 
-const ACTIVATION_ANGLE = 25;
+const GATE_VISIBLE_ANGLE = 45;
+const GATE_ACTIVE_ANGLE = 10;
+const GATE_SWITCH_MARGIN = 2.5;
 
 
 
@@ -226,7 +231,7 @@ export async function init({
     Route Gate
   */
 
-    initRouteGate(
+    initRouteGates(
     viewer,
     {
         onActivate:
@@ -673,7 +678,7 @@ function animate() {
     направления текущего node.
     */
 
-    updateDirectionGate();
+    updateDirectionGates();
 
     renderer.render(
     scene3d,
@@ -682,102 +687,114 @@ function animate() {
 }
 
 async function activateCurrentEdge() {
-  console.log("ACTIVATE EDGE", activeEdge);
+  console.log(
+    "ACTIVATE EDGE",
+    activeEdge
+  );
+
   if (isMoving) return;
   if (!activeEdge) return;
 
+  /*
+    Фиксируем выбранный edge,
+    потому что activeEdge дальше
+    может измениться.
+  */
+  const selectedEdge =
+    activeEdge;
+
   const targetNode =
     graph.getNode(
-      activeEdge.targetNodeId
+      selectedEdge.targetNodeId
     );
 
   if (!targetNode) {
     console.warn(
-      `RouteGraphViewer: target node "${activeEdge.targetNodeId}" не найден.`
+      `RouteGraphViewer: target node "${selectedEdge.targetNodeId}" не найден.`
     );
 
     return;
   }
 
+  /*
+    Начинаем переход.
+    Все gates скрываем.
+  */
   isMoving = true;
 
-  updateRouteGate({
-    visible: false
-  });
+  activeGateEdgeId = null;
+  hideRouteGates();
 
   try {
     console.log(
       "PLAY EDGE",
-      activeEdge.id,
-      activeEdge.video,
-      activeEdge.targetNodeId
+      selectedEdge.id,
+      selectedEdge.video,
+      selectedEdge.targetNodeId
     );
+
     const result =
       await playRouteEdge({
         project: projectRef,
-        edge: activeEdge,
+        edge: selectedEdge,
         sourceNode: currentNode,
         targetNode,
-        setTexture: setPanoramaTexture,
+        setTexture:
+          setPanoramaTexture,
         textureLoader
       });
+
     console.log(
       "ROUTE FINISHED",
       {
-        resultNode: result.node?.id,
-        targetNode: targetNode?.id,
-        sourceNode: currentNode?.id,
-        direction: result.direction
+        resultNode:
+          result.node?.id,
+
+        targetNode:
+          targetNode?.id,
+
+        sourceNode:
+          currentNode?.id,
+
+        direction:
+          result.direction
       }
     );
-
 
     currentNode =
       result.node;
 
-    /*
-      После перехода route больше
-      не считается выбранным.
-    */
     activeEdge = null;
-
-
-    /*
-      Если target node имеет свой
-      стартовый view — применяем.
-      Пока только если явно задан.
-    */
-
-    if (targetNode.view) {
-      lon = Number(
-        targetNode.view.yaw ?? lon
-      );
-
-      lat = Number(
-        targetNode.view.pitch ?? lat
-      );
-
-      targetFov = Number(
-        targetNode.view.fov ??
-        targetFov
-      );
-    }
 
   } catch (error) {
     console.error(
       "Route transition failed:",
       error
     );
+
+    /*
+      Важно:
+      после ошибки старый edge
+      тоже не оставляем выбранным.
+    */
+    activeEdge = null;
+
   } finally {
     isMoving = false;
   }
 }
 
-function updateDirectionGate() {
+function updateDirectionGates() {
   if (
     !graph ||
-    !currentNode
+    !currentNode ||
+    isMoving
   ) {
+    activeEdge = null;
+    activeGateEdgeId = null;
+
+    hideRouteGates();
+
     return;
   }
 
@@ -786,72 +803,148 @@ function updateDirectionGate() {
       currentNode.id
     );
 
-
   const selection =
-    selectDirection({
+    selectDirections({
       yaw: lon,
       edges,
-      activationAngle:
-        ACTIVATION_ANGLE
+
+      visibleAngle:
+        GATE_VISIBLE_ANGLE,
+
+      activeAngle:
+        GATE_ACTIVE_ANGLE,
+
+      previousActiveEdgeId:
+        activeGateEdgeId,
+
+      switchMargin:
+        GATE_SWITCH_MARGIN
     });
 
-  if (!selection) {
+
+  /*
+    ACTIVE EDGE
+  */
+
+  if (selection.active) {
+    activeEdge =
+      selection.active.edge;
+
+    activeGateEdgeId =
+      activeEdge.id;
+  } else {
     activeEdge = null;
-    updateRouteGate({
-      visible: false
-    });
-
-    return;
+    activeGateEdgeId = null;
   }
 
-  const {
-    edge,
-    distance
-  } = selection;
-
-  activeEdge = edge;
-
 
   /*
-    0 = край activation sector
-    1 = смотрим точно на route
+    VISIBLE GATES
   */
 
-  const strength =
-    1 -
-    Math.min(
-      1,
-      distance /
-        ACTIVATION_ANGLE
+  const gates = [];
+
+  for (
+    const item
+    of selection.visible
+  ) {
+    const edge =
+      item.edge;
+
+    const gatePosition =
+      getGateScreenPosition(
+        edge.yaw
+      );
+
+    if (!gatePosition) {
+      continue;
+    }
+
+    const strength =
+      1 -
+      Math.min(
+        1,
+        item.distance /
+          GATE_VISIBLE_ANGLE
+      );
+
+    gates.push({
+      id: edge.id,
+
+      x: gatePosition.x,
+      y: gatePosition.y,
+
+      /*
+        Пока default.
+        Позже возьмём
+        индивидуально из JSON.
+      */
+      width: 120,
+
+      active:
+        edge.id ===
+        activeGateEdgeId,
+
+      strength
+    });
+  }
+
+  updateRouteGates(
+    gates
+  );
+}
+
+function getGateScreenPosition(yaw) {
+  if (!camera || !renderer) {
+    return null;
+  }
+
+  const radius = 400;
+
+  const theta =
+    THREE.MathUtils.degToRad(
+      yaw
     );
 
+  const worldPosition =
+    new THREE.Vector3(
+      radius * Math.cos(theta),
+      0,
+      radius * Math.sin(theta)
+    );
+
+  const projected =
+    worldPosition.clone().project(
+      camera
+    );
 
   /*
-    Пока gate слегка двигаем
-    относительно центра экрана.
-
-    Позже сделаем настоящую
-    spherical projection.
+    Точка за камерой или далеко
+    за пределами экрана.
   */
+  if (
+    projected.z < -1 ||
+    projected.z > 1
+  ) {
+    return null;
+  }
 
-  const angleDelta =
-    normalizeAngle(
-      edge.yaw - lon
-    );
+  const rect =
+    renderer.domElement
+      .getBoundingClientRect();
 
-  const pixelsPerDegree =
-    window.innerWidth /
-    camera.fov;
+  const x =
+    (projected.x * 0.5 + 0.5) *
+    rect.width;
 
-  const offset =
-    angleDelta *
-    pixelsPerDegree;
+  const y =
+    (-projected.y * 0.5 + 0.5) *
+    rect.height;
 
-  updateRouteGate({
-    visible: true,
-    offset,
-    strength
-  });
+  return {
+    x,
+    y
+  };
 }
 
 
@@ -905,7 +998,7 @@ export function update() {}
 
 
 export function destroy() {
-  destroyRouteGate();
+  destroyRouteGates();
 
   removeControls();
 

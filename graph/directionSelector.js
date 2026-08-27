@@ -1,50 +1,107 @@
-export function selectDirection({
+export function selectDirections({
   yaw,
   edges,
-  activationAngle = 25
+  visibleAngle = 45,
+  activeAngle = 10,
+  previousActiveEdgeId = null,
+  switchMargin = 2.5
 }) {
-  if (!Array.isArray(edges) || edges.length === 0) {
-    return null;
+  if (!Array.isArray(edges)) {
+    return {
+      visible: [],
+      active: null
+    };
   }
 
-  let bestEdge = null;
-  let bestDistance = Infinity;
-
-  for (const edge of edges) {
-    const distance =
-      getAngularDistance(
+  const candidates = edges
+    .map(edge => ({
+      edge,
+      distance: getAngularDistance(
         yaw,
         edge.yaw
+      )
+    }))
+    .filter(item =>
+      item.distance <= visibleAngle
+    )
+    .sort(
+      (a, b) =>
+        a.distance - b.distance
+    );
+
+  if (candidates.length === 0) {
+    return {
+      visible: [],
+      active: null
+    };
+  }
+
+  let active = null;
+
+  const best = candidates[0];
+
+  /*
+    Новый gate может стать active
+    только внутри узкого сектора.
+  */
+  if (best.distance <= activeAngle) {
+    active = best;
+  }
+
+  /*
+    Hysteresis между двумя соседними gates.
+
+    Если предыдущий active всё ещё рядом,
+    новый должен быть заметно ближе,
+    прежде чем подсветка перескочит.
+  */
+  if (previousActiveEdgeId) {
+    const previous =
+      candidates.find(
+        item =>
+          item.edge.id ===
+          previousActiveEdgeId
       );
 
     if (
-      distance <= activationAngle &&
-      distance < bestDistance
+      previous &&
+      previous.distance <= activeAngle
     ) {
-      bestEdge = edge;
-      bestDistance = distance;
+      if (
+        !active ||
+        previous.distance <=
+          active.distance +
+          switchMargin
+      ) {
+        active = previous;
+      }
     }
   }
 
-  if (!bestEdge) {
-    return null;
-  }
-
   return {
-    edge: bestEdge,
-    distance: bestDistance
+    visible: candidates,
+    active
   };
 }
 
-function getAngularDistance(a, b) {
-  const delta =
-    normalizeAngle(a - b);
-
-  return Math.abs(delta);
+export function getAngularDistance(
+  a,
+  b
+) {
+  return Math.abs(
+    normalizeAngle(
+      a - b
+    )
+  );
 }
 
 function normalizeAngle(angle) {
   return (
-    ((angle + 180) % 360 + 360) % 360
+    (
+      (angle + 180) %
+      360 +
+      360
+    ) %
+    360
   ) - 180;
 }

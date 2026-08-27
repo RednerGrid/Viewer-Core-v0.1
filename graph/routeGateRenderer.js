@@ -1,120 +1,227 @@
-let gateEl = null;
-let activateCallback = null;
+const gateElements =
+  new Map();
+
+let viewerRef = null;
 
 
-export function initRouteGate(
-  viewer,
-  {
-    onActivate
-  } = {}
+export function initRouteGates(
+  viewer
 ) {
-  destroyRouteGate();
+  destroyRouteGates();
 
-  activateCallback =
-    onActivate ?? null;
+  viewerRef = viewer;
+}
 
-  gateEl =
-    document.createElement("div");
 
-  gateEl.className =
+export function updateRouteGates(
+  gates
+) {
+  if (!viewerRef) return;
+
+  const visibleIds =
+    new Set(
+      gates.map(
+        gate => gate.id
+      )
+    );
+
+
+  /*
+    Удаляем gates,
+    которые больше не видны.
+  */
+
+  for (
+    const [
+      edgeId,
+      element
+    ]
+    of gateElements
+  ) {
+    if (
+      visibleIds.has(edgeId)
+    ) {
+      continue;
+    }
+
+    element.style.opacity =
+      "0";
+
+    element.dataset.visible =
+      "false";
+  }
+
+
+  /*
+    Создаём / обновляем
+    видимые gates.
+  */
+
+  gates.forEach(gate => {
+    let element =
+      gateElements.get(
+        gate.id
+      );
+
+    if (!element) {
+      element =
+        createGateElement();
+
+      viewerRef.appendChild(
+        element
+      );
+
+      gateElements.set(
+        gate.id,
+        element
+      );
+    }
+
+    updateGateElement(
+      element,
+      gate
+    );
+  });
+}
+
+
+function createGateElement() {
+  const element =
+    document.createElement(
+      "div"
+    );
+
+  element.className =
     "route-gate";
 
-  gateEl.style.position =
+  element.style.position =
     "absolute";
 
-  gateEl.style.left = "50%";
-  gateEl.style.top = "50%";
+  element.style.height =
+    "220px";
 
-  gateEl.style.width = "80px";
-  gateEl.style.height = "55vh";
-  gateEl.style.maxHeight = "420px";
-
-  gateEl.style.transform =
-    "translate(-50%, -50%)";
-
-  gateEl.style.border =
-    "1px solid rgba(255,255,255,0.7)";
-
-  gateEl.style.borderRadius =
-    "4px";
-
-  gateEl.style.background =
-    "rgba(255,255,255,0.03)";
-
-  gateEl.style.opacity = "0";
-
-  gateEl.style.pointerEvents =
+  element.style.border =
     "none";
 
-  gateEl.style.cursor =
-    "pointer";
+  element.style.borderBottom =
+    "2px solid rgba(255,255,255,0.8)";
 
-  gateEl.style.zIndex =
+  element.style.borderRadius =
+    "0 0 12px 12px";
+
+  element.style.background = `
+    linear-gradient(
+      to top,
+      rgba(255,255,255,0.28) 0%,
+      rgba(255,255,255,0.15) 18%,
+      rgba(255,255,255,0.05) 38%,
+      rgba(255,255,255,0.00) 62%
+    )
+  `;
+
+  element.style.boxShadow =
+    "0 5px 14px rgba(255,255,255,0.14)";
+
+  /*
+    Gate — индикатор,
+    НЕ самостоятельная кнопка.
+  */
+  element.style.pointerEvents =
+    "none";
+
+  element.style.transform =
+    "translate(-50%, -50%)";
+
+  element.style.transformOrigin =
+    "center bottom";
+
+  element.style.opacity =
+    "0";
+
+  element.style.transition = `
+    opacity 140ms ease,
+    filter 140ms ease,
+    transform 140ms ease
+  `;
+
+  element.style.zIndex =
     "100";
 
-  gateEl.style.transition =
-    "opacity 0.15s ease";
-
-  gateEl.addEventListener(
-    "click",
-    onGateClick
-  );
-
-  viewer.appendChild(
-    gateEl
-  );
+  return element;
 }
 
 
-function onGateClick(event) {
-  event.stopPropagation();
+function updateGateElement(
+  element,
+  {
+    x,
+    y,
+    width = 120,
+    active = false,
+    strength = 1
+  }
+) {
+  element.dataset.visible =
+    "true";
 
-  console.log("GATE CLICK");
+  element.style.left =
+    `${x}px`;
 
-  activateCallback?.();
+  element.style.top =
+    `${y}px`;
+
+  element.style.width =
+    `${width}px`;
+
+
+  if (active) {
+    element.style.opacity =
+      String(
+        0.72 +
+        strength * 0.28
+      );
+
+    element.style.filter =
+      "brightness(1.45)";
+
+    element.style.transform =
+      "translate(-50%, -50%) scale(1.03)";
+  } else {
+    element.style.opacity =
+      String(
+        0.22 +
+        strength * 0.20
+      );
+
+    element.style.filter =
+      "brightness(0.8)";
+
+    element.style.transform =
+      "translate(-50%, -50%)";
+  }
 }
 
 
-export function updateRouteGate({
-  visible,
-  offset = 0,
-  strength = 0
-}) {
-  if (!gateEl) return;
+export function hideRouteGates() {
+  for (
+    const element
+    of gateElements.values()
+  ) {
+    element.style.opacity =
+      "0";
+  }
+}
 
-  if (!visible) {
-    gateEl.style.opacity = "0";
 
-    gateEl.style.pointerEvents =
-      "none";
-
-    return;
+export function destroyRouteGates() {
+  for (
+    const element
+    of gateElements.values()
+  ) {
+    element.remove();
   }
 
-  gateEl.style.opacity =
-    String(
-      0.25 +
-      strength * 0.75
-    );
+  gateElements.clear();
 
-  gateEl.style.pointerEvents =
-    "auto";
-
-  gateEl.style.transform =
-    `translate(calc(-50% + ${offset}px), -50%)`;
-}
-
-
-export function destroyRouteGate() {
-  if (gateEl) {
-    gateEl.removeEventListener(
-      "click",
-      onGateClick
-    );
-
-    gateEl.remove();
-  }
-
-  gateEl = null;
-  activateCallback = null;
+  viewerRef = null;
 }
