@@ -15,10 +15,15 @@ let sceneRef = null;
 const DEFAULT_GATE_WIDTH = 120;
 
 const WORLD_GATE_WIDTH = 24;
-const WORLD_GATE_HEIGHT = 22;
+const WORLD_GATE_HEIGHT = 11;
 
-const PASSIVE_OPACITY = 0.32;
+const PASSIVE_OPACITY = 0.3;
 const ACTIVE_OPACITY = 0.85;
+
+const GATE_COLOR = 0xffe2a0;
+
+const PARTICLE_COUNT = 140;
+const PARTICLE_SPEED = 0.1;
 
 
 export function initRouteGates(
@@ -108,7 +113,9 @@ function createGateObject() {
   const planeMaterial =
     new THREE.MeshBasicMaterial({
       map: gradientTexture,
+      color: GATE_COLOR,
       transparent: true,
+      opacity: PASSIVE_OPACITY,
       depthWrite: false,
       side: THREE.DoubleSide
     });
@@ -167,8 +174,9 @@ function createGateObject() {
 
   const edgeMaterial =
     new THREE.LineBasicMaterial({
+      color: GATE_COLOR,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.9
     });
 
   const bottomEdge =
@@ -179,6 +187,109 @@ function createGateObject() {
 
   group.add(
     bottomEdge
+  );
+
+  /*
+  Светящиеся частицы,
+  поднимающиеся снизу вверх.
+*/
+
+  const particleGeometry =
+    new THREE.BufferGeometry();
+
+  const particlePositions =
+    new Float32Array(
+      PARTICLE_COUNT * 3
+    );
+
+  const particleSeeds = [];
+
+  for (
+    let i = 0;
+    i < PARTICLE_COUNT;
+    i++
+  ) {
+    const x =
+      (
+        Math.random() - 0.5
+      ) *
+      WORLD_GATE_WIDTH;
+
+    const y =
+      Math.random() *
+      WORLD_GATE_HEIGHT;
+
+    particlePositions[
+      i * 3
+    ] = x;
+
+    particlePositions[
+      i * 3 + 1
+    ] = y;
+
+    particlePositions[
+      i * 3 + 2
+    ] = 0.05;
+
+  particleSeeds.push({
+    x,
+
+    offset:
+      Math.random(),
+
+    speed:
+      0.6 +
+      Math.random() * 0.8,
+
+    blinkOffset:
+      Math.random() *
+      Math.PI * 2,
+
+    blinkSpeed:
+      0.8 +
+      Math.random() * 2.2,
+
+    blinkStrength:
+      0.25 +
+      Math.random() * 0.75
+  });
+  }
+
+  particleGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(
+      particlePositions,
+      3
+    )
+  );
+
+  const particleTexture =
+    createParticleTexture();
+
+  const particleMaterial =
+    new THREE.PointsMaterial({
+      map: particleTexture,
+      color: GATE_COLOR,
+
+      size: 0.2,
+
+      transparent: true,
+      opacity: 0.65,
+
+      depthWrite: false,
+
+      blending:
+        THREE.AdditiveBlending
+    });
+
+  const particles =
+    new THREE.Points(
+      particleGeometry,
+      particleMaterial
+    );
+
+  group.add(
+    particles
   );
 
 
@@ -194,7 +305,15 @@ function createGateObject() {
     group,
     plane,
     bottomEdge,
-    gradientTexture
+
+    particles,
+    particleSeeds,
+    particleTexture,
+
+    gradientTexture,
+
+    currentOpacity:
+      PASSIVE_OPACITY
   };
 }
 
@@ -223,27 +342,32 @@ function createGradientTexture() {
 
   gradient.addColorStop(
     0,
-    "rgba(255,255,255,0.30)"
+    "rgba(255,245,205,0.70)"
   );
 
   gradient.addColorStop(
-    0.18,
-    "rgba(255,255,255,0.16)"
+    0.12,
+    "rgba(255,235,175,0.38)"
   );
 
   gradient.addColorStop(
-    0.38,
-    "rgba(255,255,255,0.05)"
+    0.28,
+    "rgba(255,225,150,0.15)"
   );
 
   gradient.addColorStop(
-    0.62,
-    "rgba(255,255,255,0)"
+    0.52,
+    "rgba(255,220,140,0.035)"
+  );
+
+  gradient.addColorStop(
+    0.72,
+    "rgba(255,220,140,0)"
   );
 
   gradient.addColorStop(
     1,
-    "rgba(255,255,255,0)"
+    "rgba(255,220,140,0)"
   );
 
   ctx.fillStyle =
@@ -265,6 +389,61 @@ function createGradientTexture() {
     true;
 
   return texture;
+}
+
+function createParticleTexture() {
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width = 64;
+  canvas.height = 64;
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+  const gradient =
+    ctx.createRadialGradient(
+      32,
+      32,
+      0,
+
+      32,
+      32,
+      32
+    );
+
+  gradient.addColorStop(
+    0,
+    "rgba(255,255,230,1)"
+  );
+
+  gradient.addColorStop(
+    0.25,
+    "rgba(255,225,150,0.8)"
+  );
+
+  gradient.addColorStop(
+    1,
+    "rgba(255,210,100,0)"
+  );
+
+  ctx.fillStyle =
+    gradient;
+
+  ctx.fillRect(
+    0,
+    0,
+    64,
+    64
+  );
+
+  return new THREE.CanvasTexture(
+    canvas
+  );
 }
 
 
@@ -398,29 +577,136 @@ function updateGateObject(
     Только прозрачность.
   */
 
-  const opacity =
-    active
-      ? ACTIVE_OPACITY
-      : PASSIVE_OPACITY *
-        Math.max(
-          0.35,
-          strength
-        );
+  const targetOpacity =
+    (
+      active
+        ? 0.95
+        : 0.55
+    ) *
+    strength;
+
+  gateObject.currentOpacity +=
+    (
+      targetOpacity -
+      gateObject.currentOpacity
+    ) * 0.10;
 
   plane.material.opacity =
-    opacity;
+    gateObject.currentOpacity;
 
-  bottomEdge.material.opacity =
+const targetEdgeOpacity =
+  (
     active
       ? 1
-      : Math.max(
-          0.3,
-          strength * 0.75
-        );
+      : 0.8
+  ) *
+  strength;
+
+  bottomEdge.material.opacity +=
+    (
+      targetEdgeOpacity -
+      bottomEdge.material.opacity
+    ) * 0.10;
 
   group.visible = true;
+  updateGateParticles(
+  gateObject,
+  active
+);
 }
 
+function updateGateParticles(
+  gateObject,
+  active
+) {
+  const {
+    particles,
+    particleSeeds
+  } = gateObject;
+
+  if (!particles) {
+    return;
+  }
+
+  const positions =
+    particles.geometry
+      .attributes
+      .position;
+
+  const time =
+    performance.now() *
+    0.001;
+
+  for (
+    let i = 0;
+    i < particleSeeds.length;
+    i++
+  ) {
+    const seed =
+      particleSeeds[i];
+
+    /*
+      0 → 1 постоянно
+      движется вверх.
+    */
+
+    const progress =
+      (
+        seed.offset +
+        time *
+          PARTICLE_SPEED *
+          seed.speed
+      ) % 1;
+
+    positions.array[
+      i * 3
+    ] =
+      seed.x;
+
+    positions.array[
+      i * 3 + 1
+    ] =
+      progress *
+      WORLD_GATE_HEIGHT;
+
+    positions.array[
+      i * 3 + 2
+    ] =
+      0.08;
+    const blink =
+      0.5 +
+      0.5 *
+      Math.sin(
+        time *
+          seed.blinkSpeed +
+        seed.blinkOffset
+      );
+
+    const brightness =
+      0.35 +
+      blink *
+      seed.blinkStrength;
+  }
+
+  positions.needsUpdate =
+    true;
+
+  /*
+    При наведении частицы
+    становятся немного ярче.
+  */
+
+  const targetOpacity =
+    active
+      ? 0.95
+      : 0.45;
+
+  particles.material.opacity +=
+    (
+      targetOpacity -
+      particles.material.opacity
+    ) * 0.08;
+}
 
 export function hideRouteGates() {
   for (
@@ -458,7 +744,17 @@ export function destroyRouteGates() {
 
     gateObject.bottomEdge.material
       .dispose();
+    gateObject.particles?.geometry
+      .dispose();
+
+    gateObject.particles?.material
+      .dispose();
+
+    gateObject.particleTexture
+      ?.dispose();
+
   }
+
 
   gateObjects.clear();
 

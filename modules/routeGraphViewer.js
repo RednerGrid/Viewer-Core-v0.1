@@ -69,7 +69,7 @@ let startPinchFov = 50;
 
 const activePointers = new Map();
 
-const GATE_VISIBLE_ANGLE = 45;
+const GATE_VISIBLE_ANGLE = 30;
 const GATE_ACTIVE_ANGLE = 10;
 const GATE_SWITCH_MARGIN = 2.5;
 

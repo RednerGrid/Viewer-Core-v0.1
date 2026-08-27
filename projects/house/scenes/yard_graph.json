@@ -29,11 +29,11 @@
         "id": "edge_03_01",
         "from": {
           "panorama": "Pano_03",
-          "yaw": 157.4,
-          "pitch": -8.9,
-          "distance": 45,
-          "gateWidth": 170,
-          "gateRotation": -25
+          "yaw": 174.7,
+          "pitch": -9.7,
+          "distance": 50,
+          "gateWidth": 50,
+          "gateRotation": 8
         },
         "to": {
           "panorama": "Pano_01",
