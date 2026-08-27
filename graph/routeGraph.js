@@ -1,122 +1,152 @@
 export class RouteGraph {
-  constructor(config) {
-    this.config = config;
+  constructor(graphData) {
+    if (!graphData) {
+      throw new Error(
+        "RouteGraph: graphData отсутствует."
+      );
+    }
 
-    this.nodes =
-      config.nodes ?? {};
+    this.version =
+      graphData.version ?? 1;
+
+    this.startPanorama =
+      graphData.startPanorama;
+
+    this.startView =
+      graphData.startView ?? null;
+
+    this.panoramas =
+      graphData.panoramas ?? {};
 
     this.edges =
-      config.edges ?? {};
-
-    this.startNodeId =
-      config.startNode ?? null;
-
-    this.validate();
+      graphData.edges ?? {};
   }
 
-  getStartNode() {
-    return this.getNode(
-      this.startNodeId
+
+  getPanorama(id) {
+    return (
+      this.panoramas[id] ??
+      null
     );
   }
 
-  getNode(nodeId) {
-    return this.nodes[nodeId] ?? null;
+
+  getStartPanorama() {
+    return this.getPanorama(
+      this.startPanorama
+    );
   }
 
-  getEdge(edgeId) {
-    return this.edges[edgeId] ?? null;
-  }
 
-  getEdgesForNode(nodeId) {
-    return Object
-      .values(this.edges)
-      .filter(edge =>
-        edge.from === nodeId ||
-        edge.to === nodeId
-      )
-      .map(edge =>
-        this.createNodeEdgeView(
-          edge,
-          nodeId
-        )
-      );
-  }
+  /*
+    Возвращает все переходы,
+    доступные из panoramaId.
 
-  createNodeEdgeView(
-    edge,
-    nodeId
+    Runtime получает уже
+    нормализованное направление:
+    source → target.
+  */
+
+  getEdgesForPanorama(
+    panoramaId
   ) {
-    const forward =
-      edge.from === nodeId;
+    const result = [];
 
-    return {
-      id: edge.id,
+    for (
+      const edge
+      of Object.values(
+        this.edges
+      )
+    ) {
 
-      edge,
-
-      direction:
-        forward
-          ? "forward"
-          : "reverse",
-
-      sourceNodeId:
-        nodeId,
-
-      targetNodeId:
-        forward
-          ? edge.to
-          : edge.from,
-
-      yaw:
-        forward
-          ? edge.fromYaw
-          : edge.toYaw,
-
-      video:
-        forward
-          ? edge.forward
-          : edge.reverse
-    };
-  }
-
-  validate() {
-    if (!this.startNodeId) {
-      throw new Error(
-        "RouteGraph: startNode не указан."
-      );
-    }
-
-    if (!this.nodes[this.startNodeId]) {
-      throw new Error(
-        `RouteGraph: startNode "${this.startNodeId}" не найден.`
-      );
-    }
-
-    Object.values(
-      this.edges
-    ).forEach(edge => {
-
-      if (!this.nodes[edge.from]) {
-        throw new Error(
-          `RouteGraph: edge "${edge.id}" ссылается на неизвестный node "${edge.from}".`
-        );
-      }
-
-      if (!this.nodes[edge.to]) {
-        throw new Error(
-          `RouteGraph: edge "${edge.id}" ссылается на неизвестный node "${edge.to}".`
-        );
-      }
+      /*
+        FROM → TO
+      */
 
       if (
-        typeof edge.fromYaw !== "number" ||
-        typeof edge.toYaw !== "number"
+        edge.from?.panorama ===
+        panoramaId
       ) {
-        throw new Error(
-          `RouteGraph: у edge "${edge.id}" отсутствует fromYaw/toYaw.`
-        );
+        result.push({
+          id: edge.id,
+
+          edge,
+
+          direction: "forward",
+
+          sourcePanoramaId:
+            edge.from.panorama,
+
+          targetPanoramaId:
+            edge.to.panorama,
+
+          yaw:
+            edge.from.yaw ?? 0,
+
+          pitch:
+            edge.from.pitch ?? 0,
+
+          distance:
+            edge.from.distance ?? 400,
+
+          gateWidth:
+            edge.from.gateWidth ?? 120,
+
+          gateRotation:
+            edge.from.gateRotation ?? 0,
+
+          video:
+            edge.videos?.forward ??
+            null
+        });
+
+        continue;
       }
-    });
+
+
+      /*
+        TO → FROM
+      */
+
+      if (
+        edge.to?.panorama ===
+        panoramaId
+      ) {
+        result.push({
+          id: edge.id,
+
+          edge,
+
+          direction: "reverse",
+
+          sourcePanoramaId:
+            edge.to.panorama,
+
+          targetPanoramaId:
+            edge.from.panorama,
+
+          yaw:
+            edge.to.yaw ?? 0,
+
+          pitch:
+            edge.to.pitch ?? 0,
+
+          distance:
+            edge.to.distance ?? 400,
+
+          gateWidth:
+            edge.to.gateWidth ?? 120,
+
+          gateRotation:
+            edge.to.gateRotation ?? 0,
+
+          video:
+            edge.videos?.reverse ??
+            null
+        });
+      }
+    }
+
+    return result;
   }
 }

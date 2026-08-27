@@ -27,6 +27,7 @@ import {
 
 
 let viewerRef = null;
+let editorRef = null;
 
 let renderer = null;
 let scene3d = null;
@@ -41,7 +42,7 @@ let textureLoader = null;
 let animationId = null;
 
 let graph = null;
-let currentNode = null;
+let currentPanorama = null;
 
 let activeEdge = null;
 let activeGateEdgeId = null;
@@ -78,8 +79,10 @@ const GATE_SWITCH_MARGIN = 2.5;
 export async function init({
   project,
   scene,
-  viewer
+  viewer,
+  editor
 }) {
+  editorRef = editor;
   projectRef = project;
   viewerRef = viewer;
 
@@ -89,42 +92,53 @@ export async function init({
     Создаём граф из scene.graph
   */
 
-  graph = new RouteGraph(
-    scene.graph
+  graph =
+    new RouteGraph(
+      scene.graph
+    );
+
+  currentPanorama =
+    graph.getStartPanorama();
+
+  syncDeveloperTools(
+    project
   );
 
-  currentNode =
-    graph.getStartNode();
-
-  if (!currentNode) {
+  if (!currentPanorama) {
     throw new Error(
-      "RouteGraphViewer: start node не найден."
+      `RouteGraphViewer: start panorama "${graph.startPanorama}" не найдена.`
     );
   }
 
+  
+
   /*
-    Стартовый взгляд.
-    Сначала смотрим node.view,
-    затем scene.view,
-    затем defaults.
+    Стартовый взгляд принадлежит
+    graph, а не panorama.
+
+    Применяется только при первом
+    входе в Route Graph.
   */
 
+
+
   const startView =
-    currentNode.view ??
-    scene.view ??
-    {};
+    graph.startView ?? {};
 
-  lon = Number(
-    startView.yaw ?? 0
-  );
+  lon =
+    Number(
+      startView.yaw ?? 0
+    );
 
-  lat = Number(
-    startView.pitch ?? 0
-  );
+  lat =
+    Number(
+      startView.pitch ?? 0
+    );
 
-  targetFov = Number(
-    startView.fov ?? 50
-  );
+  targetFov =
+    Number(
+      startView.fov ?? 50
+    );
 
 
   /*
@@ -170,20 +184,50 @@ export async function init({
     renderer.domElement
   );
 
-  debugViewEl = document.createElement("div");
 
-    debugViewEl.style.position = "absolute";
-    debugViewEl.style.top = "12px";
-    debugViewEl.style.left = "12px";
-    debugViewEl.style.zIndex = "1000";
-    debugViewEl.style.padding = "6px 10px";
-    debugViewEl.style.borderRadius = "8px";
-    debugViewEl.style.background = "rgba(0,0,0,0.65)";
-    debugViewEl.style.color = "#fff";
-    debugViewEl.style.fontFamily = "monospace";
-    debugViewEl.style.fontSize = "13px";
+  /*
+    DEBUG VIEW
+  */
 
-    viewer.appendChild(debugViewEl);
+  debugViewEl =
+    document.createElement(
+      "div"
+    );
+
+  debugViewEl.style.position =
+    "absolute";
+
+  debugViewEl.style.top =
+    "12px";
+
+  debugViewEl.style.left =
+    "12px";
+
+  debugViewEl.style.zIndex =
+    "1000";
+
+  debugViewEl.style.padding =
+    "6px 10px";
+
+  debugViewEl.style.borderRadius =
+    "8px";
+
+  debugViewEl.style.background =
+    "rgba(0,0,0,0.65)";
+
+  debugViewEl.style.color =
+    "#fff";
+
+  debugViewEl.style.fontFamily =
+    "monospace";
+
+  debugViewEl.style.fontSize =
+    "13px";
+
+  viewer.appendChild(
+    debugViewEl
+  );
+
 
   /*
     PANORAMA SPHERE
@@ -211,65 +255,65 @@ export async function init({
       material
     );
 
-  scene3d.add(sphere);
+  scene3d.add(
+    sphere
+  );
 
   textureLoader =
     new THREE.TextureLoader();
 
 
   /*
-    Загружаем start node.
+    Загружаем стартовую panorama.
   */
 
-  await loadNode(
+  await loadPanorama(
     project,
-    currentNode
+    currentPanorama
   );
 
 
   /*
-    Route Gate
+    ROUTE GATES
   */
 
-    initRouteGates(
-    viewer,
-    {
-        onActivate:
-        activateCurrentEdge
-    }
-    );
+  initRouteGates(
+    scene3d
+  );
 
 
   /*
-    Controls
+    CONTROLS
   */
 
-  addControls(viewer);
+  addControls(
+    viewer
+  );
 
   animate();
 }
 
 
-async function loadNode(
+async function loadPanorama(
   project,
-  node
+  panorama
 ) {
-  if (!node.panorama) {
+  if (!panorama.image) {
     throw new Error(
-      `RouteGraphViewer: panorama отсутствует у node "${node.id}".`
+      `RouteGraphViewer: image отсутствует у panorama "${panorama.id}".`
     );
   }
 
   const path =
     `${project.basePath}` +
-    `${node.panorama}`;
+    `${panorama.image}`;
 
   const assets =
     await loadAssets(
       [path],
       {
         title:
-          "Загрузка точки"
+          "Загрузка панорамы"
       }
     );
 
@@ -388,7 +432,7 @@ function removeControls() {
   );
 }
 
-function onViewerClick() {
+function onViewerClick(event) {
   if (pointerMoved) {
     pointerMoved = false;
     return;
@@ -397,10 +441,56 @@ function onViewerClick() {
   if (isMoving) return;
   if (!activeEdge) return;
 
-  console.log(
-    "VIEWER ACTIVATE",
-    activeEdge.id
-  );
+
+  /*
+    DEV MODE
+  */
+
+  if (editorRef) {
+
+    /*
+      Ctrl + Click:
+      выполняем переход.
+    */
+
+    if (event.ctrlKey) {
+      activateCurrentEdge();
+      return;
+    }
+
+
+    /*
+      Обычный Click:
+      выбираем gate
+      для редактирования.
+    */
+
+    editorRef.selectRouteGate?.(
+      activeEdge.id,
+      currentPanorama.id
+    );
+
+    console.log(
+      "DEV SELECT GATE",
+      {
+        edgeId:
+          activeEdge.id,
+
+        panoramaId:
+          currentPanorama.id
+      }
+    );
+
+    return;
+  }
+
+
+  /*
+    CLIENT MODE
+
+    Обычный click =
+    переход.
+  */
 
   activateCurrentEdge();
 }
@@ -615,23 +705,19 @@ function getDistance(a, b) {
 
 
 function animate() {
-  if (
-    !camera ||
-    !renderer ||
-    !scene3d
-  ) {
-    return;
-  }
-
-
   animationId =
     requestAnimationFrame(
       animate
     );
 
-  /*
-    Camera
-  */
+  lat =
+    Math.max(
+      -45,
+      Math.min(
+        45,
+        lat
+      )
+    );
 
   const phi =
     THREE.MathUtils.degToRad(
@@ -656,34 +742,33 @@ function animate() {
       Math.sin(theta)
   );
 
-
-    /*
-    Smooth FOV
-    */
-
-    camera.fov +=
+  camera.fov +=
     (
-        targetFov -
-        camera.fov
+      targetFov -
+      camera.fov
     ) * 0.12;
 
-    camera.updateProjectionMatrix();
-
-    debugViewEl.textContent =
-    `yaw ${lon.toFixed(1)}   pitch ${lat.toFixed(1)}   fov ${camera.fov.toFixed(1)}`;
+  camera.updateProjectionMatrix();
 
 
-    /*
-    Определяем доступные
-    направления текущего node.
-    */
+  /*
+    DevTools получает
+    текущий взгляд.
+  */
 
-    updateDirectionGates();
+  editorRef?.updateDeveloperView({
+    yaw: lon,
+    pitch: lat,
+    fov: camera.fov
+  });
 
-    renderer.render(
+
+  updateDirectionGates();
+
+  renderer.render(
     scene3d,
     camera
-    );
+  );
 }
 
 async function activateCurrentEdge() {
@@ -703,14 +788,14 @@ async function activateCurrentEdge() {
   const selectedEdge =
     activeEdge;
 
-  const targetNode =
-    graph.getNode(
-      selectedEdge.targetNodeId
+  const targetPanorama =
+    graph.getPanorama(
+      selectedEdge.targetPanoramaId
     );
 
-  if (!targetNode) {
+  if (!targetPanorama) {
     console.warn(
-      `RouteGraphViewer: target node "${selectedEdge.targetNodeId}" не найден.`
+      `RouteGraphViewer: target panorama "${selectedEdge.targetPanoramaId}" не найдена.`
     );
 
     return;
@@ -730,15 +815,15 @@ async function activateCurrentEdge() {
       "PLAY EDGE",
       selectedEdge.id,
       selectedEdge.video,
-      selectedEdge.targetNodeId
+      selectedEdge.targetPanoramaId
     );
 
     const result =
       await playRouteEdge({
         project: projectRef,
         edge: selectedEdge,
-        sourceNode: currentNode,
-        targetNode,
+        sourcePanorama: currentPanorama,
+        targetPanorama,
         setTexture:
           setPanoramaTexture,
         textureLoader
@@ -747,22 +832,22 @@ async function activateCurrentEdge() {
     console.log(
       "ROUTE FINISHED",
       {
-        resultNode:
-          result.node?.id,
+        resultPanorama:
+          result.panorama?.id,
 
-        targetNode:
-          targetNode?.id,
+        targetPanorama:
+          targetPanorama?.id,
 
-        sourceNode:
-          currentNode?.id,
+        sourcePanorama:
+          currentPanorama?.id,
 
         direction:
           result.direction
       }
     );
 
-    currentNode =
-      result.node;
+    currentPanorama =
+      result.panorama;
 
     activeEdge = null;
 
@@ -787,7 +872,7 @@ async function activateCurrentEdge() {
 function updateDirectionGates() {
   if (
     !graph ||
-    !currentNode ||
+    !currentPanorama ||
     isMoving
   ) {
     activeEdge = null;
@@ -799,8 +884,8 @@ function updateDirectionGates() {
   }
 
   const edges =
-    graph.getEdgesForNode(
-      currentNode.id
+    graph.getEdgesForPanorama(
+      currentPanorama.id
     );
 
   const selection =
@@ -851,15 +936,6 @@ function updateDirectionGates() {
     const edge =
       item.edge;
 
-    const gatePosition =
-      getGateScreenPosition(
-        edge.yaw
-      );
-
-    if (!gatePosition) {
-      continue;
-    }
-
     const strength =
       1 -
       Math.min(
@@ -871,15 +947,20 @@ function updateDirectionGates() {
     gates.push({
       id: edge.id,
 
-      x: gatePosition.x,
-      y: gatePosition.y,
+      yaw:
+        edge.yaw ?? 0,
 
-      /*
-        Пока default.
-        Позже возьмём
-        индивидуально из JSON.
-      */
-      width: 120,
+      pitch:
+        edge.pitch ?? 0,
+
+      distance:
+        edge.distance ?? 250,
+
+      width:
+        edge.gateWidth ?? 120,
+
+      rotation:
+        edge.gateRotation ?? 0,
 
       active:
         edge.id ===
@@ -894,34 +975,47 @@ function updateDirectionGates() {
   );
 }
 
-function getGateScreenPosition(yaw) {
+function getGateScreenPosition(
+  yaw,
+  pitch = 0,
+  distance = 400
+) {
   if (!camera || !renderer) {
     return null;
   }
 
-  const radius = 400;
-
-  const theta =
+  const yawRad =
     THREE.MathUtils.degToRad(
       yaw
     );
 
+  const pitchRad =
+    THREE.MathUtils.degToRad(
+      pitch
+    );
+
+  const cosPitch =
+    Math.cos(pitchRad);
+
   const worldPosition =
     new THREE.Vector3(
-      radius * Math.cos(theta),
-      0,
-      radius * Math.sin(theta)
+      distance *
+        Math.cos(yawRad) *
+        cosPitch,
+
+      distance *
+        Math.sin(pitchRad),
+
+      distance *
+        Math.sin(yawRad) *
+        cosPitch
     );
 
   const projected =
-    worldPosition.clone().project(
-      camera
-    );
+    worldPosition
+      .clone()
+      .project(camera);
 
-  /*
-    Точка за камерой или далеко
-    за пределами экрана.
-  */
   if (
     projected.z < -1 ||
     projected.z > 1
@@ -933,19 +1027,18 @@ function getGateScreenPosition(yaw) {
     renderer.domElement
       .getBoundingClientRect();
 
-  const x =
-    (projected.x * 0.5 + 0.5) *
-    rect.width;
-
-  const y =
-    (-projected.y * 0.5 + 0.5) *
-    rect.height;
-
   return {
-    x,
-    y
+    x:
+      (projected.x * 0.5 + 0.5) *
+      rect.width,
+
+    y:
+      (-projected.y * 0.5 + 0.5) *
+      rect.height
   };
 }
+
+
 
 
 function normalizeAngle(angle) {
@@ -999,6 +1092,7 @@ export function update() {}
 
 export function destroy() {
   destroyRouteGates();
+  editorRef?.destroyDeveloperTools();
 
   removeControls();
 
@@ -1041,8 +1135,29 @@ export function destroy() {
   animationId = null;
 
   graph = null;
-  currentNode = null;
+  currentPanorama = null;
   projectRef = null;
+  editorRef = null;
 
   resetControls();
+}
+
+function syncDeveloperTools(
+  project
+) {
+  editorRef?.initDeveloperTools({
+    project,
+
+    onSceneChange:
+      editableScene => {
+        /*
+          editableScene уже тот же объект,
+          с которым работает RouteGraph.
+
+          Пока достаточно просто
+          пересчитать gates.
+        */
+        updateDirectionGates();
+      }
+  });
 }

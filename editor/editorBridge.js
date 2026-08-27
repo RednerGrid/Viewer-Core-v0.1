@@ -8,10 +8,12 @@ export {
   updateDeveloperView,
   destroyDeveloperTools,
   selectHotspot,
-  saveHotspotPosition
+  saveHotspotPosition,
+  selectRouteGate
 } from "./developerTools.js";
 
 export function beginSceneEditing(scene) {
   beginEditing(scene);
+
   return getEditableScene();
 }

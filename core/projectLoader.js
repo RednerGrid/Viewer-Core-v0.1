@@ -236,15 +236,15 @@ function validateScene(scene, expectedSceneId) {
       );
     }
 
-    if (!scene.graph.startNode) {
+    if (!scene.graph.startPanorama) {
       throw new Error(
-        `В сцене "${scene.id}" отсутствует "graph.startNode".`
+        `В сцене "${scene.id}" отсутствует "graph.startPanorama".`
       );
     }
 
-    if (!scene.graph.nodes) {
+    if (!scene.graph.panoramas) {
       throw new Error(
-        `В сцене "${scene.id}" отсутствует "graph.nodes".`
+        `В сцене "${scene.id}" отсутствует "graph.panoramas".`
       );
     }
 

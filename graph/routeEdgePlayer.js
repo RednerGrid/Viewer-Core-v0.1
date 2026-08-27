@@ -21,8 +21,8 @@ let speedAnimationId = null;
 export async function playRouteEdge({
   project,
   edge,
-  sourceNode,
-  targetNode,
+  sourcePanorama,
+  targetPanorama,
   setTexture,
   textureLoader
 }) {
@@ -32,31 +32,56 @@ export async function playRouteEdge({
     );
   }
 
-  const graphEdge =
-    edge.edge;
+const graphEdge =
+  edge.edge;
 
-  const isReverseEntry =
-    edge.direction === "reverse";
+const isReverseEntry =
+  edge.direction === "reverse";
 
-  const forwardPath =
-    `${project.basePath}${
-      isReverseEntry
-        ? graphEdge.reverse
-        : graphEdge.forward
-    }`;
 
-  const reversePath =
-    `${project.basePath}${
-      isReverseEntry
-        ? graphEdge.forward
-        : graphEdge.reverse
-    }`;
+/*
+  Физическое направление маршрута
+  относительно текущей panorama.
 
-  const sourcePanoramaPath =
-    `${project.basePath}${sourceNode.panorama}`;
+  forwardVideo всегда ведёт:
+  sourcePanorama → targetPanorama
 
-  const targetPanoramaPath =
-    `${project.basePath}${targetNode.panorama}`;
+  reverseVideo всегда ведёт:
+  targetPanorama → sourcePanorama
+*/
+
+const forwardVideoPath =
+  isReverseEntry
+    ? graphEdge.videos?.reverse
+    : graphEdge.videos?.forward;
+
+const reverseVideoPath =
+  isReverseEntry
+    ? graphEdge.videos?.forward
+    : graphEdge.videos?.reverse;
+
+
+if (
+  !forwardVideoPath ||
+  !reverseVideoPath
+) {
+  throw new Error(
+    `RouteEdgePlayer: отсутствует video для edge "${edge.id}".`
+  );
+}
+
+
+const forwardPath =
+  `${project.basePath}${forwardVideoPath}`;
+
+const reversePath =
+  `${project.basePath}${reverseVideoPath}`;
+
+const sourcePanoramaPath =
+  `${project.basePath}${sourcePanorama.image}`;
+
+const targetPanoramaPath =
+  `${project.basePath}${targetPanorama.image}`;
 
 
   /*
@@ -84,7 +109,7 @@ export async function playRouteEdge({
 
 
   /*
-    Панорамы узлов готовим заранее.
+    Панорамы готовим заранее.
   */
 
   const [
@@ -146,11 +171,11 @@ export async function playRouteEdge({
     true;
 
 
-  /*
-    Route progress:
-    0 = sourceNode
-    1 = targetNode
-  */
+/*
+  Route progress:
+  0 = sourcePanorama
+  1 = targetPanorama
+*/
 
   let activeDirection = null;
 
@@ -480,14 +505,17 @@ export async function playRouteEdge({
 
       console.log(
         "FINISH FORWARD",
-        targetNode.id
+        targetPanorama.id
       );
 
       cleanup();
 
       resolve({
-        node: targetNode,
-        direction: "forward"
+        panorama:
+          targetPanorama,
+
+        direction:
+          "forward"
       });
     };
 
@@ -500,11 +528,19 @@ export async function playRouteEdge({
         }
       );
 
+      console.log(
+        "FINISH REVERSE",
+        sourcePanorama.id
+      );
+
       cleanup();
 
       resolve({
-        node: sourceNode,
-        direction: "reverse"
+        panorama:
+          sourcePanorama,
+
+        direction:
+          "reverse"
       });
     };
 

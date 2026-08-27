@@ -29,6 +29,15 @@ let highlightHotspotCallback = null;
 let inspectorTitleEl = null;
 let sceneInspectorEl = null;
 let hotspotInspectorEl = null;
+let routeGateInspectorEl = null;
+
+let routeGateYawInputEl = null;
+let routeGatePitchInputEl = null;
+let routeGateDistanceInputEl = null;
+let routeGateWidthInputEl = null;
+let routeGateRotationInputEl = null;
+
+let selectedRouteGate = null;
 
 let currentView = {
   yaw: 0,
@@ -134,6 +143,81 @@ export function initDeveloperTools(options = {}) {
       data-dev-update-scene-title
     >
       Обновить название сцены
+    </button>
+  </div>
+
+  <div
+    class="developer-tools__section"
+    data-dev-route-gate-inspector
+    hidden
+  >
+    <div class="developer-tools__subtitle">
+      Route Gate
+    </div>
+
+    <label class="developer-tools__label">
+      Yaw
+
+      <input
+        type="number"
+        step="0.1"
+        class="developer-tools__input"
+        data-dev-route-gate-yaw
+      >
+    </label>
+
+    <label class="developer-tools__label">
+      Pitch
+
+      <input
+        type="number"
+        step="0.1"
+        class="developer-tools__input"
+        data-dev-route-gate-pitch
+      >
+    </label>
+
+    <label class="developer-tools__label">
+      Distance
+
+      <input
+        type="number"
+        step="5"
+        min="10"
+        class="developer-tools__input"
+        data-dev-route-gate-distance
+      >
+    </label>
+
+    <label class="developer-tools__label">
+      Width
+
+      <input
+        type="number"
+        step="5"
+        min="10"
+        class="developer-tools__input"
+        data-dev-route-gate-width
+      >
+    </label>
+
+    <label class="developer-tools__label">
+      Rotation
+
+      <input
+        type="number"
+        step="1"
+        class="developer-tools__input"
+        data-dev-route-gate-rotation
+      >
+    </label>
+
+    <button
+      type="button"
+      class="developer-tools__button"
+      data-dev-route-gate-from-view
+    >
+      Поставить в центр взгляда
     </button>
   </div>
 
@@ -264,6 +348,40 @@ export function initDeveloperTools(options = {}) {
   inspectorTitleEl = panelEl.querySelector("[data-dev-inspector-title]");
   sceneInspectorEl = panelEl.querySelector("[data-dev-scene-inspector]");
   hotspotInspectorEl = panelEl.querySelector("[data-dev-hotspot-inspector]");
+  routeGateInspectorEl =
+    panelEl.querySelector(
+      "[data-dev-route-gate-inspector]"
+    );
+
+  routeGateYawInputEl =
+    panelEl.querySelector(
+      "[data-dev-route-gate-yaw]"
+    );
+
+  routeGatePitchInputEl =
+    panelEl.querySelector(
+      "[data-dev-route-gate-pitch]"
+    );
+
+  routeGateDistanceInputEl =
+    panelEl.querySelector(
+      "[data-dev-route-gate-distance]"
+    );
+
+  routeGateWidthInputEl =
+    panelEl.querySelector(
+      "[data-dev-route-gate-width]"
+    );
+
+  routeGateRotationInputEl =
+    panelEl.querySelector(
+      "[data-dev-route-gate-rotation]"
+    );
+
+  const routeGateFromViewButton =
+    panelEl.querySelector(
+      "[data-dev-route-gate-from-view]"
+    );
 
   fillTargetSelect();
   renderHotspotList();
@@ -278,6 +396,35 @@ export function initDeveloperTools(options = {}) {
   updateHotspotButtonEl.addEventListener("click", updateSelectedHotspot);
   deleteHotspotButtonEl.addEventListener("click", deleteSelectedHotspot);
   updateSceneTitleButtonEl.addEventListener("click", updateSceneTitle);
+  routeGateYawInputEl.addEventListener(
+    "input",
+    updateSelectedRouteGate
+  );
+
+  routeGatePitchInputEl.addEventListener(
+    "input",
+    updateSelectedRouteGate
+  );
+
+  routeGateDistanceInputEl.addEventListener(
+    "input",
+    updateSelectedRouteGate
+  );
+
+  routeGateWidthInputEl.addEventListener(
+    "input",
+    updateSelectedRouteGate
+  );
+
+  routeGateRotationInputEl.addEventListener(
+    "input",
+    updateSelectedRouteGate
+  );
+
+  routeGateFromViewButton.addEventListener(
+    "click",
+    setRouteGateFromView
+  );
   
 }
 
@@ -577,20 +724,28 @@ export function selectHotspot(hotspotId) {
     });
   }
 
+  selectedRouteGate = null;
   selectedHotspotId = hotspot.id;
 
   if (highlightHotspotCallback) {
-    highlightHotspotCallback(hotspot.id);
+    highlightHotspotCallback(
+      hotspot.id
+    );
   }
 
-  hotspotTitleInputEl.value = hotspot.title ?? "";
-  hotspotTargetSelectEl.value = hotspot.target ?? "";
+  hotspotTitleInputEl.value =
+    hotspot.title ?? "";
 
-  updateHotspotButtonEl.disabled = false;
-  deleteHotspotButtonEl.disabled = false;
+  hotspotTargetSelectEl.value =
+    hotspot.target ?? "";
+
+  updateHotspotButtonEl.disabled =
+    false;
+
+  deleteHotspotButtonEl.disabled =
+    false;
 
   renderInspector();
-  renderHotspotList();
   renderHotspotList();
 }
 
@@ -810,17 +965,218 @@ function renderInspector() {
   if (
     !inspectorTitleEl ||
     !sceneInspectorEl ||
-    !hotspotInspectorEl
+    !hotspotInspectorEl ||
+    !routeGateInspectorEl
   ) {
     return;
   }
 
-  const hasSelectedHotspot = Boolean(selectedHotspotId);
+  const hasHotspot =
+    Boolean(
+      selectedHotspotId
+    );
 
-  inspectorTitleEl.textContent = hasSelectedHotspot
-    ? "Hotspot"
-    : "Scene";
+  const hasRouteGate =
+    Boolean(
+      selectedRouteGate
+    );
 
-  sceneInspectorEl.hidden = hasSelectedHotspot;
-  hotspotInspectorEl.hidden = !hasSelectedHotspot;
+  if (hasRouteGate) {
+    inspectorTitleEl.textContent =
+      `Route Gate — ${selectedRouteGate.edgeId}`;
+
+    sceneInspectorEl.hidden =
+      true;
+
+    hotspotInspectorEl.hidden =
+      true;
+
+    routeGateInspectorEl.hidden =
+      false;
+
+    return;
+  }
+
+  if (hasHotspot) {
+    inspectorTitleEl.textContent =
+      "Hotspot";
+
+    sceneInspectorEl.hidden =
+      true;
+
+    hotspotInspectorEl.hidden =
+      false;
+
+    routeGateInspectorEl.hidden =
+      true;
+
+    return;
+  }
+
+  inspectorTitleEl.textContent =
+    "Scene";
+
+  sceneInspectorEl.hidden =
+    false;
+
+  hotspotInspectorEl.hidden =
+    true;
+
+  routeGateInspectorEl.hidden =
+    true;
+}
+
+export function selectRouteGate(
+  edgeId,
+  panoramaId
+) {
+  const side =
+    getRouteGateSide(
+      edgeId,
+      panoramaId
+    );
+
+  if (!side) {
+    console.warn(
+      `Route Gate не найден: ${edgeId} / ${panoramaId}`
+    );
+
+    return;
+  }
+
+  selectedHotspotId = null;
+
+  selectedRouteGate = {
+    edgeId,
+    panoramaId
+  };
+
+  routeGateYawInputEl.value =
+    side.yaw ?? 0;
+
+  routeGatePitchInputEl.value =
+    side.pitch ?? 0;
+
+  routeGateDistanceInputEl.value =
+    side.distance ?? 250;
+
+  routeGateWidthInputEl.value =
+    side.gateWidth ?? 120;
+
+  routeGateRotationInputEl.value =
+    side.gateRotation ?? 0;
+
+  renderInspector();
+}
+
+function getRouteGateSide(
+  edgeId,
+  panoramaId
+) {
+  const scene =
+    getEditableScene();
+
+  const edge =
+    scene?.graph?.edges?.[
+      edgeId
+    ];
+
+  if (!edge) {
+    return null;
+  }
+
+  if (
+    edge.from?.panorama ===
+    panoramaId
+  ) {
+    return edge.from;
+  }
+
+  if (
+    edge.to?.panorama ===
+    panoramaId
+  ) {
+    return edge.to;
+  }
+
+  return null;
+}
+
+function updateSelectedRouteGate() {
+  if (!selectedRouteGate) {
+    return;
+  }
+
+  const {
+    edgeId,
+    panoramaId
+  } = selectedRouteGate;
+
+  updateScene(scene => {
+    const edge =
+      scene.graph?.edges?.[
+        edgeId
+      ];
+
+    if (!edge) return;
+
+    let side = null;
+
+    if (
+      edge.from?.panorama ===
+      panoramaId
+    ) {
+      side = edge.from;
+    }
+
+    if (
+      edge.to?.panorama ===
+      panoramaId
+    ) {
+      side = edge.to;
+    }
+
+    if (!side) return;
+
+    side.yaw =
+      Number(
+        routeGateYawInputEl.value
+      );
+
+    side.pitch =
+      Number(
+        routeGatePitchInputEl.value
+      );
+
+    side.distance =
+      Number(
+        routeGateDistanceInputEl.value
+      );
+
+    side.gateWidth =
+      Number(
+        routeGateWidthInputEl.value
+      );
+
+    side.gateRotation =
+      Number(
+        routeGateRotationInputEl.value
+      );
+  });
+
+  notifySceneChanged();
+}
+
+function setRouteGateFromView() {
+  if (!selectedRouteGate) {
+    return;
+  }
+
+  routeGateYawInputEl.value =
+    currentView.yaw.toFixed(1);
+
+  routeGatePitchInputEl.value =
+    currentView.pitch.toFixed(1);
+
+  updateSelectedRouteGate();
 }
