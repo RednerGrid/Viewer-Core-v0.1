@@ -21,6 +21,7 @@ import {
 
 import { playRouteEdge } from "./routeEdgePlayer.js";
 import { playRouteFrameEdge } from "./routeFrameEdgePlayer.js";
+import { showRouteTouchControl } from "../ui/routeTouchControl.js";
 
 
 
@@ -280,6 +281,15 @@ export async function init({
     scene3d
   );
 
+  showRouteTouchControl({
+    onMove(direction, speed) {
+      console.log("TOUCH MOVE", direction, speed);
+    },
+
+    onStop() {
+      console.log("TOUCH STOP");
+    }
+  });
 
   /*
     CONTROLS
