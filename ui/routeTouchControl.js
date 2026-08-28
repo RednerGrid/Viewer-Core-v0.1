@@ -9,7 +9,16 @@ let moveCallback = null;
 let stopCallback = null;
 
 const DEAD_ZONE = 10;
-const MAX_DRAG = matchMedia("(pointer: coarse)").matches ? 120 : 70;
+
+function getMaxDrag() {
+  const isTouch = matchMedia("(pointer: coarse)").matches;
+  const isPortrait = matchMedia("(orientation: portrait)").matches;
+
+  if (isTouch && isPortrait) return 300;
+  if (isTouch) return 120;
+
+  return 70;
+}
 
 export function showRouteTouchControl({
   container,
@@ -81,7 +90,13 @@ function onPointerMove(event) {
   if (pointerId === null) return;
   if (event.pointerId !== pointerId) return;
 
-  const deltaY = clamp(event.clientY - startY, -MAX_DRAG, MAX_DRAG);
+  const maxDrag = getMaxDrag();
+
+  const deltaY = clamp(
+    event.clientY - startY,
+    -maxDrag,
+    maxDrag
+  );
 
   updateVisual(deltaY);
 
@@ -93,7 +108,7 @@ function onPointerMove(event) {
   }
 
   const speed = clamp(
-    (distance - DEAD_ZONE) / (MAX_DRAG - DEAD_ZONE),
+    (distance - DEAD_ZONE) / (maxDrag - DEAD_ZONE),
     0,
     1
   );
@@ -126,13 +141,9 @@ function onPointerUp(event) {
 function updateVisual(deltaY) {
   if (!knobEl) return;
 
-  const amount = Math.abs(deltaY) / MAX_DRAG;
+  const maxDrag = getMaxDrag();
+  const amount = Math.abs(deltaY) / maxDrag;
 
-  /*
-    Центр двигается вслед за пальцем.
-    Одновременно круг вытягивается
-    в направлении движения.
-  */
   const scaleY = 1 + amount * 0.45;
   const scaleX = 1 - amount * 0.12;
 
