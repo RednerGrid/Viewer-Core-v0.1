@@ -1,4 +1,5 @@
 import { loadMp4Samples } from "../graph/mp4Demuxer.js";
+
 import {
   showRouteTouchControl,
   hideRouteTouchControl
@@ -23,19 +24,25 @@ export async function playRouteFrameEdge({
   getViewYaw
 }) {
   if (!edge?.edge) {
-    throw new Error("RouteFrameEdgePlayer: edge отсутствует.");
+    throw new Error(
+      "RouteFrameEdgePlayer: edge отсутствует."
+    );
   }
 
   if (!("VideoDecoder" in window)) {
-    throw new Error("RouteFrameEdgePlayer: WebCodecs не поддерживается.");
+    throw new Error(
+      "RouteFrameEdgePlayer: WebCodecs не поддерживается."
+    );
   }
 
   const graphEdge = edge.edge;
-  const isReverseEntry = edge.direction === "reverse";
+  const isReverseEntry =
+    edge.direction === "reverse";
+
   const entryViewYaw =
-  Number(
-    getViewYaw?.() ?? 0
-  );
+    Number(
+      getViewYaw?.() ?? 0
+    );
 
   const motion = graphEdge.motion;
 
@@ -45,9 +52,15 @@ export async function playRouteFrameEdge({
     );
   }
 
-  const videoPath = `${project.basePath}${motion.src}`;
-  const sourcePanoramaPath = `${project.basePath}${sourcePanorama.image}`;
-  const targetPanoramaPath = `${project.basePath}${targetPanorama.image}`;
+  const videoPath =
+    `${project.basePath}${motion.src}`;
+
+  const sourcePanoramaPath =
+    `${project.basePath}${sourcePanorama.image}`;
+
+  const targetPanoramaPath =
+    `${project.basePath}${targetPanorama.image}`;
+
 
   /*
     Панорамы.
@@ -57,9 +70,15 @@ export async function playRouteFrameEdge({
     sourceTexture,
     targetTexture
   ] = await Promise.all([
-    textureLoader.loadAsync(sourcePanoramaPath),
-    textureLoader.loadAsync(targetPanoramaPath)
+    textureLoader.loadAsync(
+      sourcePanoramaPath
+    ),
+
+    textureLoader.loadAsync(
+      targetPanoramaPath
+    )
   ]);
+
 
   /*
     All-Intra MP4.
@@ -68,10 +87,14 @@ export async function playRouteFrameEdge({
   const {
     samples,
     config
-  } = await loadMp4Samples(videoPath);
+  } = await loadMp4Samples(
+    videoPath
+  );
 
   const support =
-    await VideoDecoder.isConfigSupported(config);
+    await VideoDecoder.isConfigSupported(
+      config
+    );
 
   if (!support.supported) {
     throw new Error(
@@ -79,9 +102,18 @@ export async function playRouteFrameEdge({
     );
   }
 
-  const frameCount = samples.length;
-  const fps = Number(motion.fps ?? DEFAULT_FPS);
-  const frameTime = 1000 / fps;
+  const frameCount =
+    samples.length;
+
+  const fps =
+    Number(
+      motion.fps ??
+      DEFAULT_FPS
+    );
+
+  const frameTime =
+    1000 / fps;
+
 
   /*
     Один canvas / одна texture
@@ -89,36 +121,65 @@ export async function playRouteFrameEdge({
   */
 
   const canvas =
-    document.createElement("canvas");
+    document.createElement(
+      "canvas"
+    );
 
-  canvas.width = config.codedWidth;
-  canvas.height = config.codedHeight;
+  canvas.width =
+    config.codedWidth;
+
+  canvas.height =
+    config.codedHeight;
 
   const ctx =
-    canvas.getContext("2d");
+    canvas.getContext(
+      "2d",
+      {
+        alpha: false
+      }
+    );
 
   const frameTexture =
-    new THREE.CanvasTexture(canvas);
+    new THREE.CanvasTexture(
+      canvas
+    );
 
-  frameTexture.needsUpdate = true;
+  frameTexture.generateMipmaps =
+    false;
+
+  frameTexture.minFilter =
+    THREE.LinearFilter;
+
+  frameTexture.magFilter =
+    THREE.LinearFilter;
+
+  frameTexture.needsUpdate =
+    true;
+
+
+  /*
+    State.
+  */
 
   let currentFrame =
     isReverseEntry
       ? frameCount - 1
       : 0;
 
-  let displayedFrame = currentFrame;
+  let displayedFrame = -1;
 
   let playing = false;
   let direction = 0;
   let speed = 0;
   let keyboardDirection = 0;
 
-  let speedAnimationId = null;
   let sliderAnimationId = null;
 
   let destroyed = false;
   let resolveRoute = null;
+
+  const pendingFrames =
+    new Map();
 
 
   /*
@@ -133,6 +194,11 @@ export async function playRouteFrameEdge({
           return;
         }
 
+        const pending =
+          pendingFrames.get(
+            frame.timestamp
+          );
+
         ctx.drawImage(
           frame,
           0,
@@ -143,8 +209,19 @@ export async function playRouteFrameEdge({
 
         frame.close();
 
-        frameTexture.needsUpdate = true;
-        displayedFrame = currentFrame;
+        frameTexture.needsUpdate =
+          true;
+
+        if (pending) {
+          displayedFrame =
+            pending.index;
+
+          pendingFrames.delete(
+            frame.timestamp
+          );
+
+          pending.resolve();
+        }
       },
 
       error: error => {
@@ -155,7 +232,9 @@ export async function playRouteFrameEdge({
       }
     });
 
-  decoder.configure(support.config);
+  decoder.configure(
+    support.config
+  );
 
 
   /*
@@ -167,17 +246,33 @@ export async function playRouteFrameEdge({
 
       if (destroyed) return;
 
-      index = Math.max(
-        0,
-        Math.min(
-          frameCount - 1,
-          index
-        )
-      );
+      index =
+        Math.max(
+          0,
+          Math.min(
+            frameCount - 1,
+            index
+          )
+        );
 
-      const sample = samples[index];
+      if (
+        displayedFrame === index
+      ) {
+        currentFrame = index;
+        return;
+      }
+
+      const sample =
+        samples[index];
 
       if (!sample) return;
+
+      const timestamp =
+        Math.round(
+          sample.cts *
+          1_000_000 /
+          sample.timescale
+        );
 
       const chunk =
         new EncodedVideoChunk({
@@ -186,12 +281,7 @@ export async function playRouteFrameEdge({
               ? "key"
               : "delta",
 
-          timestamp:
-            Math.round(
-              sample.cts *
-              1_000_000 /
-              sample.timescale
-            ),
+          timestamp,
 
           duration:
             Math.round(
@@ -206,9 +296,21 @@ export async function playRouteFrameEdge({
 
       currentFrame = index;
 
-      decoder.decode(chunk);
+      await new Promise(
+        resolve => {
+          pendingFrames.set(
+            timestamp,
+            {
+              index,
+              resolve
+            }
+          );
 
-      await decoder.flush();
+          decoder.decode(
+            chunk
+          );
+        }
+      );
     };
 
 
@@ -216,7 +318,9 @@ export async function playRouteFrameEdge({
     Первый кадр.
   */
 
-  await showFrame(currentFrame);
+  await showFrame(
+    currentFrame
+  );
 
   setTexture(
     frameTexture,
@@ -228,24 +332,26 @@ export async function playRouteFrameEdge({
 
   /*
     Route progress всегда:
+
     source = 0
     target = 1
-
-    Независимо от физического
-    направления файла.
   */
 
-  const getRouteProgress = () => {
-    if (frameCount <= 1) return 0;
+  const getRouteProgress =
+    () => {
 
-    const fileProgress =
-      currentFrame /
-      (frameCount - 1);
+      if (frameCount <= 1) {
+        return 0;
+      }
 
-    return isReverseEntry
-      ? 1 - fileProgress
-      : fileProgress;
-  };
+      const fileProgress =
+        currentFrame /
+        (frameCount - 1);
+
+      return isReverseEntry
+        ? 1 - fileProgress
+        : fileProgress;
+    };
 
 
   const progressToFrame =
@@ -264,11 +370,8 @@ export async function playRouteFrameEdge({
 
 
   /*
-    Направление относительно
-    текущего маршрута.
-
     +1 = к targetPanorama
-    -1 = обратно к sourcePanorama
+    -1 = к sourcePanorama
   */
 
   const routeDirectionToFrameDirection =
@@ -281,167 +384,131 @@ export async function playRouteFrameEdge({
 
 
   /*
-    Скорость.
+    Направление взгляда
+    относительно направления
+    входа в маршрут.
   */
 
-  const animateSpeed =
-    (
-      targetSpeed,
-      duration,
-      onComplete = null
-    ) => {
+  const getViewDirection =
+    () => {
 
-      if (speedAnimationId) {
-        cancelAnimationFrame(
-          speedAnimationId
+      const viewYaw =
+        Number(
+          getViewYaw?.() ??
+          entryViewYaw
         );
-      }
 
-      const startSpeed = speed;
-      const startTime = performance.now();
+      const delta =
+        normalizeAngle(
+          viewYaw -
+          entryViewYaw
+        );
 
-      const step = now => {
-        const progress =
-          Math.min(
-            1,
-            (now - startTime) /
-            duration
+      return Math.abs(delta) <= 90
+        ? 1
+        : -1;
+    };
+
+
+  /*
+    Playback.
+  */
+
+  const playbackLoop =
+    async () => {
+
+      while (
+        playing &&
+        !destroyed
+      ) {
+        const routeDirection =
+          keyboardDirection !== 0
+            ? keyboardDirection *
+              getViewDirection()
+            : direction;
+
+        const frameDirection =
+          routeDirectionToFrameDirection(
+            routeDirection
           );
 
-        const eased =
-          1 -
-          Math.pow(
-            1 - progress,
-            3
-          );
+        const nextFrame =
+          currentFrame +
+          frameDirection;
 
-        speed =
-          startSpeed +
-          (
-            targetSpeed -
-            startSpeed
-          ) *
-          eased;
+        if (
+          nextFrame < 0 ||
+          nextFrame >= frameCount
+        ) {
+          playing = false;
 
-        if (progress < 1) {
-          speedAnimationId =
-            requestAnimationFrame(step);
+          if (
+            routeDirection > 0
+          ) {
+            finishTarget();
+          } else {
+            finishSource();
+          }
 
           return;
         }
 
-        speedAnimationId = null;
+        const start =
+          performance.now();
 
-        onComplete?.();
-      };
+        await showFrame(
+          nextFrame
+        );
 
-      speedAnimationId =
-        requestAnimationFrame(step);
+        const elapsed =
+          performance.now() -
+          start;
+
+        const effectiveSpeed =
+          Math.max(
+            MIN_SPEED,
+            speed
+          );
+
+        const wait =
+          Math.max(
+            0,
+            frameTime /
+              effectiveSpeed -
+              elapsed
+          );
+
+        if (wait > 0) {
+          await new Promise(
+            resolve =>
+              setTimeout(
+                resolve,
+                wait
+              )
+          );
+        }
+      }
     };
 
-  const getViewDirection = () => {
-    const viewYaw =
-      Number(
-        getViewYaw?.() ??
-        entryViewYaw
-      );
 
-    const delta =
-      normalizeAngle(
-        viewYaw -
-        entryViewYaw
-      );
+  const play =
+    (
+      routeDirection,
+      targetSpeed = 1
+    ) => {
 
-    return Math.abs(delta) <= 90
-      ? 1
-      : -1;
-  };
-   
-    /*
-    Playback loop.
+      direction =
+        routeDirection;
 
-    MOVE_SPEED = коэффициент
-    относительно fps.
-  */
+      speed =
+        targetSpeed;
 
-  const playbackLoop = async () => {
-    while (playing && !destroyed) {
-      const routeDirection =
-        keyboardDirection !== 0
-          ? keyboardDirection * getViewDirection()
-          : direction;
+      if (playing) return;
 
-      const frameDirection =
-        routeDirectionToFrameDirection(
-          routeDirection
-        );
+      playing = true;
 
-      const nextFrame =
-        currentFrame +
-        frameDirection;
-
-      if (
-        nextFrame < 0 ||
-        nextFrame >= frameCount
-      ) {
-        playing = false;
-
-      if (routeDirection > 0) {
-        finishTarget();
-      } else {
-        finishSource();
-      }
-
-        return;
-      }
-
-      const start =
-        performance.now();
-
-      await showFrame(
-        nextFrame
-      );
-
-      const elapsed =
-        performance.now() -
-        start;
-
-      const effectiveSpeed =
-        Math.max(
-          MIN_SPEED,
-          speed
-        );
-
-      const wait =
-        Math.max(
-          0,
-          frameTime /
-            effectiveSpeed -
-            elapsed
-        );
-
-      if (wait > 0) {
-        await new Promise(
-          resolve =>
-            setTimeout(
-              resolve,
-              wait
-            )
-        );
-      }
-    }
-  };
-
-
-  const play = (routeDirection, targetSpeed = 1) => {
-    direction = routeDirection;
-    speed = targetSpeed;
-
-    if (playing) return;
-
-    playing = true;
-    playbackLoop();
-  };
+      playbackLoop();
+    };
 
 
   const stop = () => {
@@ -462,20 +529,14 @@ export async function playRouteFrameEdge({
 
         playing = false;
 
-        if (speedAnimationId) {
-          cancelAnimationFrame(
-            speedAnimationId
-          );
-
-          speedAnimationId = null;
-        }
-
         const frame =
           progressToFrame(
             progress
           );
 
-        await showFrame(frame);
+        await showFrame(
+          frame
+        );
 
         setTexture(
           frameTexture,
@@ -486,9 +547,20 @@ export async function playRouteFrameEdge({
       }
   });
 
+
+  /*
+    Touch control.
+  */
+
   showRouteTouchControl({
-    onMove(direction, touchSpeed) {
-      if (!direction || touchSpeed <= 0) {
+    onMove(
+      touchDirection,
+      touchSpeed
+    ) {
+      if (
+        !touchDirection ||
+        touchSpeed <= 0
+      ) {
         stop();
         return;
       }
@@ -497,12 +569,14 @@ export async function playRouteFrameEdge({
         getViewDirection();
 
       const inputDirection =
-        direction === "forward"
+        touchDirection ===
+        "forward"
           ? 1
           : -1;
 
       play(
-        inputDirection * viewDirection,
+        inputDirection *
+        viewDirection,
         touchSpeed
       );
     },
@@ -512,6 +586,10 @@ export async function playRouteFrameEdge({
     }
   });
 
+
+  /*
+    Slider progress.
+  */
 
   const updateSlider =
     () => {
@@ -535,133 +613,160 @@ export async function playRouteFrameEdge({
     Keyboard.
   */
 
-  const onKeyDown = event => {
-    if (event.repeat) return;
+  const onKeyDown =
+    event => {
 
-    if (event.code === "KeyW") {
-      keyboardDirection = 1;
-      speed = 1;
+      if (event.repeat) return;
 
-      if (!playing) {
-        playing = true;
-        playbackLoop();
+      if (
+        event.code ===
+        "KeyW"
+      ) {
+        keyboardDirection = 1;
+        speed = 1;
+
+        if (!playing) {
+          playing = true;
+          playbackLoop();
+        }
       }
-    }
 
-    if (event.code === "KeyS") {
-      keyboardDirection = -1;
-      speed = 1;
+      if (
+        event.code ===
+        "KeyS"
+      ) {
+        keyboardDirection = -1;
+        speed = 1;
 
-      if (!playing) {
-        playing = true;
-        playbackLoop();
+        if (!playing) {
+          playing = true;
+          playbackLoop();
+        }
       }
-    }
-  };
-  const onKeyUp = event => {
-    if (
-      event.code !== "KeyW" &&
-      event.code !== "KeyS"
-    ) {
-      return;
-    }
+    };
 
-    keyboardDirection = 0;
-    stop();
-  };
+
+  const onKeyUp =
+    event => {
+
+      if (
+        event.code !== "KeyW" &&
+        event.code !== "KeyS"
+      ) {
+        return;
+      }
+
+      keyboardDirection = 0;
+
+      stop();
+    };
 
 
   /*
     Finish.
   */
 
-  const finishTarget = () => {
-    if (destroyed) return;
+  const finishTarget =
+    () => {
 
-    setTexture(
-      targetTexture,
-      {
-        disposePrevious: false
-      }
-    );
+      if (destroyed) return;
 
-    cleanup();
-
-    resolveRoute?.({
-      panorama:
-        targetPanorama,
-
-      direction:
-        "forward"
-    });
-  };
-
-
-  const finishSource = () => {
-    if (destroyed) return;
-
-    setTexture(
-      sourceTexture,
-      {
-        disposePrevious: false
-      }
-    );
-
-    cleanup();
-
-    resolveRoute?.({
-      panorama:
-        sourcePanorama,
-
-      direction:
-        "reverse"
-    });
-  };
-
-
-  const cleanup = () => {
-    if (destroyed) return;
-
-    destroyed = true;
-    playing = false;
-
-    window.removeEventListener(
-      "keydown",
-      onKeyDown
-    );
-
-    window.removeEventListener(
-      "keyup",
-      onKeyUp
-    );
-
-    if (speedAnimationId) {
-      cancelAnimationFrame(
-        speedAnimationId
+      setTexture(
+        targetTexture,
+        {
+          disposePrevious: false
+        }
       );
-    }
 
-    if (sliderAnimationId) {
-      cancelAnimationFrame(
+      cleanup();
+
+      resolveRoute?.({
+        panorama:
+          targetPanorama,
+
+        direction:
+          "forward"
+      });
+    };
+
+
+  const finishSource =
+    () => {
+
+      if (destroyed) return;
+
+      setTexture(
+        sourceTexture,
+        {
+          disposePrevious: false
+        }
+      );
+
+      cleanup();
+
+      resolveRoute?.({
+        panorama:
+          sourcePanorama,
+
+        direction:
+          "reverse"
+      });
+    };
+
+
+  /*
+    Cleanup.
+  */
+
+  const cleanup =
+    () => {
+
+      if (destroyed) return;
+
+      destroyed = true;
+      playing = false;
+
+      window.removeEventListener(
+        "keydown",
+        onKeyDown
+      );
+
+      window.removeEventListener(
+        "keyup",
+        onKeyUp
+      );
+
+      if (
         sliderAnimationId
-      );
-    }
+      ) {
+        cancelAnimationFrame(
+          sliderAnimationId
+        );
+      }
 
-    speedAnimationId = null;
-    sliderAnimationId = null;
+      sliderAnimationId = null;
 
-    hideRouteSlider();
-    hideRouteTouchControl();
+      hideRouteSlider();
+      hideRouteTouchControl();
 
-    if (
-      decoder.state !==
-      "closed"
-    ) {
-      decoder.close();
-    }
+      for (
+        const pending
+        of pendingFrames.values()
+      ) {
+        pending.resolve();
+      }
 
-    frameTexture.dispose();
-  };
+      pendingFrames.clear();
+
+      if (
+        decoder.state !==
+        "closed"
+      ) {
+        decoder.close();
+      }
+
+      frameTexture.dispose();
+    };
 
 
   window.addEventListener(
@@ -675,14 +780,22 @@ export async function playRouteFrameEdge({
   );
 
 
-  return new Promise(resolve => {
-    resolveRoute = resolve;
-  });
+  return new Promise(
+    resolve => {
+      resolveRoute = resolve;
+    }
+  );
 }
-function normalizeAngle(angle) {
+
+
+function normalizeAngle(
+  angle
+) {
   return (
     (
-      (angle + 180) %
+      (
+        angle + 180
+      ) %
       360 +
       360
     ) %
