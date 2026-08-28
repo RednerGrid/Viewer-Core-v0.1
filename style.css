@@ -649,3 +649,52 @@ body {
 .route-gate.active {
   opacity: 1;
 }
+
+.route-touch-control {
+  position: fixed;
+  left: 28px;
+  bottom: 38px;
+  z-index: 1000;
+  width: 90px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+}
+
+.route-touch-control__base {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.route-touch-control__knob {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(5px);
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.route-touch-control__knob.is-active {
+  background: rgba(255, 255, 255, 0.34);
+  transition: background 120ms ease;
+}
+
+/* @media (pointer: fine) {
+  .route-touch-control {
+    display: none;
+  }
+} */

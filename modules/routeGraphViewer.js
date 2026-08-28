@@ -281,7 +281,7 @@ export async function init({
     scene3d
   );
 
-  showRouteTouchControl({
+/*   showRouteTouchControl({
     onMove(direction, speed) {
       console.log("TOUCH MOVE", direction, speed);
     },
@@ -289,7 +289,7 @@ export async function init({
     onStop() {
       console.log("TOUCH STOP");
     }
-  });
+  }); */
 
   /*
     CONTROLS
