@@ -106,11 +106,14 @@ function onPointerMove(event) {
     return;
   }
 
-  const speed = clamp(
-    (distance - DEAD_ZONE) / (maxDrag - DEAD_ZONE),
+    const normalized = clamp(
+    (distance - DEAD_ZONE) /
+    (maxDrag - DEAD_ZONE),
     0,
     1
-  );
+    );
+
+    const speed = 0.35 + normalized * 0.65;
 
   moveCallback?.(
     deltaY < 0 ? "forward" : "reverse",
