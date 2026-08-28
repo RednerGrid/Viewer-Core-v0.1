@@ -1,4 +1,8 @@
 import { loadMp4Samples } from "../graph/mp4Demuxer.js";
+import {
+  showRouteTouchControl,
+  hideRouteTouchControl
+} from "../ui/routeTouchControl.js";
 
 import {
   showRouteSlider,
@@ -6,15 +10,8 @@ import {
   hideRouteSlider
 } from "../ui/routeSlider.js";
 
-
-const MOVE_SPEED = 1;
-const START_SPEED = 1;
-
-const ACCELERATION_TIME = 0;
-const DECELERATION_TIME = 0;
-
+const MIN_SPEED = 0.1;
 const DEFAULT_FPS = 25;
-
 
 export async function playRouteFrameEdge({
   project,
@@ -389,11 +386,7 @@ export async function playRouteFrameEdge({
           0.8 = 80% fps.
         */
 
-        const effectiveSpeed =
-          Math.max(
-            START_SPEED,
-            speed
-          );
+        const effectiveSpeed = Math.max(MIN_SPEED, speed);
 
         const wait =
           Math.max(
@@ -416,17 +409,13 @@ export async function playRouteFrameEdge({
     };
 
 
-  const play = routeDirection => {
+  const play = (routeDirection, targetSpeed = 1) => {
     direction = routeDirection;
+    speed = targetSpeed;
 
-    if (playing) {
-      speed = 1;
-      return;
-    }
+    if (playing) return;
 
-    speed = 1;
     playing = true;
-
     playbackLoop();
   };
 
@@ -471,6 +460,24 @@ export async function playRouteFrameEdge({
           }
         );
       }
+  });
+
+  showRouteTouchControl({
+    onMove(direction, touchSpeed) {
+      if (!direction || touchSpeed <= 0) {
+        stop();
+        return;
+      }
+
+      play(
+        direction === "forward" ? 1 : -1,
+        touchSpeed
+      );
+    },
+
+    onStop() {
+      stop();
+    }
   });
 
 
@@ -603,6 +610,7 @@ export async function playRouteFrameEdge({
     sliderAnimationId = null;
 
     hideRouteSlider();
+    hideRouteTouchControl();
 
     if (
       decoder.state !==

@@ -21,10 +21,6 @@ import {
 
 import { playRouteEdge } from "./routeEdgePlayer.js";
 import { playRouteFrameEdge } from "./routeFrameEdgePlayer.js";
-import { showRouteTouchControl } from "../ui/routeTouchControl.js";
-
-
-
 
 let viewerRef = null;
 let editorRef = null;
@@ -282,17 +278,7 @@ export async function init({
   );
 
 try {
-  showRouteTouchControl({
-    container: viewer,
 
-    onMove(direction, speed) {
-      console.log("TOUCH MOVE", direction, speed);
-    },
-
-    onStop() {
-      console.log("TOUCH STOP");
-    }
-  });
 } catch (error) {
   console.error("TOUCH CONTROL ERROR:", error);
 }

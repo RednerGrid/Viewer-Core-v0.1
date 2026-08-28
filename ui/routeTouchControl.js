@@ -21,7 +21,6 @@ function getMaxDrag() {
 }
 
 export function showRouteTouchControl({
-  container,
   onMove,
   onStop
 } = {}) {
@@ -42,7 +41,7 @@ export function showRouteTouchControl({
   baseEl.appendChild(knobEl);
   rootEl.appendChild(baseEl);
 
-  container.appendChild(rootEl);
+  document.body.appendChild(rootEl);
 
   baseEl.addEventListener("pointerdown", onPointerDown);
 }
