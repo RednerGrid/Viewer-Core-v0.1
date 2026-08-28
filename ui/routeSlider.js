@@ -13,8 +13,8 @@ let lastSeekTime = 0;
 
 let inputCallback = null;
 
-const MAX_PROGRESS_SPEED = 0.25;
-const SEEK_INTERVAL = 60;
+const MAX_PROGRESS_SPEED = 1.00;
+const SEEK_INTERVAL = 40;
 
 export function showRouteSlider({
   progress = 0,

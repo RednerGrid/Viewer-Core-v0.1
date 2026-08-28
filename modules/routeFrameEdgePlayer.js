@@ -10,8 +10,8 @@ import {
 const MOVE_SPEED = 1;
 const START_SPEED = 1;
 
-const ACCELERATION_TIME = 300;
-const DECELERATION_TIME = 180;
+const ACCELERATION_TIME = 0;
+const DECELERATION_TIME = 0;
 
 const DEFAULT_FPS = 25;
 
@@ -416,26 +416,19 @@ export async function playRouteFrameEdge({
     };
 
 
-  const play =
-    routeDirection => {
+  const play = routeDirection => {
+    direction = routeDirection;
 
-      direction =
-        routeDirection;
-
-      if (playing) {
-        animateSpeed(
-          MOVE_SPEED,
-          ACCELERATION_TIME
-        );
-
-        return;
-      }
-
+    if (playing) {
       speed = 1;
-      playing = true;
+      return;
+    }
 
-      playbackLoop();
-    };
+    speed = 1;
+    playing = true;
+
+    playbackLoop();
+  };
 
 
   const stop = () => {

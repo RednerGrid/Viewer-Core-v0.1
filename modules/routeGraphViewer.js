@@ -19,6 +19,7 @@ import {
   destroyRouteGates
 } from "../graph/routeGateRenderer.js";
 
+import { playRouteEdge } from "./routeEdgePlayer.js";
 import { playRouteFrameEdge } from "./routeFrameEdgePlayer.js";
 
 
@@ -770,100 +771,59 @@ function animate() {
 }
 
 async function activateCurrentEdge() {
-  console.log(
-    "ACTIVATE EDGE",
-    activeEdge
-  );
+  if (isMoving || !activeEdge) return;
 
-  if (isMoving) return;
-  if (!activeEdge) return;
-
-  /*
-    Фиксируем выбранный edge,
-    потому что activeEdge дальше
-    может измениться.
-  */
-  const selectedEdge =
-    activeEdge;
-
-  const targetPanorama =
-    graph.getPanorama(
-      selectedEdge.targetPanoramaId
-    );
+  const selectedEdge = activeEdge;
+  const graphEdge = selectedEdge.edge;
+  const targetPanorama = graph.getPanorama(selectedEdge.targetPanoramaId);
 
   if (!targetPanorama) {
-    console.warn(
-      `RouteGraphViewer: target panorama "${selectedEdge.targetPanoramaId}" не найдена.`
-    );
-
+    console.warn(`RouteGraphViewer: target panorama "${selectedEdge.targetPanoramaId}" не найдена.`);
     return;
   }
 
-  /*
-    Начинаем переход.
-    Все gates скрываем.
-  */
   isMoving = true;
-
   activeGateEdgeId = null;
   hideRouteGates();
 
   try {
-    console.log(
-      "PLAY EDGE",
-      selectedEdge.id,
-      selectedEdge.video,
-      selectedEdge.targetPanoramaId
-    );
+    let result;
 
-    console.log(
-      "PLAY WEBCODECS",
-      selectedEdge.id,
-      selectedEdge.edge.motion
-    );
+    if (graphEdge.motion?.src) {
+      console.log("PLAY WEBCODECS", graphEdge.id, graphEdge.motion.src);
 
-    const result = await playRouteFrameEdge({
-      project: projectRef,
-      edge: selectedEdge,
-      sourcePanorama: currentPanorama,
-      targetPanorama,
-      setTexture: setPanoramaTexture,
-      textureLoader
-    });
+      result = await playRouteFrameEdge({
+        project: projectRef,
+        edge: selectedEdge,
+        sourcePanorama: currentPanorama,
+        targetPanorama,
+        setTexture: setPanoramaTexture,
+        textureLoader
+      });
 
-    console.log(
-      "ROUTE FINISHED",
-      {
-        resultPanorama:
-          result.panorama?.id,
+    } else if (graphEdge.videos) {
+      console.log("PLAY VIDEO", graphEdge.id, selectedEdge.video);
 
-        targetPanorama:
-          targetPanorama?.id,
+      result = await playRouteEdge({
+        project: projectRef,
+        edge: selectedEdge,
+        sourcePanorama: currentPanorama,
+        targetPanorama,
+        setTexture: setPanoramaTexture,
+        textureLoader
+      });
 
-        sourcePanorama:
-          currentPanorama?.id,
+    } else {
+      throw new Error(
+        `RouteGraphViewer: edge "${graphEdge.id}" не содержит motion.src или videos.`
+      );
+    }
 
-        direction:
-          result.direction
-      }
-    );
-
-    currentPanorama =
-      result.panorama;
-
+    currentPanorama = result.panorama;
     activeEdge = null;
 
   } catch (error) {
-    console.error(
-      "Route transition failed:",
-      error
-    );
-
-    /*
-      Важно:
-      после ошибки старый edge
-      тоже не оставляем выбранным.
-    */
+    console.error("Route transition failed:", error);
     activeEdge = null;
 
   } finally {
