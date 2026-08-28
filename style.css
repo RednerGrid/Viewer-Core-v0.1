@@ -698,3 +698,22 @@ body {
     display: none;
   }
 } */
+
+@media (pointer: coarse) and (orientation: portrait) {
+  .route-touch-control {
+    left: 40px;
+    bottom: 80px;
+    width: 210px;
+    height: 420px;
+  }
+
+  .route-touch-control__base {
+    width: 168px;
+    height: 168px;
+  }
+
+  .route-touch-control__knob {
+    width: 168px;
+    height: 168px;
+  }
+}
