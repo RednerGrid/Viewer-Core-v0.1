@@ -9,9 +9,10 @@ let moveCallback = null;
 let stopCallback = null;
 
 const DEAD_ZONE = 10;
-const MAX_DRAG = 70;
+const MAX_DRAG = matchMedia("(pointer: coarse)").matches ? 120 : 70;
 
 export function showRouteTouchControl({
+  container,
   onMove,
   onStop
 } = {}) {
@@ -31,7 +32,8 @@ export function showRouteTouchControl({
 
   baseEl.appendChild(knobEl);
   rootEl.appendChild(baseEl);
-  document.body.appendChild(rootEl);
+
+  container.appendChild(rootEl);
 
   baseEl.addEventListener("pointerdown", onPointerDown);
 }
@@ -39,6 +41,9 @@ export function showRouteTouchControl({
 export function hideRouteTouchControl() {
   if (baseEl) {
     baseEl.removeEventListener("pointerdown", onPointerDown);
+    baseEl.removeEventListener("pointermove", onPointerMove);
+    baseEl.removeEventListener("pointerup", onPointerUp);
+    baseEl.removeEventListener("pointercancel", onPointerUp);
   }
 
   rootEl?.remove();
@@ -53,6 +58,9 @@ export function hideRouteTouchControl() {
 }
 
 function onPointerDown(event) {
+  event.stopPropagation();
+  event.preventDefault();
+
   if (pointerId !== null) return;
 
   pointerId = event.pointerId;
@@ -65,18 +73,15 @@ function onPointerDown(event) {
   baseEl.addEventListener("pointercancel", onPointerUp);
 
   knobEl.classList.add("is-active");
-
-  event.preventDefault();
 }
 
 function onPointerMove(event) {
+  event.stopPropagation();
+
+  if (pointerId === null) return;
   if (event.pointerId !== pointerId) return;
 
-  const deltaY = clamp(
-    event.clientY - startY,
-    -MAX_DRAG,
-    MAX_DRAG
-  );
+  const deltaY = clamp(event.clientY - startY, -MAX_DRAG, MAX_DRAG);
 
   updateVisual(deltaY);
 
@@ -88,8 +93,7 @@ function onPointerMove(event) {
   }
 
   const speed = clamp(
-    (distance - DEAD_ZONE) /
-    (MAX_DRAG - DEAD_ZONE),
+    (distance - DEAD_ZONE) / (MAX_DRAG - DEAD_ZONE),
     0,
     1
   );
@@ -101,6 +105,8 @@ function onPointerMove(event) {
 }
 
 function onPointerUp(event) {
+  event.stopPropagation();
+
   if (event.pointerId !== pointerId) return;
 
   baseEl.releasePointerCapture?.(pointerId);
@@ -111,7 +117,7 @@ function onPointerUp(event) {
 
   pointerId = null;
 
-  knobEl?.classList.remove("is-active");
+  knobEl.classList.remove("is-active");
 
   resetVisual();
   stopCallback?.();

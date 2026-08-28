@@ -283,6 +283,8 @@ export async function init({
 
 try {
   showRouteTouchControl({
+    container: viewer,
+
     onMove(direction, speed) {
       console.log("TOUCH MOVE", direction, speed);
     },
