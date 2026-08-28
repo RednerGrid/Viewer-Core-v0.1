@@ -19,7 +19,8 @@ export async function playRouteFrameEdge({
   sourcePanorama,
   targetPanorama,
   setTexture,
-  textureLoader
+  textureLoader,
+  getViewYaw
 }) {
   if (!edge?.edge) {
     throw new Error("RouteFrameEdgePlayer: edge отсутствует.");
@@ -31,6 +32,10 @@ export async function playRouteFrameEdge({
 
   const graphEdge = edge.edge;
   const isReverseEntry = edge.direction === "reverse";
+  const entryViewYaw =
+  Number(
+    getViewYaw?.() ?? 0
+  );
 
   const motion = graphEdge.motion;
 
@@ -107,6 +112,7 @@ export async function playRouteFrameEdge({
   let playing = false;
   let direction = 0;
   let speed = 0;
+  let keyboardDirection = 0;
 
   let speedAnimationId = null;
   let sliderAnimationId = null;
@@ -333,80 +339,98 @@ export async function playRouteFrameEdge({
         requestAnimationFrame(step);
     };
 
+  const getViewDirection = () => {
+    const viewYaw =
+      Number(
+        getViewYaw?.() ??
+        entryViewYaw
+      );
 
-  /*
+    const delta =
+      normalizeAngle(
+        viewYaw -
+        entryViewYaw
+      );
+
+    return Math.abs(delta) <= 90
+      ? 1
+      : -1;
+  };
+   
+    /*
     Playback loop.
 
     MOVE_SPEED = коэффициент
     относительно fps.
   */
 
-  const playbackLoop =
-    async () => {
+  const playbackLoop = async () => {
+    while (playing && !destroyed) {
+      const routeDirection =
+        keyboardDirection !== 0
+          ? keyboardDirection * getViewDirection()
+          : direction;
 
-      while (
-        playing &&
-        !destroyed
+      const frameDirection =
+        routeDirectionToFrameDirection(
+          routeDirection
+        );
+
+      const nextFrame =
+        currentFrame +
+        frameDirection;
+
+      if (
+        nextFrame < 0 ||
+        nextFrame >= frameCount
       ) {
-        const frameDirection =
-          routeDirectionToFrameDirection(
-            direction
-          );
+        playing = false;
 
-        const nextFrame =
-          currentFrame +
-          frameDirection;
-
-        if (
-          nextFrame < 0 ||
-          nextFrame >= frameCount
-        ) {
-          playing = false;
-
-          if (direction > 0) {
-            finishTarget();
-          } else {
-            finishSource();
-          }
-
-          return;
-        }
-
-        const start =
-          performance.now();
-
-        await showFrame(nextFrame);
-
-        const elapsed =
-          performance.now() -
-          start;
-
-        /*
-          speed 1 = исходный fps.
-          0.8 = 80% fps.
-        */
-
-        const effectiveSpeed = Math.max(MIN_SPEED, speed);
-
-        const wait =
-          Math.max(
-            0,
-            frameTime /
-              effectiveSpeed -
-              elapsed
-          );
-
-        if (wait > 0) {
-          await new Promise(
-            resolve =>
-              setTimeout(
-                resolve,
-                wait
-              )
-          );
-        }
+      if (routeDirection > 0) {
+        finishTarget();
+      } else {
+        finishSource();
       }
-    };
+
+        return;
+      }
+
+      const start =
+        performance.now();
+
+      await showFrame(
+        nextFrame
+      );
+
+      const elapsed =
+        performance.now() -
+        start;
+
+      const effectiveSpeed =
+        Math.max(
+          MIN_SPEED,
+          speed
+        );
+
+      const wait =
+        Math.max(
+          0,
+          frameTime /
+            effectiveSpeed -
+            elapsed
+        );
+
+      if (wait > 0) {
+        await new Promise(
+          resolve =>
+            setTimeout(
+              resolve,
+              wait
+            )
+        );
+      }
+    }
+  };
 
 
   const play = (routeDirection, targetSpeed = 1) => {
@@ -469,8 +493,16 @@ export async function playRouteFrameEdge({
         return;
       }
 
+      const viewDirection =
+        getViewDirection();
+
+      const inputDirection =
+        direction === "forward"
+          ? 1
+          : -1;
+
       play(
-        direction === "forward" ? 1 : -1,
+        inputDirection * viewDirection,
         touchSpeed
       );
     },
@@ -503,31 +535,40 @@ export async function playRouteFrameEdge({
     Keyboard.
   */
 
-  const onKeyDown =
-    event => {
+  const onKeyDown = event => {
+    if (event.repeat) return;
 
-      if (event.repeat) return;
+    if (event.code === "KeyW") {
+      keyboardDirection = 1;
+      speed = 1;
 
-      if (event.code === "KeyW") {
-        play(1);
+      if (!playing) {
+        playing = true;
+        playbackLoop();
       }
+    }
 
-      if (event.code === "KeyS") {
-        play(-1);
+    if (event.code === "KeyS") {
+      keyboardDirection = -1;
+      speed = 1;
+
+      if (!playing) {
+        playing = true;
+        playbackLoop();
       }
-    };
+    }
+  };
+  const onKeyUp = event => {
+    if (
+      event.code !== "KeyW" &&
+      event.code !== "KeyS"
+    ) {
+      return;
+    }
 
-
-  const onKeyUp =
-    event => {
-
-      if (
-        event.code === "KeyW" ||
-        event.code === "KeyS"
-      ) {
-        stop();
-      }
-    };
+    keyboardDirection = 0;
+    stop();
+  };
 
 
   /*
@@ -637,4 +678,14 @@ export async function playRouteFrameEdge({
   return new Promise(resolve => {
     resolveRoute = resolve;
   });
+}
+function normalizeAngle(angle) {
+  return (
+    (
+      (angle + 180) %
+      360 +
+      360
+    ) %
+    360
+  ) - 180;
 }

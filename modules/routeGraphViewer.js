@@ -800,7 +800,8 @@ async function activateCurrentEdge() {
         sourcePanorama: currentPanorama,
         targetPanorama,
         setTexture: setPanoramaTexture,
-        textureLoader
+        textureLoader,
+        getViewYaw: () => lon
       });
 
     } else if (graphEdge.videos) {

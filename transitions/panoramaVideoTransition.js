@@ -240,12 +240,15 @@ export async function playPanoramaVideoTransition({
     const onKeyDown = event => {
       if (event.repeat) return;
 
+      const viewDirection =
+        getViewDirection();
+
       if (event.code === "KeyW") {
-        playForward();
+        play(viewDirection);
       }
 
       if (event.code === "KeyS") {
-        playReverse();
+        play(-viewDirection);
       }
     };
 
