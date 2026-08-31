@@ -45,7 +45,7 @@ export async function loadMp4Samples(url) {
           codec: trackInfo.codec,
           codedWidth: trackInfo.video.width,
           codedHeight: trackInfo.video.height,
-          description: getAvcDescription(track)
+          description: getCodecDescription(track, trackInfo.codec)
         }
       });
     };
@@ -58,12 +58,25 @@ export async function loadMp4Samples(url) {
 }
 
 
-function getAvcDescription(track) {
-  const avcC =
-    track.mdia?.minf?.stbl?.stsd?.entries?.[0]?.avcC;
+function getCodecDescription(track, codec) {
+  if (codec.startsWith("avc1") || codec.startsWith("avc3")) {
+    return getBoxDescription(track, "avcC");
+  }
 
-  if (!avcC) {
-    throw new Error("avcC box not found.");
+  if (codec.startsWith("hvc1") || codec.startsWith("hev1")) {
+    return getBoxDescription(track, "hvcC");
+  }
+
+  throw new Error(`Unsupported codec: ${codec}`);
+}
+
+
+function getBoxDescription(track, boxName) {
+  const entry = track.mdia?.minf?.stbl?.stsd?.entries?.[0];
+  const box = entry?.[boxName];
+
+  if (!box) {
+    throw new Error(`${boxName} box not found.`);
   }
 
   const stream = new MP4Box.DataStream(
@@ -72,7 +85,7 @@ function getAvcDescription(track) {
     MP4Box.DataStream.BIG_ENDIAN
   );
 
-  avcC.write(stream);
+  box.write(stream);
 
   return new Uint8Array(stream.buffer, 8);
 }
