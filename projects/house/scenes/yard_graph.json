@@ -77,7 +77,7 @@
         },
         "motion": {
           "type": "frames",
-          "src": "assets/route-graph/edge_07_01_edge_gop1_crf26_bt709.mp4",
+          "src": "assets/route-graph/edge_07_01_gop1_crf26_8k_bt709.mp4",
           "fps": 40
         }
       }
